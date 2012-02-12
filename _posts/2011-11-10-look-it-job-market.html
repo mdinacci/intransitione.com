@@ -1,0 +1,99 @@
+--- 
+layout: post
+title: A look at the IT job market
+summary: A quick analysis of the jobs on careers.stackoverflow.com
+tags: 
+- Blog
+- google visualization api
+- javascript
+- jquery
+- Programming
+- ruby
+- Web development
+type: post
+---
+<script type="text/javascript" src="/code/careers/js/a.js"></script>
+<script type="text/javascript" src="/code/careers/js/charts.js"></script>
+<script type="text/javascript" src="/code/careers/js/raph.js"></script>
+<script type="text/javascript">
+load();
+</script>
+<style>
+.term-cloud {font-family: ubuntu,verdana,arial; font-size: 10px; }
+.term-cloud-1 {font-size: 10px; color: #acc1f3; }
+.term-cloud-2 {font-size: 14px; color: #86a0dc; }
+.term-cloud-3 {font-size: 18px; color: #607ec5; }
+.term-cloud-4 {font-size: 22px; color: #264ca2; }
+.term-cloud-5 {font-size: 26px; color: #133b97; }
+.term-cloud-6 {font-size: 32px; color: #002a8b; }
+.term-cloud-7 {font-size: 36px; color: #071a41; }
+.term-cloud-8 {font-size: 40px; color: #081122; }
+.term-cloud-9 {font-size: 44px; color: #000000; }
+.term-cloud-error {font-family: ubuntu, verdana, arial; font-size: 10px; color: red; }
+.term-cloud-link {text-decoration: none; }
+.term-cloud-link:hover {text-decoration: underline;}
+</style>
+
+<div id="debug"></div>
+
+Few weeks ago I bought an <a href="http://pragprog.com/book/btlang/seven-languages-in-seven-weeks" title="Seven Languages In Seven Weeks">amazing book</a> whose first chapter is an introduction to the Ruby language. I've never really been interested in Ruby before as I'm perfectly happy with Python but I think there's always something to learn when studying a new language. 
+
+With this in mind, and considering that I'm looking for a job, I thought to learn Ruby by writing a tool to analyze the technical skills most required by the market today. 
+
+I selected the website that in my opinion offers the more interesting jobs, <a href="http://careers.stackoverflow.com" title="careers.stackoverflow.com" target="_blank">careers.stackoverflow.com</a> I scraped the data and made some visualisations to help me understand it (which, BTW, is limited only to the last 5 weeks). 
+
+First, let's <strong>see</strong> what are the technologies required the most: 
+
+<div id="tag_chart_cloud"></div>
+
+<br/>
+Although the data is limited (again, only 5 weeks), we can make some interesting comparisons:
+<ul>
+<li>There's more demand of <strong>Java</strong> developers than <strong>C#</strong> developers. </li>
+<li>More jobs require <strong>Android</strong> knowledge rather than <strong>iOS</strong>, maybe this is also why Java > C#. </li>
+<li><strong>MySQL</strong> beats any other database, including NoSQL ones.</li>
+<li><strong>Javascript</strong> is the most frequent tag, immediately followed by Java.</li>
+<li><strong>Ruby</strong> is less requested than I thought, but maybe requests are distributed among the tags <strong>ruby</strong> and <strong>ruby-on-rails</strong>, I don't know.</li>
+</ul>
+
+This knowledge is useful but too superficial. Most of the companies are looking for candidates with a knowledge of a <strong>set</strong> of technologies strongly related between them so I made a graph to see which groups of technologies are the most requested. This visualization takes the 20 most occurring tags and analyze which other tags appear with. I shortened some of the words to make the visualization more readable, eg. <em>ror</em> stands for Ruby on Rails while <em>js</em> represents Javascript. 
+Each circle represents a tag, the number in each circle represent the number of times that tag appears with the tag label on the left.
+
+(If you don't like the colors reload the page)
+
+<div id="tagsgraph"></div>
+
+Now I think it's possible to appreciate more which <strong>set</strong> of technologies are currently requested and which one a developer should focus in order to increase his/her changes of landing a job of the ones proposed on careers.stackoverflow.com.
+
+Let's see some trends:
+
+For frontend web developers that know HTML and CSS it is also necessary to know Javascript and a big advantage is to know JQuery which demonstrates to be the leading Javascript framework. 
+If you're a frontend developer and want to learn a server-side scripting language, PHP (instead of Ruby or Python) seems to be the most requested.
+
+Python is very often associated with Java and C++ but also with Django and Javascript confirming the language versatility. It seems though that companies prefer to use it mostly outside the web, probably as a "second language requirement" for Java or C++ developers. 
+If you know Python already and want to apply it on the web, study Django.
+
+Nothing surprising in the Microsoft world, .net, C#, Asp.net and SQL server are the technologies required in companies that relies on Microsoft technologies.
+
+It's interesting to see C++ and Java so often together. Companies are probably looking for candidates with a knowledge of either one or the other but I think that while a C++ developer can pick up Java pretty fast I've some doubts about the opposite being so easy.
+
+Knowledge of both Android an iOS seems to be well appreciated by companies that probably prefer to have only one developer working on the same application for both platforms. Windows mobile and blackberry skills are not particularly requested.
+
+The Spring framework is often demanded when working with Java EE. Interesting to note that Java skills are often requested along with a scripting language like Python, Perl or Groovy. They aren't probably necessary but a candidate with a knowledge of at least one scripting language may have the head over a candidate that does not.
+
+Finally, since I don't live in a place with a lot of job opportunities, I'm particularly interested in telecommuting job: 
+<div id="remote_vs_local_chart"></div>
+
+I guess I should relocate... :(
+
+For those interested the code I wrote to collect the data and visualizing it is available on <a href="https://github.com/mdinacci/careers-crawler"> github</a>. 
+
+I think making this kind of tools is a great exercise to learn a new programming language and I really enjoyed doing it in Ruby and Javascript. 
+
+Marco
+
+<script type="text/javascript">
+drawTagsRelated();
+drawJobsByTagCloud();
+drawJobsRemoteVsLocal();
+</script>

@@ -1,0 +1,187 @@
+--- 
+layout: post
+title: "Advanced ListView: populating a list with images and text"
+published: true
+meta: 
+  _edit_last: "1"
+  _disable_convert_chars: "0"
+  blr_date: "2011-05-17"
+  _disable_convert_smilies: "0"
+  _thumbnail_id: "1554"
+  et_feather_settings: a:1:{s:14:"et_is_featured";s:1:"0";}
+  _disable_wptexturize: "0"
+  _disable_wpautop: "0"
+tags: 
+- adapter
+- Android
+- android
+- arrayadapter
+- custom
+- linkedin
+- listview
+- Programming
+- view
+type: post
+status: publish
+---
+The Android documentation says that the <tt>ListView</tt> widget is easy to use. It is true if you just want to display a simple list of strings but as soon as you want to customize your list things become more complicated.
+
+The following is a tutorial on how to write a <tt>ListView</tt> that displays a static list of images and strings, similar to the settings list on your phone. 
+<!--more-->
+
+For the impatients, here's the <a href="http://www.intransitione.com/code/android/adv_listview_demo.zip">Eclipse project code</a>, and a picture of the final result:
+<br>
+<a href="http://www.intransitione.com/blog/advanced-listview-populating-a-list-with-images-and-text/adv_list_demo/" rel="attachment wp-att-1281"><img src="http://www.intransitione.com/intransitione.com/wp-content/uploads/2011/05/adv_list_demo-168x300.png" alt="Advanced ListView demo screenshot" title="Advanced ListView demo screenshot" width="168" height="300" class="aligncenter size-medium wp-image-1281" /></a>
+
+
+Let's start with the <tt>Activity</tt> code.
+First of all, we extends from <tt>ListActivity</tt> instead of <tt>Activity</tt> so we can easily supply our custom adapter:
+
+<pre class="prettyprint [lang-java|linenums:1]">
+public class AdvancedListViewActivity extends ListActivity {
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.main);
+        
+        Context ctx = getApplicationContext();
+	Resources res = ctx.getResources();
+
+	String[] options = res.getStringArray(R.array.country_names);
+	TypedArray icons = res.obtainTypedArray(R.array.country_icons);
+		
+	setListAdapter(new ImageAndTextAdapter(ctx, R.layout.main_list_item, options, icons));
+    }
+}
+</pre>
+
+In the <tt>onCreate</tt> we also create an array of strings, which contains the country names, and a <tt>TypedArray</tt>, which will contain our <tt>Drawable</tt> flags.
+
+The arrays are created from an XML file, here's the content of the <tt>countries.xml</tt> file.
+
+<pre class="prettyprint [lang-xml|linenums:1]">
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="country_names">
+        <item>Bhutan</item>
+        <item>Colombia</item>
+        <item>Italy</item>
+        <item>Jamaica</item>
+        <item>Kazakhstan</item>
+        <item>Kenya</item>
+    </string-array>
+    <array name="country_icons">
+        <item>@drawable/bhutan</item>
+        <item>@drawable/colombia</item>
+        <item>@drawable/italy</item>
+        <item>@drawable/jamaica</item>
+        <item>@drawable/kazakhstan</item>
+        <item>@drawable/kenya</item>
+    </array>
+</resources>
+</pre>
+
+Now we're ready to create the adapter. The official documentation for <tt>Adapter</tt> says: 
+<br><cite>An Adapter object acts as a bridge between an AdapterView and the underlying data for that view. The Adapter provides access to the data items. The Adapter is also responsible for making a View for each item in the data set.</cite>
+
+There are already various subclasses of <tt>Adapter</tt>, we're going to extend on <tt>ArrayAdapter</tt> which is a concrete <tt>BaseAdapter</tt> that is backed by an array of arbitrary objects.
+
+<pre class="prettyprint [lang-java|linenums:1]">
+public class ImageAndTextAdapter extends ArrayAdapter<String> {
+
+	private LayoutInflater mInflater;
+	
+	private String[] mStrings;
+	private TypedArray mIcons;
+	
+	private int mViewResourceId;
+	
+	public ImageAndTextAdapter(Context ctx, int viewResourceId,
+			String[] strings, TypedArray icons) {
+		super(ctx, viewResourceId, strings);
+		
+		mInflater = (LayoutInflater)ctx.getSystemService(
+				Context.LAYOUT_INFLATER_SERVICE);
+		
+		mStrings = strings;
+		mIcons = icons;
+		
+		mViewResourceId = viewResourceId;
+	}
+
+	@Override
+	public int getCount() {
+		return mStrings.length;
+	}
+
+	@Override
+	public String getItem(int position) {
+		return mStrings[position];
+	}
+
+	@Override
+	public long getItemId(int position) {
+		return position;
+	}
+
+	@Override
+	public View getView(int position, View convertView, ViewGroup parent) {
+		convertView = mInflater.inflate(mViewResourceId, null);
+		
+		ImageView iv = (ImageView)convertView.findViewById(R.id.option_icon);
+		iv.setImageDrawable(mIcons.getDrawable(position));
+
+		TextView tv = (TextView)convertView.findViewById(R.id.option_text);
+		tv.setText(mStrings[position]);
+		
+		return convertView;
+	}
+}
+</pre>
+
+The constructor accepts a <tt>Context</tt>, the <tt>id</tt> of the layout that will be used for every row (more on this soon), an array of strings (the country names) and a <tt>TypedArray</tt> (our flags).
+
+The <tt>getView</tt> method is where we build a row for the list.
+We first use a <tt>LayoutInflater</tt> to create a <tt>View</tt> from XML, then we retrieve the country flag as a <tt>Drawable</tt> and the country name as a <tt>String</tt> and we use them to populate the <tt>ImageView</tt> and <tt>TextView</tt> that we've declared in the layout.
+
+The layout for the list rows is the following:
+
+<pre class="prettyprint [lang-xml|linenums:1]">
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android">
+	<ImageView
+	android:id="@+id/option_icon"
+	android:layout_width="48dp"
+	android:layout_height="fill_parent"/>
+	<TextView
+	   android:id="@+id/option_text"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"
+	    android:padding="10dp"
+	    android:textSize="16dp" >
+	</TextView>
+</LinearLayout>
+</pre>
+
+As a reference, this is the content of the main layout:
+
+<pre class="prettyprint [lang-xml|linenums:1]">
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+<ListView android:id="@android:id/list" 
+    android:layout_height="wrap_content" 
+    android:layout_width="fill_parent"
+    />
+</LinearLayout>
+</pre>
+
+Note that the <tt>ListView</tt> ID must be exactly <strong><pre>@android:id/list</pre></strong> or you'll get a <tt>RuntimeException</tt>.
+
+That's it, you can download the <a href="http://www.intransitione.com/code/android/adv_listview_demo.zip">Eclipse project code</a> or post a comment if you have any question.
+
+Marco 

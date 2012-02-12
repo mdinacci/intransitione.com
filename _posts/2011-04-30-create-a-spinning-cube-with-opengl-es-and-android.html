@@ -1,0 +1,186 @@
+--- 
+layout: post
+title: Create a spinning cube with OpenGL ES and Android
+published: true
+meta: 
+  _edit_last: "1"
+  _disable_convert_chars: "0"
+  blr_date: "2011-05-17"
+  _wp_page_template: default
+  _disable_convert_smilies: "0"
+  _thumbnail_id: "1558"
+  et_feather_settings: a:1:{s:14:"et_is_featured";s:1:"0";}
+  _disable_wptexturize: "0"
+  _disable_wpautop: "0"
+tags: 
+- Android
+- android
+- linkedin
+- opengl
+- Programming
+- programming
+type: post
+status: publish
+---
+Android supports 3D graphics via the OpenGL ES API, a flavor of OpenGL specifically designed for embedded devices.
+
+This article is not an OpenGL tutorial, it assumes the reader has already basic OpenGL knowledge.
+
+The final result will look like this:<br>
+<!--more-->
+<a href="http://www.intransitione.com/blog/create-a-spinning-cube-with-opengl-es-and-android/device/" rel="attachment wp-att-1195"><img src="http://www.intransitione.com/intransitione.com/wp-content/uploads/2011/04/device-300x223.png" alt="Screenshot of OpenGL ES spinning cube" title="Screenshot of OpenGL ES spinning cube" width="300" height="223" class="aligncenter size-medium wp-image-1195" /></a>
+
+First we write a new <tt>Activity</tt> and in the <tt>onCreate</tt> method we create the two fundamental objects
+we need to use the OpenGL API: a <tt>GLSurfaceView</tt> and a <tt>Renderer</tt>.
+
+<pre class="prettyprint [lang-java|linenums:1]">
+public class OpenGLDemoActivity extends Activity {
+        
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        
+        // Go fullscreen
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                        WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        
+        GLSurfaceView view = new GLSurfaceView(this);
+        view.setRenderer(new OpenGLRenderer());
+        setContentView(view);
+    }
+}
+</pre>
+
+And this is our <tt>Renderer</tt> that uses a simple <tt>Cube</tt> object we'll describe later do display
+a spinning cube:
+
+<pre class="prettyprint [lang-java|linenums:1]">
+class OpenGLRenderer implements Renderer {
+
+        private Cube mCube = new Cube();
+        private float mCubeRotation;
+
+        @Override
+        public void onSurfaceCreated(GL10 gl, EGLConfig config) {
+            gl.glClearColor(0.0f, 0.0f, 0.0f, 0.5f); 
+                
+            gl.glClearDepthf(1.0f);
+            gl.glEnable(GL10.GL_DEPTH_TEST);
+            gl.glDepthFunc(GL10.GL_LEQUAL);
+
+            gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT,
+                      GL10.GL_NICEST);
+                
+        }
+
+        @Override
+        public void onDrawFrame(GL10 gl) {
+            gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);        
+            gl.glLoadIdentity();
+            
+            gl.glTranslatef(0.0f, 0.0f, -10.0f);
+            gl.glRotatef(mCubeRotation, 1.0f, 1.0f, 1.0f);
+                
+            mCube.draw(gl);
+               
+            gl.glLoadIdentity();                                    
+                
+            mCubeRotation -= 0.15f; 
+        }
+
+        @Override
+        public void onSurfaceChanged(GL10 gl, int width, int height) {
+            gl.glViewport(0, 0, width, height);
+            gl.glMatrixMode(GL10.GL_PROJECTION);
+            gl.glLoadIdentity();
+            GLU.gluPerspective(gl, 45.0f, (float)width / (float)height, 0.1f, 100.0f);
+            gl.glViewport(0, 0, width, height);
+
+            gl.glMatrixMode(GL10.GL_MODELVIEW);
+            gl.glLoadIdentity();
+        }
+}
+</pre> 
+
+Our <tt>onSurfaceChanged</tt> and <tt>onDrawFrame</tt> methods are basically the equivalent of the <tt>GLUT</tt> 
+<tt>glutReshapeFunc</tt> and <tt>glutDisplayFunc</tt>. The first is called when the surface is resized, for instance when the phone
+switch between landscape and portrait mode, the second is called every frame and that's where we put the code to draw our cube. 
+
+<pre class="prettyprint [lang-java|linenums:1]">
+class Cube {
+                
+    private FloatBuffer mVertexBuffer;
+    private FloatBuffer mColorBuffer;
+    private ByteBuffer  mIndexBuffer;
+        
+    private float vertices[] = {
+                                -1.0f, -1.0f, -1.0f,
+                                1.0f, -1.0f, -1.0f,
+                                1.0f,  1.0f, -1.0f,
+                                -1.0f, 1.0f, -1.0f,
+                                -1.0f, -1.0f,  1.0f,
+                                1.0f, -1.0f,  1.0f,
+                                1.0f,  1.0f,  1.0f,
+                                -1.0f,  1.0f,  1.0f
+                                };
+    private float colors[] = {
+                               0.0f,  1.0f,  0.0f,  1.0f,
+                               0.0f,  1.0f,  0.0f,  1.0f,
+                               1.0f,  0.5f,  0.0f,  1.0f,
+                               1.0f,  0.5f,  0.0f,  1.0f,
+                               1.0f,  0.0f,  0.0f,  1.0f,
+                               1.0f,  0.0f,  0.0f,  1.0f,
+                               0.0f,  0.0f,  1.0f,  1.0f,
+                               1.0f,  0.0f,  1.0f,  1.0f
+                            };
+   
+    private byte indices[] = {
+                              0, 4, 5, 0, 5, 1,
+                              1, 5, 6, 1, 6, 2,
+                              2, 6, 7, 2, 7, 3,
+                              3, 7, 4, 3, 4, 0,
+                              4, 7, 6, 4, 6, 5,
+                              3, 0, 1, 3, 1, 2
+                              };
+                
+    public Cube() {
+            ByteBuffer byteBuf = ByteBuffer.allocateDirect(vertices.length * 4);
+            byteBuf.order(ByteOrder.nativeOrder());
+            mVertexBuffer = byteBuf.asFloatBuffer();
+            mVertexBuffer.put(vertices);
+            mVertexBuffer.position(0);
+                
+            byteBuf = ByteBuffer.allocateDirect(colors.length * 4);
+            byteBuf.order(ByteOrder.nativeOrder());
+            mColorBuffer = byteBuf.asFloatBuffer();
+            mColorBuffer.put(colors);
+            mColorBuffer.position(0);
+                
+            mIndexBuffer = ByteBuffer.allocateDirect(indices.length);
+            mIndexBuffer.put(indices);
+            mIndexBuffer.position(0);
+    }
+
+    public void draw(GL10 gl) {             
+            gl.glFrontFace(GL10.GL_CW);
+            
+            gl.glVertexPointer(3, GL10.GL_FLOAT, 0, mVertexBuffer);
+            gl.glColorPointer(4, GL10.GL_FLOAT, 0, mColorBuffer);
+            
+            gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
+            gl.glEnableClientState(GL10.GL_COLOR_ARRAY);
+             
+            gl.glDrawElements(GL10.GL_TRIANGLES, 36, GL10.GL_UNSIGNED_BYTE, 
+                            mIndexBuffer);
+                
+            gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
+            gl.glDisableClientState(GL10.GL_COLOR_ARRAY);
+    }
+}
+</pre>
+
+The <tt>Cube</tt> uses two <tt>FloatBuffer</tt> objects to store vertex and color informations and a <tt>ByteBuffer</tt> to store
+the face indices. In order for the buffers to work it is important to set their order according to the endianness of the platform 
+using the <tt>order</tt> method. Once the buffers have been filled with the values from the arrays, the internal cursor must be 
+restored to the beginning of the data using <tt>buffer.position(0)</tt>.

@@ -1,0 +1,141 @@
+--- 
+layout: post
+title: Grabbing a video using MediaRecorder
+published: true
+meta: 
+  _edit_last: "1"
+  blr_date: "2011-05-17"
+  _wp_old_slug: "1128"
+  _thumbnail_id: "1576"
+tags: 
+- Android
+- android
+- linkedin
+- mediarecorder
+- Programming
+- programming
+- video
+type: post
+status: publish
+---
+The MediaRecorder is normally used to perform audio and/or video recording. The class has a straightforward API but as it's based on a simple state machine the methods must be called in the proper order in order to avoid IllegalStateException from popping up.
+
+Create a new Activity and override the onCreate method with the following:
+<!--more-->
+
+<pre class="prettyprint [lang-java|linenums:1]">
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.media_recorder_recipe);
+        
+        // we shall take the video in landscape orientation
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        
+        mSurfaceView = (SurfaceView) findViewById(R.id.surfaceView);
+        mHolder = mSurfaceView.getHolder();
+        mHolder.addCallback(this);
+        mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+        
+        mToggleButton = (ToggleButton) findViewById(R.id.toggleRecordingButton);
+        mToggleButton.setOnClickListener(new OnClickListener() {
+                @Override
+                // toggle video recording
+                public void onClick(View v) {
+                        if (((ToggleButton)v).isChecked())
+                                mMediaRecorder.start();
+                        else {
+                                mMediaRecorder.stop();
+                                mMediaRecorder.reset();
+                                try {
+                                        initRecorder(mHolder.getSurface());
+                                } catch (IOException e) {
+                                        e.printStackTrace();
+                                }
+                        }
+                }
+        });
+    }  
+</pre>
+The preview frames from the camera will be displayed on a SurfaceView. Recording is controlled by a toggle button. After the recording is over, we stop the MediaRecorder. Since the stop method resets all the state machine variables in order to be able to grab another video we reset the state machine and call our initRecorder once more.
+
+initRecorder is where we configure the MediaRecorder and the camera:
+<pre class="prettyprint [lang-java|linenums:1]">
+    /* Init the MediaRecorder, the order the methods are called is vital to
+     * its correct functioning. 
+     */
+    private void initRecorder(Surface surface) throws IOException {
+        // It is very important to unlock the camera before doing setCamera
+        // or it will results in a black preview
+        if(mCamera == null) {
+            mCamera = Camera.open();
+            mCamera.unlock();
+        }
+
+        if(mMediaRecorder == null)
+            mMediaRecorder = new MediaRecorder();
+        
+        mMediaRecorder.setPreviewDisplay(surface);
+        mMediaRecorder.setCamera(mCamera);
+             
+        mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
+        mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.DEFAULT);
+        File file = createFile();
+             
+        mMediaRecorder.setOutputFile(file.getAbsolutePath());
+              
+        // No limit. Don't forget to check the space on disk.
+        mMediaRecorder.setMaxDuration(-1);
+        mMediaRecorder.setVideoFrameRate(15);
+        
+        mMediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.DEFAULT);
+              
+        try {
+            mMediaRecorder.prepare();
+        } catch (IllegalStateException e) {
+            // This is thrown if the previous calls are not called with the 
+            // proper order
+            e.printStackTrace();
+        }
+                
+        mInitSuccesful = true;
+    }
+</pre>
+It is important to create and unlock a Camera object before of the creation of a MediaRecorder. setPreviewDisplay and setCamera must be called immediately after the creation of the MediaRecorder. The choice of the format and the output file is obligatory. Other options are optional but they must be called in the order outlined in the code above.
+
+The MediaRecorder is best initialized when the surface has been created. We register our Activity as a SurfaceHolder.Callback listener in order to be notified of this and override the surfaceCreated method to call our initialization code:
+<pre class="prettyprint [lang-java|linenums:1]">
+        @Override
+        public void surfaceCreated(SurfaceHolder holder) {
+            try {
+                if(!mInitSuccesful)
+                    initRecorder(mHolder.getSurface());
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+        }   
+</pre>
+When you're done with the surface, don't forget to release the resources, the camera is a shared object and may be used by other applications as well:
+<pre class="prettyprint [lang-java|linenums:1]">
+        private void shutdown() {
+            // Release MediaRecorder and especially the Camera as it's a shared
+            // object that can be used by other applications
+            mMediaRecorder.reset();
+            mMediaRecorder.release();
+            mCamera.release();
+              
+            // once the objects have been released they can't be reused
+            mMediaRecorder = null;
+            mCamera = null;
+        }
+</pre>
+Override the surfaceDestroyed method so the previous code can be called automatically when the user is done with the Activity:
+<pre class="prettyprint [lang-java|linenums:1]">
+        @Override
+        public void surfaceDestroyed(SurfaceHolder holder) {
+            shutdown();
+        }
+</pre>
+
+The full source code for this demo <a href="http://www.intransitione.com/intransitione.com/code/android/media_recorder_recipe_code.zip">is available.</a>

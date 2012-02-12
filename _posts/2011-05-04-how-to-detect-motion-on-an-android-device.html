@@ -1,0 +1,173 @@
+--- 
+layout: post
+title: How to detect motion on an Android device
+published: true
+meta: 
+  _edit_last: "1"
+  blr_date: "2011-05-17"
+  et_feather_settings: a:1:{s:14:"et_is_featured";s:1:"0";}
+  _thumbnail_id: "1546"
+tags: 
+- Android
+- android
+- Featured
+- linkedin
+- motion detection
+- Programming
+- programming
+type: post
+status: publish
+---
+For learning purposes I've written <a href="http://www.intransitione.com/software/#pim" alt="PicInMotion description">PicInMotion</a>, a small Android application that automatically takes a picture when it detects motion in the camera preview. 
+
+This article explains how the simple motion detection mechanism works.
+<!--more-->
+
+<em>UPDATE: source code is available at <a href="https://github.com/mdinacci/PicInMotion/tree/standalone" title="github">github</a>, be sure to clone the <strong>standalone</strong> repository.</em>
+
+<h3>Strategy</h3>
+The strategy is dead simple, we store a frame and we compare it to the next, if the differences in the two frames are above a certain threshold, we declare that motion is detected. Common image detection techniques are far more complicated than what I'm using here and image processing operations (like erode, dilate and some other form of noise reduction) are normally applied to frames in order to reduce digital noise.
+
+Since I wanted to focus on learning Android more than some new image processing techniques, I kept the image operations to the absolute minimum.
+
+<h3>Acquiring data</h3>
+First, we need to acquire the raw image data from the camera. To do it, we implement the <tt>Camera.PreviewCallback</tt> and override the <tt>onPreviewFrame</tt> method. This method is called every time a new frame is ready. 
+
+Here's the code:
+
+<pre class="prettyprint [lang-java|linenums:1]">
+@Override
+public void onPreviewFrame(byte[] data, Camera camera) {
+    if (mMotionDetection.detect(data)) {
+        // The delay is necessary to avoid taking a picture while in the 
+        // middle of taking another. This problem can causes some phones
+        // to reboot.
+        // I set PICTURE_DELAY to 3000 ms, your degree may vary.
+        // mReferenceTime is simply 0 at the beginning.
+        long now = System.currentTimeMillis();
+	if (now > mReferenceTime + PICTURE_DELAY) {  			 
+            mReferenceTime = now + PICTURE_DELAY;
+	    camera.takePicture(null, null, this);
+	} else {
+	    Log.i(TAG, "Not taking picture because not enough time has "
+	    + "passed since the creation of the Surface");
+	}
+    }
+}
+</pre>
+
+<tt>data</tt> is a byte array containing the raw data coming from the camera hardware. Its format may change depending on the device and if the hardware supports multiple formats you can change it using:
+
+<pre class="prettyprint [lang-java|linenums:1]">
+Camera.Parameters parameters = mCamera.getParameters();
+parameters.setPreviewFormat(...);
+mCamera.setParameters(parameters);
+</pre>
+
+In this post I'll assume the image format is <tt>PixelFormat.YCbCr_420_SP</tt> (now deprecated and to be replaced with<tt>ImageFormat.NV21</tt>.
+
+<h3>Detecting movement</h3>
+The advantage of using <tt>ImageFormat.NV21</tt> is that being a YUV based, not RGB based, format, the first <tt>height * width</tt> bytes contains the <a href="http://en.wikipedia.org/wiki/Luminance" alt="Luminance article on Wikipedia">luminance</a> data. You can think of the luminance data as a grayscale version of your image.
+
+We can perform the motion detection on the luminance data only, it will be much faster than comparing two RGB images.
+
+<pre class="prettyprint [lang-java|linenums:1]">
+public boolean detect(byte[] data) {		
+    // Create the "background" picture, the one that will be used
+    // to check the next frame against.
+    if(mBackground == null) {
+        mBackground = AndroidImageFactory.createImage(data,   
+            mSize.value, mPixelFormat.value);
+	Log.i(TAG, "Creating background image");
+	return false;
+    }
+		
+    boolean motionDetected = false;
+		
+    mAndroidImage=AndroidImageFactory.createImage(data,
+        mSize.value, mPixelFormat.value);
+		
+    motionDetected = mAndroidImage.isDifferent(mBackground, 
+        mPixelThreshold.value, mThreshold.value);
+   
+    // Replace the current image with the background.
+    // This is an oversimplification, you would normally blend the two
+    // images to create a new one.
+    mBackground = mAndroidImage;
+	
+    return motionDetected;
+} 
+</pre>
+
+<tt>AndroidImageFactory</tt> is a simple factory class I've created that create a specific class depending on the image format. An extract:
+
+<pre class="prettyprint [lang-java|linenums:1]">
+public static AndroidImage createImage(byte[] data, Size<Integer,
+    Integer> size, int format) {
+    
+    AndroidImage im = null;
+		
+    String imgType = "";
+		
+    switch (format) {
+        case IMAGE_FORMAT_NV21:
+	    im = new AndroidImage_NV21(data,size);
+	    imgType = "NV_21";
+	    break;
+   
+    ...
+</pre>
+
+<tt>AndroidImage</tt> and AndroidImage_NV21 are also classes I've created and that are part of my <tt>commons</tt> library. I'm not releasing yet the source code for these classes but you don't need it anyway.
+
+<h3>Comparing the images by luminance values</h3>
+This is the bulk of the article, here the <tt>isDifferent</tt> method in my <tt>AndroidImage_NV21</tt> class.
+
+<pre class="prettyprint [lang-java|linenums:1]">
+@Override
+public boolean isDifferent(AndroidImage other, int pixel_threshold, 
+	int threshold) {
+		
+        if(!assertImage(other))
+            return false;
+		
+	byte[] otherData = other.get();
+	int totDifferentPixels = 0;
+		
+	int size= mHeight * mWidth;
+	for (int i = 0, ij=0; i < mHeight; i++) {
+	    for (int j = 0; j < mWidth; j++,ij++) {
+	        int pix = (0xff & ((int) mData[ij])) - 16;
+		int otherPix = (0xff & ((int) otherData[ij])) - 16;
+				
+		if (pix < 0) pix = 0;
+		if (pix > 255) pix = 255;
+		if (otherPix < 0) otherPix = 0;
+		if (otherPix > 255) otherPix = 255;
+
+		if(Math.abs(pix - otherPix) >= pixel_threshold)
+			totDifferentPixels++;
+	    }
+	}
+		
+	if(totDifferentPixels == 0) totDifferentPixels = 1;
+	Log.d(TAG, "Number of different pixels: " + totDifferentPixels + "> " 
+            + (100 / ( size / totDifferentPixels) ) + "%");
+		
+	return totDifferentPixels > threshold;
+}
+</pre>
+
+I use two different thresholds. The first acts on the pixel values and could be defined as:
+
+<tt>reference_pixel - threshold < new_pixel < reference_pixel + threshold </tt>
+
+So the <tt>new_pixel</tt> must be bigger than the <tt>reference_pixel</tt> minus the <tt>threshold</tt> but smaller than <tt>new_pixel</tt> plus <tt>threshold</tt>.
+
+If the pixel is different I increment <tt>totDifferentPixels</tt>. At the end I check how many different pixels I have, if the value is greater than the second threshold, then the image is different.
+
+As a reference, I use <tt>25</tt> as value for pixel value threshold (~10% difference) and 3% (9216 for a 640x480 image) as total pixel threshold.
+
+Questions ? write a comment.
+
+Marco

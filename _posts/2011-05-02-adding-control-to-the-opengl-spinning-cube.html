@@ -1,0 +1,139 @@
+--- 
+layout: post
+title: Adding control to the OpenGL spinning cube
+published: true
+meta: 
+  _edit_last: "1"
+  blr_date: "2011-05-17"
+  et_feather_settings: a:1:{s:14:"et_is_featured";s:1:"0";}
+  _thumbnail_id: "1559"
+tags: 
+- Android
+- android
+- linkedin
+- opengl
+- Programming
+- programming
+type: post
+status: publish
+---
+This demo extends on the <a href="http://www.intransitione.com/blog/create-a-spinning-cube-with-opengl-es-and-android/" alt="Create a spinning cube with OpenGL ES">Create a spinning cube OpenGL</a> to show how to control the cube using a D-pad. 
+We're going to increment the speed rotation along the X and Y axes using the directional keys of the D-pad.
+<!--more-->
+
+The biggest change is that we now have our custom class that extends the <tt>SurfaceView</tt>.
+We do this so we can override the <tt>onKeyUp</tt> method and be notified when the user uses the D-pad.
+
+The <tt>onCreate</tt> of our <tt>Activity</tt> looks like this:
+<pre class="prettyprint [lang-java|linenums:1]">
+public class SpinningCubeActivity2 extends Activity {
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        
+        // go fullscreen
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                        WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        
+        // create our custom view
+        GLSurfaceView view = new OpenGLSurfaceView(this);
+        view.setRenderer((Renderer)view);
+        setContentView(view);
+    }
+}
+</pre>
+
+Our new <tt>GLSurfaceView</tt> also implements the <tt>Renderer</tt> interface.
+The <tt>onSurfaceCreated</tt> and <tt>onSurfaceChanged</tt> method are exactly the same as in the previous recipe, most of the changes occur in the <tt>onDrawFrame</tt> as we introduce four new parameters:
+<ul>
+<li><tt>mXrot</tt> and mYrot</tt> to control the rotation of the cube along the X and Y axis. </li>
+<li><tt>mXspeed</tt> and <tt>mYSpeed</tt> to store the speed of the rotation along the X and Y axis.</li>
+</ul> 
+
+Each time the user click on a D-pad button we alter the speed of the cube by modifying these parameters. 
+
+Here's the full code of our new class:
+<pre class="prettyprint [lang-java|linenums:1]">
+class OpenGLSurfaceView extends GLSurfaceView implements Renderer {
+
+    private Cube mCube;
+    private float mXrot;
+    private float mYrot;
+    private float mXspeed;
+    private float mYspeed;
+        
+    public OpenGLSurfaceView(Context context) {
+        super(context);
+        
+        // give focus to the GLSurfaceView    
+        requestFocus();
+        setFocusableInTouchMode(true);
+                
+        mCube = new Cube();
+    }
+
+    @Override
+    public void onDrawFrame(GL10 gl) {
+        gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);        
+        gl.glLoadIdentity();
+               
+        gl.glTranslatef(0.0f, 0.0f, -10.0f);
+                
+        gl.glRotatef(mXrot, 1.0f, 0.0f, 0.0f);  
+        gl.glRotatef(mYrot, 0.0f, 1.0f, 0.0f);
+        
+        mCube.draw(gl);
+                
+        gl.glLoadIdentity();                                    
+                
+        mXrot += mXspeed;
+        mYrot += mYspeed;
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if(keyCode == KeyEvent.KEYCODE_DPAD_LEFT)
+            mYspeed -= 0.1f;
+        else if(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT)
+            mYspeed += 0.1f;
+        else if(keyCode == KeyEvent.KEYCODE_DPAD_UP)
+            mXspeed -= 0.1f;
+        else if(keyCode == KeyEvent.KEYCODE_DPAD_DOWN)
+            mXspeed += 0.1f;
+             
+        return true;
+     }
+
+     // unchanged
+     @Override
+     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
+         gl.glClearColor(0.0f, 0.0f, 0.0f, 0.5f); 
+                
+         gl.glClearDepthf(1.0f);
+         gl.glEnable(GL10.GL_DEPTH_TEST);
+         gl.glDepthFunc(GL10.GL_LEQUAL);
+
+         gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT,
+                  GL10.GL_NICEST);        
+     }
+
+     
+     // unchanged
+     @Override
+     public void onSurfaceChanged(GL10 gl, int width, int height) {
+         gl.glViewport(0, 0, width, height);
+         gl.glMatrixMode(GL10.GL_PROJECTION);
+         gl.glLoadIdentity();
+         GLU.gluPerspective(gl, 45.0f, (float)width / (float)height, 0.1f, 100.0f);
+         gl.glViewport(0, 0, width, height);
+
+         gl.glMatrixMode(GL10.GL_MODELVIEW);
+         gl.glLoadIdentity();
+     }
+}
+</pre>
+
+The <tt>Cube</tt> is inherited from the <a href="http://www.intransitione.com/blog/create-a-spinning-cube-with-opengl-es-and-android/" alt="Create a spinning cube with OpenGL ES">previous recipe</a>. Don't forget to call the <tt>requestFocus()</tt> and <tt>setFocusableInTouchMode(true)</tt> in the constructor of the  view or else the key events will not be received.
+
+The complete code <a href="/code/android/spinning_cube_controllable.zip" alt="code for adding control to the spinning cube demo">is available</a>.

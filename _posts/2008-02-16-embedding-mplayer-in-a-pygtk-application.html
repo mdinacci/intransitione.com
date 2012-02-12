@@ -1,0 +1,85 @@
+--- 
+layout: post
+title: Embedding Mplayer in a PyGTK application
+category: it
+tags: 
+- Programming
+type: post
+status: archive
+---
+Recently I wanted to extract the sound track from a MP4 file.
+You actually need a single command-line to do that, either using <a href="www.mplayerhq.hu">Mplayer</a> or <a href="http://gstreamer.freedesktop.org/">GStreamer</a>.
+It's amazing what you can do with GStreamer pipelines, but unfortunately I ran into several problems trying to play H.264 video files with AAC audio  (the files are produced by a Sanyo camera and make Totem crash after about few seconds...) so I gave up and I took a look at MPlayer. After all I really didn't need all the GStreamer functionalities.
+A single line actually does the job:
+<pre lang="bash">mplayer -ao pcm:file=$OUTPUT_FILE $INPUT_FILE</pre>
+Couldn't be easier.
+<!--more-->
+
+Nevertheless, I wanted to command the extraction from a GUI as it makes it more user friendly for people that don't deal with shells everyday. Additionally, I didn't want the MPlayer window to popup, I actually wanted to embed Mplayer inside my application.
+
+Again, it turns out that a single line does the job:
+<pre lang="bash">mplayer -ao pcm:file=$OUTPUT_FILE -wid $WINDOW_XID</pre>
+The <strong>-wid</strong> option tells Mplayer to connect to the window represented by the ID $WINDOW_XID.
+This ID is actually the identifier given by the X Server to the window.
+We'll see later how to retrieve it.
+
+With this setup, the video is shown in the application, the problem is that there is no indication about the progress. What I wanted was to periodically ask to MPlayer the status of the playback, and displaying it in a progress bar. Checking the MPlayer's man page I discovered that it can be controlled by putting it into a <em>slave</em> mode and by sending him the commands through a named pipe. Bingo !
+
+To start the mplayer in slave mode, I modified the command line to look like this:
+<pre lang="bash">mplayer -ao pcm:file=$OUTPUT_FILE -wid $WINDOW_XID -slave -idle \n
+-input file=$FIFO</pre>
+where FIFO is the absolute path of the named pipe where the commands are sent
+(for a complete list of commands, type <em>mplayer -input cmdlist</em>).
+
+On the Python side, you have to embed the video in a <strong>GtkDrawingArea</strong>.
+The documentation for this component just says:
+<cite>The GtkDrawingArea widget is used for creating custom user interface elements.
+It's essentially a blank widget; you can draw on widget-&gt;window</cite>
+
+It is actually everything I need, as the only thing required to do is to get the X ID of the window and pass it to Mplayer. You do it like this:
+<pre lang="python">xid = canvas.window.xid # where canvas is an instance of GtkDrawingArea</pre>
+We have almost everything required to start Mplayer, the only missing thing is the FIFO.
+In Python, you create a FIFO using
+<pre lang="python">os.mkfifo("path_to_fifo")</pre>
+The full code to start Mplayer in another process would then be:
+<pre lang="python">command = "mplayer -ao pcm:file=%s -wid %i -slave -idle \n
+-input file=%s" % (outputFile,xid,fifo)
+command = command.split().append("input_video_file.mp4")
+subprocess.Popen(command, stdout=logfile, stderr=logfile)</pre>
+I added the input file after the call to split because if there are whitespaces in the filename or in a parent directory, then the filename would break down in multiple tokens with the call to split.
+
+Now that MPlayer has started, we have to tell him what to do. To do that, we write to the pipe:
+<pre lang="python">mplayerClient = open(FIFO,"w")
+mplayerClient.write("play\n") # commands must ends with a newline</pre>
+(Actually, I still haven't get MPlayer to not start automatically the playback, even if I'm using the <em>-idle</em> option. Please post a comment if you can shed a light on the subject...)
+
+At this point the application is showing the video, but as we said before, we also want to update a progress bar to show the progress, and to do that we've to repeatedly ask the status to Mplayer.
+
+The easiest way to do that, since I was using Gtk, is to use the <strong>gobject.timeout_add call</strong>, like this:
+<pre lang="python"># call the myUpdateFunction each UPDATE_INTERVAL milliseconds
+gobject.timeout_add(UPDATE_INTERVAL, myUpdateFunction)</pre>
+and <span style="font-weight: bold">myUpdateFunction</span> is defined as:
+<pre lang="python">def myUpdateFunction():
+    keepGoing = True
+    mplayerClient.write("get_percent_pos\n")
+    mplayerClient.flush() # really important, or commands won't be always sent !
+    line = logfile.readline()
+    if line and line.startswith("ANS_PERCENT_POSITION"):
+    # +1 because progress starts from 0, it would end to 99 otherwise
+        progress = int(line[line.index('=')+1:-1]) + 1
+        progressBar.set_text("%s %%" % progress)
+        progressBar.update(progress/100.0)
+    else:
+        keepGoing = False
+
+return keepGoing</pre>
+That's it, <span style="font-style: italic">progressBar</span> is a normal GtkProgressBar object and <span style="font-style: italic">logfile</span> is where I previously redirected Mplayer <em>stdout</em> and <em>stderr</em>.
+
+The above code won't actually works out of the box as there are some corner cases you have to deal with, for example it can happen that the update function is called before MPlayer starts to play the video (which should actually happen with the <em>-idle</em> option, but I couldn't get it to work). In that case line would be an empty string and the playback will immediately stop as <span style="font-style: italic">myUpdateFunction</span> will return <span style="font-style: italic">False.</span>
+
+You can find the complete but fairly hackish code here:
+<a id="mbef" title="Download the full example' source code" href="http://www.dinointeractive.com/code/audioextractor.zip">AudioExtractor.zip</a>
+
+<img src="/img/ae.png" alt="AudioExtractor" />
+
+The program also pops up a dialog asking you if you want to burn the file with <em>Serpentine </em>or save it to a different location. I can't guarantee it will work for you as I've been written it mostly as an educational tool.

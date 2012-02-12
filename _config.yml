@@ -1,0 +1,16 @@
+markdown: rdiscount
+pygments: true
+auto: true
+permalink: /blog/:title
+
+# feedburner:
+# #   id: feedburnerid
+#
+# # google_analytics:
+# #   account: UA-XXXXX-X
+#
+# # github:
+# #   username: ghusername
+#
+# # disqus:
+# #   id: disqusid

@@ -1,0 +1,87 @@
+--- 
+layout: post
+title: "PyQT playground: image gallery with zoom"
+published: true
+meta: 
+  _edit_last: "1"
+  blr_date: "2011-05-17"
+  _wp_page_template: default
+tags: 
+- Programming
+type: post
+status: publish
+---
+In this article I'm going to create a small <a title="PyQT" href="http://www.riverbankcomputing.co.uk/software/pyqt/intro">PyQT</a> based application that displays images in a grid and that zoom the image hovered by the mouse.
+<!--more-->
+
+This is how the final application looks like:
+<p style="text-align: center;"><img class="aligncenter" title="PyQT Image Gallery Screenshot" src="/code/pyqt_image_gallery/ig_screenshot.png" alt="PyQT Image Gallery Screenshot" width="354" height="368" /></p>
+
+The first class we need is an <em>ImageGallery</em>, which is a mere <em>QDialog</em> using a <em>QGridLayout</em>.
+<pre lang="python">class ImageGallery(QDialog):
+
+    def __init__(self, parent=None):
+        super(QDialog, self).__init__(parent)
+        self.setWindowTitle("Image Gallery")
+        self.setLayout(QGridLayout(self))
+
+    def populate(self, pics, size, imagesPerRow=4,
+                 flags=Qt.KeepAspectRatioByExpanding):
+        row = col = 0
+        for pic in pics:
+            label = ImageLabel("")
+            pixmap = QPixmap(pic)
+            pixmap = pixmap.scaled(size, flags)
+            label.setPixmap(pixmap)
+            self.layout().addWidget(label, row, col)
+            col +=1
+            if col % imagesPerRow == 0:
+                row += 1
+                col = 0</pre>
+The code is very simple, the class has only one public method, <em>populate</em>, which iterates over the images passed in the argument pics, create a <em>QPixmap </em>for each of them, and add them to the layout.
+
+The interesting bit is the line where I create the label:
+<pre lang="python">label = ImageLabel("")</pre>
+This line creates a new instance of the <em>ImageLabel</em>, which is listed here below:
+<pre lang="python">class ImageLabel(QLabel):
+    """ This widget displays an ImagePopup when the mouse enters its region """
+    def enterEvent(self, event):
+        self.p = ImagePopup(self)
+        self.p.show()
+        event.accept()</pre>
+The <em>ImageLabel</em> is a normal <em>QLabel</em> except that I redefined the <em>enterEvent</em> in order to show an <em>ImagePopup</em> when the mouse enters the label.
+
+Finally, the <em>ImagePopup</em> class, responsible for the creation of the zoomed popup image.
+<pre lang="python">class ImagePopup(QLabel):
+    """
+    The ImagePopup class is a QLabel that displays a popup, zoomed image
+    on top of another label.
+    """
+    def __init__(self, parent):
+        super(QLabel, self).__init__(parent)
+
+        # set pixmap and size, which is the double of the original pixmap
+        thumb = parent.pixmap()
+        imageSize = thumb.size()
+        imageSize.setWidth(imageSize.width()*2)
+        imageSize.setHeight(imageSize.height()*2)
+        self.setPixmap(thumb.scaled(imageSize,Qt.KeepAspectRatioByExpanding))
+
+        # center the zoomed image on the thumb
+        position = self.cursor().pos()
+        position.setX(position.x() - thumb.size().width())
+        position.setY(position.y() - thumb.size().height())
+        self.move(position)
+
+        # FramelessWindowHint may not work on some window managers on Linux
+        # so I force also the flag X11BypassWindowManagerHint
+        self.setWindowFlags(Qt.Popup | Qt.WindowStaysOnTopHint
+                            | Qt.FramelessWindowHint
+                            | Qt.X11BypassWindowManagerHint)
+
+    def leaveEvent(self, event):
+        """ When the mouse leave this widget, destroy it. """
+        self.destroy()</pre>
+That's it, it's very simple as you can see. You can download the <a title="Python code for PyQT Image Gallery" href="/code/pyqt_image_gallery/pyqt_image_gallery.py">python code</a> or a <a title="PyQT Image Gallery code and images" href="/code/pyqt_image_gallery/pyqt_image_gallery.zip">zip file</a> containing the code and the images.
+
+Thanks for reading.
