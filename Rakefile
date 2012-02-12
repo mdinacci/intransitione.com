@@ -5,21 +5,26 @@ task :clean do
   cleanup
 end
 
+desc 'Compile less files'
+task :less do
+  lessc
+end
+
 desc 'Build site with Jekyll'
 task :build => :clean do
-  compass
-  jekyll
+  lessc
+  jekyll('--no-server')
 end
 
 desc 'Start server with --auto'
 task :server => :clean do
-  compass
+  lessc
   jekyll('--server --auto')
 end
 
 desc 'Build and deploy'
 task :deploy => :build do
-  sh 'rsync -rtzh --progress --delete _site/ username@servername:/var/www/websitename/'
+  #sh 'rsync -rtzh --progress --delete _site/ username@servername:/var/www/websitename/'
 end
 
 desc 'Check links for site already running on localhost:4000'
@@ -60,6 +65,6 @@ def jekyll(opts = '')
   sh 'jekyll ' + opts
 end
 
-def compass(opts = '')
-  sh 'compass compile -c config.rb --force ' + opts
+def lessc(opts = '')
+  sh 'lessc -x _less/screen.less css/screen.css'
 end
