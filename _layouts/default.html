@@ -25,34 +25,26 @@
         {% endif %}
 
         <link rel="stylesheet" href="/css/screen.css" type="text/css" media="screen, projection" />
-        <link rel="stylesheet" href="/css/print.css" type="text/css" media="print" />
+        <link id='ubuntu' href='http://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet' type='text/css' />
 
-        {% for css in page.css %}
-        <link rel="stylesheet" href="{{ css }}" type="text/css" />
-        {% endfor %}
-
-        {% if site.google_analytics %}
-        <!-- google analytics async -->
-        <script type="text/javascript">
-          var _gaq = _gaq || [];
-          _gaq.push(['_setAccount', '{{ site.google_analytics.account }}']);
-          _gaq.push(['_trackPageview']);
-          (function() {
-            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-          })();
-        </script>
-        {% endif %}
         <!--[if lt IE 9]>
         <script type="text/javascript" src="/js/html5.js"></script>
         <![endif]-->
     </head>
     <body>
-        <h1>As you probably figured out in the first few milliseconds you
-            looked at this page, this is not how the website should look like.
-            Give me a few weeks.</h1>
-        <div id="site">
+        <header>
+            <h1><a href="/">marcodinacci.com</a></h1>
+            <nav>
+                <i class="icon-home"></i>&nbsp; <a href="/" title="Home">Home</a> ||
+                <a href="/blog.html" title="Blog">blog</a> ||
+                <a href="/about.html" title="About me">about</a> ||
+                <a href="http://github.com/mdinacci" title="github.com/mdinacci" rel="nofollow">github</a> ||
+                <!--<a href="http://twitter.com/MarcoDinacci" title="twitter.com/MarcoDinacci" rel="nofollow">twitter</a> ||-->
+                <a id="subscribe-link" href="http://feeds.feedburner.com/marcodinacci" title="Go to my RSS feed" rel="nofollow">subscribe</a>
+            </nav>
+        </header>
+
+        <div id="main">
             {{ content }}
         </div>
 
