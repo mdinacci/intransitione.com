@@ -1,18 +1,20 @@
-[class^="icon-"] {
+.icon(@img) {
   display: inline-block;
   width: 14px;
   height: 14px;
   vertical-align: text-top;
-  background-image: url(../img/glyphicons-halflings.png);
-  background-position: 14px 14px;
+  background-image:url("@{img}");
+  //background-position: 14px 14px;
   background-repeat: no-repeat;
   *margin-right: .3em;
 }
+
+[class^="icon-"] {
+    .icon("/img/glyphicons-halflings.png");
+}
+
 [class^="icon-"]:last-child {
   *margin-left: 0;
-}
-.icon-white {
-  background-image: url(../img/glyphicons-halflings-white.png);
 }
 .icon-glass {
   background-position: 0      0;
@@ -373,4 +375,16 @@
 }
 .icon-resize-horizontal {
   background-position: -456px -118px;
+}
+
+// Other icons
+
+.icon-rss {
+    .icon("/img/rss_icon.png");
+  background-position: 0      0;
+}
+
+.icon-github {
+    .icon("/img/github_icon.png");
+  background-position: 0      0;
 }
