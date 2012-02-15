@@ -1,4 +1,4 @@
-task :default => :server
+task :default => :build
 
 desc 'Clean up generated site'
 task :clean do
@@ -11,20 +11,22 @@ task :less do
 end
 
 desc 'Build site with Jekyll'
-task :build => :clean do
-  lessc
+task :build => [:clean, :less] do
   jekyll('--no-server')
 end
 
 desc 'Start server with --auto'
-task :server => :clean do
-  lessc
+task :server => [:clean, :build] do
   jekyll('--server --auto')
 end
 
 desc 'Build and deploy'
 task :deploy => :build do
   #sh 'rsync -rtzh --progress --delete _site/ username@servername:/var/www/websitename/'
+end
+
+desc 'Create a new post'
+task :newpost do
 end
 
 desc 'Check links for site already running on localhost:4000'

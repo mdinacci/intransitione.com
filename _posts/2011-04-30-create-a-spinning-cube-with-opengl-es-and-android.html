@@ -1,27 +1,21 @@
 --- 
 layout: post
 title: Create a spinning cube with OpenGL ES and Android
-published: true
 tags: 
 - android
-- linkedin
 - opengl
-- programming
-type: post
-status: publish
 ---
 Android supports 3D graphics via the OpenGL ES API, a flavor of OpenGL specifically designed for embedded devices.
 
 This article is not an OpenGL tutorial, it assumes the reader has already basic OpenGL knowledge.
 
 The final result will look like this:<br>
-<!--more-->
 <a href="http://www.intransitione.com/blog/create-a-spinning-cube-with-opengl-es-and-android/device/" rel="attachment wp-att-1195"><img src="http://www.intransitione.com/intransitione.com/wp-content/uploads/2011/04/device-300x223.png" alt="Screenshot of OpenGL ES spinning cube" title="Screenshot of OpenGL ES spinning cube" width="300" height="223" class="aligncenter size-medium wp-image-1195" /></a>
 
 First we write a new <tt>Activity</tt> and in the <tt>onCreate</tt> method we create the two fundamental objects
 we need to use the OpenGL API: a <tt>GLSurfaceView</tt> and a <tt>Renderer</tt>.
 
-<pre class="prettyprint [lang-java|linenums:1]">
+{% highlight java %}
 public class OpenGLDemoActivity extends Activity {
         
     @Override
@@ -38,12 +32,12 @@ public class OpenGLDemoActivity extends Activity {
         setContentView(view);
     }
 }
-</pre>
+{% endhighlight %}
 
 And this is our <tt>Renderer</tt> that uses a simple <tt>Cube</tt> object we'll describe later do display
 a spinning cube:
 
-<pre class="prettyprint [lang-java|linenums:1]">
+{% highlight java %}
 class OpenGLRenderer implements Renderer {
 
         private Cube mCube = new Cube();
@@ -89,13 +83,13 @@ class OpenGLRenderer implements Renderer {
             gl.glLoadIdentity();
         }
 }
-</pre> 
+{% endhighlight %} 
 
 Our <tt>onSurfaceChanged</tt> and <tt>onDrawFrame</tt> methods are basically the equivalent of the <tt>GLUT</tt> 
 <tt>glutReshapeFunc</tt> and <tt>glutDisplayFunc</tt>. The first is called when the surface is resized, for instance when the phone
 switch between landscape and portrait mode, the second is called every frame and that's where we put the code to draw our cube. 
 
-<pre class="prettyprint [lang-java|linenums:1]">
+{% highlight java %}
 class Cube {
                 
     private FloatBuffer mVertexBuffer;
@@ -166,7 +160,7 @@ class Cube {
             gl.glDisableClientState(GL10.GL_COLOR_ARRAY);
     }
 }
-</pre>
+{% endhighlight %}
 
 The <tt>Cube</tt> uses two <tt>FloatBuffer</tt> objects to store vertex and color informations and a <tt>ByteBuffer</tt> to store
 the face indices. In order for the buffers to work it is important to set their order according to the endianness of the platform 

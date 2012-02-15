@@ -2,37 +2,26 @@
 layout: post
 title: Playing an audio file with Android
 published: true
-meta: 
-  _edit_last: "1"
-  blr_date: "2011-05-17"
-  _thumbnail_id: "1554"
 tags: 
-- Android
 - android
 - audio
-- linkedin
-- music
-- Programming
-- programming
-type: post
-status: publish
 ---
 Playing an audio file is as easy as setting up a MediaPlayer and a MediaController.
 
 First create a new activity that implements the MediaPlayerControl interface.
 
-<pre class="prettyprint [lang-java|linenums:1]"> 
+{% highlight java %} 
 public class PlayAudioActivity extends Activity implements MediaPlayerControl {
         private MediaController mMediaController;
         private MediaPlayer mMediaPlayer;
         private Handler mHandler = new Handler();
-</pre>
+{% endhighlight %}
 <!--more-->
 
 In the onCreate method we create and configure a MediaPlayer and a MediaController. The first is the object that perform the typical operations on an audio file like playing, pausing and seeking. The second is a view containing the buttons that launch the just mentioned operations through our MediaPlayerControl class.
 
 Let's see the onCreate code:
-<pre class="prettyprint [lang-java|linenums:1]">
+{% highlight java %}
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,21 +52,21 @@ Let's see the onCreate code:
             }
         });
     }
-</pre>
+{% endhighlight %}
 In addition to configuring our MediaController and MediaPlayer we create an anonymous OnPreparedListener in order to start the player only when the media source is ready for playback.
 
 Remember to cleanup the media player when the Activity is destroyed.
-<pre class="prettyprint [lang-java|linenums:1]">
+{% highlight java %}
     @Override
     protected void onDestroy() {
         super.onDestroy();
         mMediaPlayer.stop();
         mMediaPlayer.release();
     }
-</pre>
+{% endhighlight %}
 At last we implement the MediaPlayerControl interface. The code is very straightforward:
 
-<pre class="prettyprint [lang-java|linenums:1]">
+{% highlight java %}
     @Override
     public boolean canPause() {
         return true;
@@ -138,11 +127,11 @@ At last we implement the MediaPlayerControl interface. The code is very straight
         return false;
     }
 }
-</pre>
+{% endhighlight %}
 As a final touch we override the onTouchEvent in order to show the MediaController buttons when the user click on the screen.
 
 Since we create our MediaController programmatically, the layout is very simple:
-<pre class="prettyprint [lang-xml|linenums:1]">
+{% highlight xml %}
 &lt;?xml version="1.0" encoding="utf-8"?%gt;
 &lt;LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
@@ -151,6 +140,6 @@ Since we create our MediaController programmatically, the layout is very simple:
     android:id="@+id/audioView"
     &gt;
 &lt;/LinearLayout&gt;
-</pre>
+{% endhighlight %}
 
 The complete source code for this demo <a href="http://www.intransitione.com/code/android/play_audio_demo.zip">is available</a>.

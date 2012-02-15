@@ -2,28 +2,16 @@
 layout: post
 title: Grabbing a video using MediaRecorder
 published: true
-meta: 
-  _edit_last: "1"
-  blr_date: "2011-05-17"
-  _wp_old_slug: "1128"
-  _thumbnail_id: "1576"
 tags: 
-- Android
 - android
-- linkedin
 - mediarecorder
-- Programming
-- programming
 - video
-type: post
-status: publish
 ---
 The MediaRecorder is normally used to perform audio and/or video recording. The class has a straightforward API but as it's based on a simple state machine the methods must be called in the proper order in order to avoid IllegalStateException from popping up.
 
 Create a new Activity and override the onCreate method with the following:
-<!--more-->
 
-<pre class="prettyprint [lang-java|linenums:1]">
+{% highlight java %}
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,11 +44,11 @@ Create a new Activity and override the onCreate method with the following:
                 }
         });
     }  
-</pre>
+{% endhighlight %}
 The preview frames from the camera will be displayed on a SurfaceView. Recording is controlled by a toggle button. After the recording is over, we stop the MediaRecorder. Since the stop method resets all the state machine variables in order to be able to grab another video we reset the state machine and call our initRecorder once more.
 
 initRecorder is where we configure the MediaRecorder and the camera:
-<pre class="prettyprint [lang-java|linenums:1]">
+{% highlight java %}
     /* Init the MediaRecorder, the order the methods are called is vital to
      * its correct functioning. 
      */
@@ -100,11 +88,11 @@ initRecorder is where we configure the MediaRecorder and the camera:
                 
         mInitSuccesful = true;
     }
-</pre>
+{% endhighlight %}
 It is important to create and unlock a Camera object before of the creation of a MediaRecorder. setPreviewDisplay and setCamera must be called immediately after the creation of the MediaRecorder. The choice of the format and the output file is obligatory. Other options are optional but they must be called in the order outlined in the code above.
 
 The MediaRecorder is best initialized when the surface has been created. We register our Activity as a SurfaceHolder.Callback listener in order to be notified of this and override the surfaceCreated method to call our initialization code:
-<pre class="prettyprint [lang-java|linenums:1]">
+{% highlight java %}
         @Override
         public void surfaceCreated(SurfaceHolder holder) {
             try {
@@ -115,9 +103,9 @@ The MediaRecorder is best initialized when the surface has been created. We regi
                     e.printStackTrace();
                 }
         }   
-</pre>
+{% endhighlight %}
 When you're done with the surface, don't forget to release the resources, the camera is a shared object and may be used by other applications as well:
-<pre class="prettyprint [lang-java|linenums:1]">
+{% highlight java %}
         private void shutdown() {
             // Release MediaRecorder and especially the Camera as it's a shared
             // object that can be used by other applications
@@ -129,13 +117,13 @@ When you're done with the surface, don't forget to release the resources, the ca
             mMediaRecorder = null;
             mCamera = null;
         }
-</pre>
+{% endhighlight %}
 Override the surfaceDestroyed method so the previous code can be called automatically when the user is done with the Activity:
-<pre class="prettyprint [lang-java|linenums:1]">
+{% highlight java %}
         @Override
         public void surfaceDestroyed(SurfaceHolder holder) {
             shutdown();
         }
-</pre>
+{% endhighlight %}
 
 The full source code for this demo <a href="http://www.intransitione.com/intransitione.com/code/android/media_recorder_recipe_code.zip">is available.</a>

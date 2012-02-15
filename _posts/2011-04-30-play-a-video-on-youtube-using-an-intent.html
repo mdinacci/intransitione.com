@@ -2,25 +2,14 @@
 layout: post
 title: Play a video on Youtube using an Intent
 published: true
-meta: 
-  _edit_last: "1"
-  blr_date: "2011-05-17"
-  _thumbnail_id: "1575"
 tags: 
-- Android
 - android
-- linkedin
-- Programming
-- programming
 - video
 - youtube
-type: post
-status: publish
 ---
 For this demo to work the user needs the Youtube application installed on his device.
-<!--more-->
 
-<pre class="prettyprint [lang-java|linenums:1]">
+{% highlight java %}
 public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.main);
@@ -35,11 +24,11 @@ public void onCreate(Bundle savedInstanceState) {
     Intent intent = new Intent(Intent.ACTION_VIEW, uri);
     startActivity(intent);
 }
-</pre>
+{% endhighlight %}
 The example uses a standard Youtube URL. The
 
-<pre class="prettyprint [lang-java|linenums:1]">
+{% highlight java %}
 uri.getQueryParameter("v")
-</pre>
+{% endhighlight %}
 is used to extract the video ID from the URI itself, in this example the ID is
-<pre>opZ69P-0Jbc</pre>
+<pre>opZ69P-0Jbc{% endhighlight %}

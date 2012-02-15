@@ -1,27 +1,11 @@
 --- 
 layout: post
 title: "\"touch\" a file on Android"
-published: true
-meta: 
-  _edit_last: "1"
-  _disable_convert_chars: "0"
-  blr_date: "2011-05-17"
-  _disable_convert_smilies: "0"
-  _thumbnail_id: "1554"
-  et_feather_settings: a:1:{s:14:"et_is_featured";s:1:"0";}
-  _disable_wptexturize: "0"
-  _disable_wpautop: "0"
 tags: 
-- Android
 - android
-- Programming
-- programming
-type: post
-status: publish
 ---
 This snippet mimics the behaviour of the unix <tt>touch</tt> command on the Android platform:
-<!--more-->
-<pre class="prettyprint [lang-java|linenums:1]">
+{% highlight java %}
 public static void touch(File file) throws IOException {
     if(!file.exists()) {
         File parent = file.getParentFile();
@@ -38,4 +22,4 @@ public static void touch(File file) throws IOException {
     if (!success)
         throw new IOException("Unable to set the last modification time for " + file);
 }
-</pre>
+{% endhighlight %}

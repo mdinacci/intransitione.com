@@ -2,28 +2,16 @@
 layout: post
 title: Taking a picture with android.media.Camera
 published: true
-meta: 
-  _edit_last: "1"
-  blr_date: "2011-05-17"
-  _thumbnail_id: "1574"
 tags: 
-- Android
 - android
 - camera
-- linkedin
-- photo
 - picture
-- Programming
-- programming
-type: post
-status: publish
 ---
 Sometimes you may want more control over the stages involved when taking a picture or you may want to access and modify the raw image data acquired by the camera. In these cases, using a simple Intent to take a picture is not enough.
 
 We're going to create a new Activity and customize the view to make it full screen inside the onCreate method.
-<!--more-->
 
-<pre class="prettyprint [lang-java|linenums:1]">
+{% highlight java %}
 public class TakePictureActivity extends Activity {
     private Preview mCameraView;
 
@@ -43,12 +31,12 @@ public class TakePictureActivity extends Activity {
         setContentView(mCameraView);
     }
 }
-</pre>
+{% endhighlight %}
 The Preview class is the bulk of the recipe. It handle the Surface where the pixels are drawn and the Camera object.
 
 We define a ClickListener in the constructor so the user can take a picture by just tapping once on the screen. Once we get the notification of the click we take a picture passing as parameters four (all optional) callbacks.
 
-<pre class="prettyprint [lang-java|linenums:1]">
+{% highlight java %}
 class Preview extends SurfaceView implements SurfaceHolder.Callback, PictureCallback  {
 
     private SurfaceHolder mHolder;
@@ -72,9 +60,9 @@ class Preview extends SurfaceView implements SurfaceHolder.Callback, PictureCall
             }
         });
     }
-</pre>
+{% endhighlight %}
 The Preview class implement the SurfaceHolder.Callback interface in order to be notified when underlying surface is created, changed and destroyed. We'll use these callbacks to properly handle the Camera object.
-<pre class="prettyprint [lang-java|linenums:1]">
+{% highlight java %}
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width,
             int height) {
@@ -103,9 +91,9 @@ The Preview class implement the SurfaceHolder.Callback interface in order to be 
     public void surfaceDestroyed(SurfaceHolder holder) {
         closeCamera();
     }
-</pre>
+{% endhighlight %}
 As soon as the camera is created we call configure in order to set the parameters the camera will use to take a picture. Things like flash mode, effects, picture format, picture size, scene mode and so on. Since not all devices support all kind of features always ask which features are supported before setting them.
-<pre class="prettyprint [lang-java|linenums:1]">
+{% highlight java %}
     private void configure(Camera camera) {
         Camera.Parameters params = camera.getParameters();
 
@@ -138,9 +126,9 @@ As soon as the camera is created we call configure in order to set the parameter
         
         camera.setParameters(params);
     }
-</pre>
+{% endhighlight %}
 When the surface is destroyed we close the camera and free its resources:
-<pre class="prettyprint [lang-java|linenums:1]">
+{% highlight java %}
     private void closeCamera() {
         if (mCamera != null) {
             mCamera.stopPreview();
@@ -148,9 +136,9 @@ When the surface is destroyed we close the camera and free its resources:
             mCamera = null;
         }
     }
-</pre>
+{% endhighlight %}
 The Jpeg callback is the last one called, this is where we restart the preview and save the file on disk.
-<pre class="prettyprint [lang-java|linenums:1]">
+{% highlight java %}
     @Override
     public void onPictureTaken(byte[] jpeg, Camera camera) {
         // now that all the callbacks have been called it is safe to resume the preview
@@ -159,10 +147,10 @@ The Jpeg callback is the last one called, this is where we restart the preview a
         saveFile(jpeg);
     }
 }
-</pre>
+{% endhighlight %}
 Finally we implement the ShutterCallback and again PictureCallback to receive the uncompressed raw image data.
 
-<pre class="prettyprint [lang-java|linenums:1]">
+{% highlight java %}
 class RawCallback implements ShutterCallback, PictureCallback {
 
     @Override
@@ -176,4 +164,4 @@ class RawCallback implements ShutterCallback, PictureCallback {
         // manipulate uncompressed image data
     }       
 }
-</pre>
+{% endhighlight %}
