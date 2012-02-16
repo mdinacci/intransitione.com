@@ -10,13 +10,13 @@ Recently I wanted to extract the sound track from a MP4 file.
 You actually need a single command-line to do that, either using <a href="www.mplayerhq.hu">Mplayer</a> or <a href="http://gstreamer.freedesktop.org/">GStreamer</a>.
 It's amazing what you can do with GStreamer pipelines, but unfortunately I ran into several problems trying to play H.264 video files with AAC audio  (the files are produced by a Sanyo camera and make Totem crash after about few seconds...) so I gave up and I took a look at MPlayer. After all I really didn't need all the GStreamer functionalities.
 A single line actually does the job:
-<pre lang="bash">mplayer -ao pcm:file=$OUTPUT_FILE $INPUT_FILE{% endhighlight %}
+{% highlight bash %}mplayer -ao pcm:file=$OUTPUT_FILE $INPUT_FILE{% endhighlight %}
 Couldn't be easier.
 
 Nevertheless, I wanted to command the extraction from a GUI as it makes it more user friendly for people that don't deal with shells everyday. Additionally, I didn't want the MPlayer window to popup, I actually wanted to embed Mplayer inside my application.
 
 Again, it turns out that a single line does the job:
-<pre lang="bash">mplayer -ao pcm:file=$OUTPUT_FILE -wid $WINDOW_XID{% endhighlight %}
+{% highlight bash %}mplayer -ao pcm:file=$OUTPUT_FILE -wid $WINDOW_XID{% endhighlight %}
 The <strong>-wid</strong> option tells Mplayer to connect to the window represented by the ID $WINDOW_XID.
 This ID is actually the identifier given by the X Server to the window.
 We'll see later how to retrieve it.
@@ -24,7 +24,7 @@ We'll see later how to retrieve it.
 With this setup, the video is shown in the application, the problem is that there is no indication about the progress. What I wanted was to periodically ask to MPlayer the status of the playback, and displaying it in a progress bar. Checking the MPlayer's man page I discovered that it can be controlled by putting it into a <em>slave</em> mode and by sending him the commands through a named pipe. Bingo !
 
 To start the mplayer in slave mode, I modified the command line to look like this:
-<pre lang="bash">mplayer -ao pcm:file=$OUTPUT_FILE -wid $WINDOW_XID -slave -idle \n
+{% highlight bash %}mplayer -ao pcm:file=$OUTPUT_FILE -wid $WINDOW_XID -slave -idle \n
 -input file=$FIFO{% endhighlight %}
 where FIFO is the absolute path of the named pipe where the commands are sent
 (for a complete list of commands, type <em>mplayer -input cmdlist</em>).

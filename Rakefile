@@ -12,11 +12,11 @@ end
 
 desc 'Build site with Jekyll'
 task :build => [:clean, :less] do
-  jekyll('--no-server')
+  jekyll('--no-server --no-auto')
 end
 
 desc 'Start server with --auto'
-task :server => [:clean, :build] do
+task :server => :build do
   jekyll('--server --auto')
 end
 
