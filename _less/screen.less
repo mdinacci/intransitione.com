@@ -1,6 +1,7 @@
 @import "reset.less";
 @import "helpers.less";
 @import "icons.less";
+@import "syntax.css";
 
 body > * {
     clear: both;
@@ -122,4 +123,35 @@ div.projects > p {
     float:right;
     color:#333;
     font-size:120%;
+}
+
+div.highlight {
+    margin: 10px;
+}
+
+article {
+    clear: both;
+    margin-bottom: 20px;
+}
+article > header {
+    border-bottom: 1px solid #ddd;
+    color: #999;
+    font-size: 13px;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+}
+article > header > h2 {
+    color: #333;
+    margin: 0 0 5px 0;
+    padding: 0;
+}
+article > header > h2 > a {
+    color: #333 !important;
+}
+article img {
+    display: block;
+    margin: 10px auto;
+}
+article > footer {
+    margin-top: 20px;
 }
