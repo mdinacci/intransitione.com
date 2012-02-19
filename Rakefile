@@ -11,8 +11,9 @@ task :less do
 end
 
 desc 'Build site with Jekyll'
-task :build => [:clean, :less] do
+task :build => :clean do
   jekyll('--no-server --no-auto')
+  lessc
 end
 
 desc 'Start server with --auto'
@@ -68,5 +69,7 @@ def jekyll(opts = '')
 end
 
 def lessc(opts = '')
-  sh 'lessc -x _less/screen.less css/screen.css'
+    FileUtils.mkdir_p("_site/css")
+    sh 'lessc -x _less/screen.less _site/css/screen.css'
 end
+
