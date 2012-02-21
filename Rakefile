@@ -23,7 +23,7 @@ end
 
 desc 'Build and deploy'
 task :deploy => :build do
-  #sh 'rsync -rtzh --progress --delete _site/ username@servername:/var/www/websitename/'
+  sh 'rsync -rtzh --progress --delete _site/ marco@95.154.250.249:/var/www/intransitione.com/'
 end
 
 desc 'Create a new post'

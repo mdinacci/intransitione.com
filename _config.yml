@@ -2,9 +2,10 @@ markdown: rdiscount
 pygments: true
 auto: true
 permalink: /blog/:title
+domain: intransitione.com
 
-# feedburner:
-# #   id: feedburnerid
+feedburner:
+    id: Intransitionecom
 #
 # # google_analytics:
 # #   account: UA-XXXXX-X
