@@ -2,7 +2,7 @@
 @import "helpers.less";
 @import "icons.less";
 @import "syntax.css";
-@import "bootstrap.css";
+@import "mobile.less";
 
 body > * {
     clear: both;
@@ -35,11 +35,9 @@ html {
 }
 
 body {
-    position: relative; // to enable correct absolute positioning
+    //position: relative; // to enable correct absolute positioning
     .marginless;
-    font-family: "Ubuntu", "Helvetica Neue", Helvetica, Arial, Verdana, sans-serif;
-    font-size: 14px;
-    line-height: 20px;
+    font: 13/20px "Helvetica Neue", Helvetica, Arial, Verdana, sans-serif;
     text-rendering: optimizeLegibility; 
     margin: 20px;
     overflow-y: scroll !important;
@@ -106,8 +104,7 @@ ul.post-list > li > time {
     color: #999;
     display: inline-block;
     float: right;
-    //font-family: Menlo, Monaco, 'Bitstream Vera Sans Mono', 'Courier New', monospace;
-    font-family: "Ubuntu", "Helvetica Neue", Helvetica, Arial, Verdana, sans-serif;
+    font-family: Menlo, Monaco, 'Bitstream Vera Sans Mono', 'Courier New', monospace;
     font-size: 12px;
     white-space: nowrap;
 
@@ -133,11 +130,11 @@ div.highlight {
 article {
     clear: both;
     margin-bottom: 20px;
+    font-size: 13px;
 }
 article > header {
     border-bottom: 1px solid #ddd;
     color: #999;
-    font-size: 13px;
     margin-bottom: 20px;
     padding-bottom: 10px;
 }
@@ -149,10 +146,16 @@ article > header > h2 {
 article > header > h2 > a {
     color: #333 !important;
 }
-article img {
-    display: block;
-    margin: 10px auto;
-}
 article > footer {
     margin-top: 20px;
+}
+
+article > img {
+    border: 1px solid #CCC;
+    opacity: .9;
+}
+
+article > img:hover {
+    border-color: #AAA;
+    opacity: 1.0;
 }

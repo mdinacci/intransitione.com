@@ -69,7 +69,6 @@ def jekyll(opts = '')
 end
 
 def lessc(opts = '')
-    sh 'rm -rf _site/css'
     FileUtils.mkdir_p("_site/css")
     sh 'lessc -x _less/screen.less _site/css/screen.css'
 end
