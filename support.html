@@ -1,8 +1,60 @@
 --- 
-layout: default
+layout: contact
 title: Support
 ---
 
 <div>
-    <p>Please write to marco.dinacci AT gmail.com with your enquiries</p>
+    <p>Please leave a message in the form below if you want to contact me. Name and e-mail are optional but if
+    you want me to reply you please fill at least the e-mail field :)</p>
+    <div id="contact">
+        <div id="center">
+    		<div id="contact_form">
+        		<form method="post" action="/cgi-bin/contact.php" id="contactForm">
+                	<span class="input">
+						<input type="text" id="contact-email" name="contact-email" />
+					</span>
+
+                	<span>
+						<label for="name"><b>Name:</b> </label>
+						<input type="text" id="contact-nah83h8dhm" name="nah83h8dhm" />
+					</span>
+
+					<span>
+						<label for="email"><b>Email:</b> </label>
+						<input type="text" id="contact-emGRJK3ai" name="emGRJK3ai" />
+					</span>
+
+				<span>
+					<label for="subjects"><b>Subject:</b> </label>
+					<select id="subjects" name="subjects">
+                        <optgroup label="Applications">
+                            <option value="GroupBill">GroupBill</option>
+                            <option value="Movie Suggestions">Movie Suggestions</option>
+                        </optgroup>
+                        <optgroup label="Misc">
+						<option value="website">Website</option>
+						<option value="other">Other</option>
+					</select>
+				</span>
+
+				<span>
+					<label for="message"><b>Message:</b> </label>
+					<textarea id="message" name="message">Hello, write your message here
+					</textarea>
+				</span>
+
+				<span>
+					<label for="security_code"><b>Security Code:</b> </label>
+					<input class="noicon" type="text" id="security_code" name="security_code" style="width:100px" />
+                    <img src="/img/captcha.jpg" style="vertical-align:middle;" />
+				</span>
+                <span id="submit">
+                	<label for="submit"></label>
+                	<input id="contact-c7823nk" type="submit" value="SEND" />
+                </span>
+            </form>
+        </div>
+    </div>
 </div>
+<br />
+<br />

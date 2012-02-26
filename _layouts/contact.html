@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"  xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1,
+        maximum-scale=1, user-scalable=0" />
+        <meta http-equiv="content-language" content="en" />
+        <title>
+            {% if page.title %}
+            {{ page.title }} //
+            {% endif %}  
+            Marco Dinacci
+        </title>
+        <meta name="author" content="Marco Dinacci" />
+        {% if page.summary %}
+        <meta name="description" content="{{ page.summary }}" />
+        {% endif %}
+        {% if site.feedburner %}
+        <link href="http://feeds.feedburner.com/{{site.feedburner.id}}" rel="alternate"
+        title="{{ site.title }}" type="application/rss2" />
+        {% endif %}
+        
+        <link rel="stylesheet" href="/css/screen.css" type="text/css" media="screen, projection" />
+        <link rel="stylesheet" href="/css/contact.css" type="text/css" media="screen, projection" />
+
+        <!--[if lt IE 9]>
+        <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+        <script
+            src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+        <script src="/js/bootstrap.js"></script>
+    </head>
+    <body>
+        {% include header.html %}
+    
+        <div id="main">
+            {{ content }}
+        </div>
+
+        {% include footer.html %}
+        <script type="text/javascript" src="/js/main.js"></script>
+    </body>
+</html>
