@@ -69,7 +69,7 @@ def cleanup
 end
 
 def jekyll(opts = '')
-  sh 'jekyll ' + opts
+  sh 'jekyll --pygments ' + opts
 end
 
 def lessdev(opts = '')

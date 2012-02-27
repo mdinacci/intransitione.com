@@ -1,5 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml"  xml:lang="en" lang="en">
     <head>
@@ -17,19 +16,15 @@
         {% if page.summary %}
         <meta name="description" content="{{ page.summary }}" />
         {% endif %}
-        {% if site.feedburner %}
         <link href="http://feeds.feedburner.com/{{site.feedburner.id}}" rel="alternate"
         title="{{ site.title }}" type="application/rss2" />
-        {% endif %}
-        
         <link rel="stylesheet" href="/css/screen.css" type="text/css" media="screen, projection" />
+        <link rel="stylesheet" href="/css/syntax.css" type="text/css" media="screen, projection" />
 
         <!--[if lt IE 9]>
         <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
         <![endif]-->
-        <script
-            src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-        <script src="/js/bootstrap.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
     </head>
     <body>
         {% include header.html %}

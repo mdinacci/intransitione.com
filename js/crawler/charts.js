@@ -1,7 +1,7 @@
 /* 
  This file initialise the Google Visualization API and perform the AJAX calls
  to retrieve the data for all the charts.
- It requires JQuery, Google Visualization API and ArborJS
+ It requires JQuery, Google Visualization API and RaphaelJS
  */
 
 String.prototype.ucfirst = function() {
@@ -19,7 +19,7 @@ function load() {
 function fetchData(vizURL) {
     return $.ajax({
         type: "GET",
-        url: "/code/careers/proxy.php?v=" + vizURL,
+        url: "/cgi-bin/proxy.php?v=" + vizURL,
         dataType:"json",
         async: false
         }).responseText;
