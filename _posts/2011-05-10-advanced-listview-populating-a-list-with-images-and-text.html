@@ -7,17 +7,16 @@ tags:
 - arrayadapter
 - listview
 ---
-The Android documentation says that the <tt>ListView</tt> widget is easy to use. It is true if you just want to display a simple list of strings but as soon as you want to customize your list things become more complicated.
+<p>The Android documentation says that the <code class="simple">ListView</code> widget is easy to use. It is true if you just want to display a simple list of strings but as soon as you want to customize your list things become more complicated.</p>
 
-The following is a tutorial on how to write a <tt>ListView</tt> that displays a static list of images and strings, similar to the settings list on your phone. 
+<p>The following is a tutorial on how to write a <code class="simple">ListView</code> that displays a static list of images and strings, similar to the settings list on your phone. </p>
 
-For the impatients, here's the <a href="http://www.intransitione.com/code/android/adv_listview_demo.zip">Eclipse project code</a>, and a picture of the final result:
-<br>
-<a href="http://www.intransitione.com/blog/advanced-listview-populating-a-list-with-images-and-text/adv_list_demo/" rel="attachment wp-att-1281"><img src="http://www.intransitione.com/intransitione.com/wp-content/uploads/2011/05/adv_list_demo-168x300.png" alt="Advanced ListView demo screenshot" title="Advanced ListView demo screenshot" width="168" height="300" class="aligncenter size-medium wp-image-1281" /></a>
+<p>For the impatients, here's the <a href="http://www.intransitione.com/code/android/adv_listview_demo.zip">Eclipse project code</a>, and a picture of the final result:
+<img src="/img/adv_list_demo.png" alt="Advanced ListView demo screenshot" title="Advanced ListView demo screenshot" width="180" height="320" class="align-left"/></p>
 
 
-Let's start with the <tt>Activity</tt> code.
-First of all, we extends from <tt>ListActivity</tt> instead of <tt>Activity</tt> so we can easily supply our custom adapter:
+<p>Let's start with the <code class="simple">Activity</code> code.
+First of all, we extends from <code class="simple">ListActivity</code> instead of <code class="simple">Activity</code> so we can easily supply our custom adapter:</p>
 
 {% highlight java %}
 public class AdvancedListViewActivity extends ListActivity {
@@ -38,9 +37,9 @@ public class AdvancedListViewActivity extends ListActivity {
 }
 {% endhighlight %}
 
-In the <tt>onCreate</tt> we also create an array of strings, which contains the country names, and a <tt>TypedArray</tt>, which will contain our <tt>Drawable</tt> flags.
+<p>In the <code class="simple">onCreate</code> we also create an array of strings, which contains the country names, and a <code class="simple">TypedArray</code>, which will contain our <code class="simple">Drawable</code> flags.</p>
 
-The arrays are created from an XML file, here's the content of the <tt>countries.xml</tt> file.
+<p>The arrays are created from an XML file, here's the content of the <code class="simple">countries.xml</code> file.</p>
 
 {% highlight xml %}
 <?xml version="1.0" encoding="utf-8"?>
@@ -64,10 +63,10 @@ The arrays are created from an XML file, here's the content of the <tt>countries
 </resources>
 {% endhighlight %}
 
-Now we're ready to create the adapter. The official documentation for <tt>Adapter</tt> says: 
-<br><cite>An Adapter object acts as a bridge between an AdapterView and the underlying data for that view. The Adapter provides access to the data items. The Adapter is also responsible for making a View for each item in the data set.</cite>
+<p>Now we're ready to create the adapter. The official documentation for <code class="simple">Adapter</code> says: 
+<br><cite>An Adapter object acts as a bridge between an AdapterView and the underlying data for that view. The Adapter provides access to the data items. The Adapter is also responsible for making a View for each item in the data set.</cite></p>
 
-There are already various subclasses of <tt>Adapter</tt>, we're going to extend on <tt>ArrayAdapter</tt> which is a concrete <tt>BaseAdapter</tt> that is backed by an array of arbitrary objects.
+<p>There are already various subclasses of <code class="simple">Adapter</code>, we're going to extend on <code class="simple">ArrayAdapter</code> which is a concrete <code class="simple">BaseAdapter</code> that is backed by an array of arbitrary objects.</p>
 
 {% highlight java %}
 public class ImageAndTextAdapter extends ArrayAdapter<String> {
@@ -122,12 +121,12 @@ public class ImageAndTextAdapter extends ArrayAdapter<String> {
 }
 {% endhighlight %}
 
-The constructor accepts a <tt>Context</tt>, the <tt>id</tt> of the layout that will be used for every row (more on this soon), an array of strings (the country names) and a <tt>TypedArray</tt> (our flags).
+<p>The constructor accepts a <code class="simple">Context</code>, the <code class="simple">id</code> of the layout that will be used for every row (more on this soon), an array of strings (the country names) and a <code class="simple">TypedArray</code> (our flags).</p>
 
-The <tt>getView</tt> method is where we build a row for the list.
-We first use a <tt>LayoutInflater</tt> to create a <tt>View</tt> from XML, then we retrieve the country flag as a <tt>Drawable</tt> and the country name as a <tt>String</tt> and we use them to populate the <tt>ImageView</tt> and <tt>TextView</tt> that we've declared in the layout.
+<p>The <code class="simple">getView</code> method is where we build a row for the list.
+We first use a <code class="simple">LayoutInflater</code> to create a <code class="simple">View</code> from XML, then we retrieve the country flag as a <code class="simple">Drawable</code> and the country name as a <code class="simple">String</code> and we use them to populate the <code class="simple">ImageView</code> and <code class="simple">TextView</code> that we've declared in the layout.</p>
 
-The layout for the list rows is the following:
+<p>The layout for the list rows is the following:</p>
 
 {% highlight xml %}
 <?xml version="1.0" encoding="utf-8"?>
@@ -146,7 +145,7 @@ The layout for the list rows is the following:
 </LinearLayout>
 {% endhighlight %}
 
-As a reference, this is the content of the main layout:
+<p>As a reference, this is the content of the main layout:</p>
 
 {% highlight xml %}
 <?xml version="1.0" encoding="utf-8"?>
@@ -162,8 +161,6 @@ As a reference, this is the content of the main layout:
 </LinearLayout>
 {% endhighlight %}
 
-Note that the <tt>ListView</tt> ID must be exactly <strong><pre>@android:id/list</pre></strong> or you'll get a <tt>RuntimeException</tt>.
+<p>Note that the <code class="simple">ListView</code> ID must be exactly <strong><pre>@android:id/list</pre></strong> or you'll get a <code class="simple">RuntimeException</code>.</p>
 
-That's it, you can download the <a href="http://www.intransitione.com/code/android/adv_listview_demo.zip">Eclipse project code</a> or post a comment if you have any question.
-
-Marco 
+<p>That's it, you can download the <a href="http://www.intransitione.com/code/android/adv_listview_demo.zip">Eclipse project code</a> or post a comment if you have any question.</p>

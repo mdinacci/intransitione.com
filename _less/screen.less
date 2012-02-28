@@ -35,7 +35,8 @@ html {
 body {
     background-color: #fff;
     color: #333;
-    font: 14px/20px 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    //font: 14px/20px 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font: 14px/20px 'Corben', serif, 'Helvetica Neue', Helvetica, Arial, sans-serif;
     margin: 20px;
     overflow-y: scroll !important;
     text-rendering: optimizelegibility;
@@ -63,11 +64,11 @@ h2 {
 h3 {
     font-size: 20px;
     .text-header;
+    border-bottom:1px solid #ddd;
 }
 
 h4, h5, h6 {
     font-size: 16px;
-    padding-bottom:0px;
     border-bottom:1px solid #ddd;
     font-weight:normal;
 }
@@ -134,6 +135,11 @@ article > img:hover {
 }
 
 /* Post and project lists */
+
+#simple code {
+    font: 13px/18px Menlo, Monaco, 'Bitstream Vera Sans Mono', 'Courier New', monospace;
+    background-color: #eee;
+}
 
 #related-posts {
     color: #333;

@@ -5,13 +5,13 @@ tags:
 - android
 - opengl
 ---
-This demo extends on the <a href="http://www.intransitione.com/blog/create-a-spinning-cube-with-opengl-es-and-android/" alt="Create a spinning cube with OpenGL ES">Create a spinning cube OpenGL</a> to show how to control the cube using a D-pad. 
-We're going to increment the speed rotation along the X and Y axes using the directional keys of the D-pad.
+<p>This demo extends on the <a href="http://www.intransitione.com/blog/create-a-spinning-cube-with-opengl-es-and-android/" alt="Create a spinning cube with OpenGL ES">Create a spinning cube OpenGL</a> to show how to control the cube using a D-pad. 
+We're going to increment the speed rotation along the X and Y axes using the directional keys of the D-pad.</p>
 
-The biggest change is that we now have our custom class that extends the <tt>SurfaceView</tt>.
-We do this so we can override the <tt>onKeyUp</tt> method and be notified when the user uses the D-pad.
+<p>The biggest change is that we now have our custom class that extends the <code class="simple">SurfaceView</code>.
+We do this so we can override the <code class="simple">onKeyUp</code> method and be notified when the user uses the D-pad.</p>
 
-The <tt>onCreate</tt> of our <tt>Activity</tt> looks like this:
+<p>The <code class="simple">onCreate</code> of our <code class="simple">Activity</code> looks like this:</p>
 {% highlight java %}
 public class SpinningCubeActivity2 extends Activity {
     @Override
@@ -31,11 +31,11 @@ public class SpinningCubeActivity2 extends Activity {
 }
 {% endhighlight %}
 
-Our new <tt>GLSurfaceView</tt> also implements the <tt>Renderer</tt> interface.
-The <tt>onSurfaceCreated</tt> and <tt>onSurfaceChanged</tt> method are exactly the same as in the previous recipe, most of the changes occur in the <tt>onDrawFrame</tt> as we introduce four new parameters:
+Our new <code class="simple">GLSurfaceView</code> also implements the <code class="simple">Renderer</code> interface.
+The <code class="simple">onSurfaceCreated</code> and <code class="simple">onSurfaceChanged</code> method are exactly the same as in the previous recipe, most of the changes occur in the <code class="simple">onDrawFrame</code> as we introduce four new parameters:
 <ul>
-<li><tt>mXrot</tt> and mYrot</tt> to control the rotation of the cube along the X and Y axis. </li>
-<li><tt>mXspeed</tt> and <tt>mYSpeed</tt> to store the speed of the rotation along the X and Y axis.</li>
+<li><code class="simple">mXrot</code> and mYrot</code> to control the rotation of the cube along the X and Y axis. </li>
+<li><code class="simple">mXspeed</code> and <code class="simple">mYSpeed</code> to store the speed of the rotation along the X and Y axis.</li>
 </ul> 
 
 Each time the user click on a D-pad button we alter the speed of the cube by modifying these parameters. 
@@ -121,6 +121,6 @@ class OpenGLSurfaceView extends GLSurfaceView implements Renderer {
 }
 {% endhighlight %}
 
-The <tt>Cube</tt> is inherited from the <a href="http://www.intransitione.com/blog/create-a-spinning-cube-with-opengl-es-and-android/" alt="Create a spinning cube with OpenGL ES">previous recipe</a>. Don't forget to call the <tt>requestFocus()</tt> and <tt>setFocusableInTouchMode(true)</tt> in the constructor of the  view or else the key events will not be received.
+The <code class="simple">Cube</code> is inherited from the <a href="http://www.intransitione.com/blog/create-a-spinning-cube-with-opengl-es-and-android/" alt="Create a spinning cube with OpenGL ES">previous recipe</a>. Don't forget to call the <code class="simple">requestFocus()</code> and <code class="simple">setFocusableInTouchMode(true)</code> in the constructor of the  view or else the key events will not be received.
 
 The complete code <a href="/code/android/spinning_cube_controllable.zip" alt="code for adding control to the spinning cube demo">is available</a>.

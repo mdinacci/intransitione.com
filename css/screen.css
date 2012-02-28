@@ -5,13 +5,13 @@ body>*{clear:both;margin:0 auto;width:700px;}
 body>header{border-bottom:4px solid #ddd;margin-bottom:20px;padding:0 0 20px 0;position:relative;}
 body>footer{border-top:4px solid #ddd;margin-top:20px;padding:10px 0;}
 #main{clear:both;margin-bottom:20px;}
-body{background-color:#fff;color:#333;font:14px/20px 'Helvetica Neue',Helvetica,Arial,sans-serif;margin:20px;overflow-y:scroll !important;text-rendering:optimizelegibility;}
+body{background-color:#fff;color:#333;font:14px/20px 'Corben',serif,'Helvetica Neue',Helvetica,Arial,sans-serif;margin:20px;overflow-y:scroll !important;text-rendering:optimizelegibility;}
 a{color:#26a;text-decoration:none;}
 a:hover{color:#0e4071;}
 h1{font-size:48px;font-weight:bold;line-height:1em;margin:0;padding:0 0 20px 0;}
 h2{font-size:24px;font-weight:bold;line-height:1em;margin:0;padding:0 0 20px 0;}
-h3{font-size:20px;font-weight:bold;line-height:1em;margin:0;padding:0 0 20px 0;}
-h4,h5,h6{font-size:16px;padding-bottom:0px;border-bottom:1px solid #ddd;font-weight:normal;}
+h3{font-size:20px;font-weight:bold;line-height:1em;margin:0;padding:0 0 20px 0;border-bottom:1px solid #ddd;}
+h4,h5,h6{font-size:16px;border-bottom:1px solid #ddd;font-weight:normal;}
 pre{padding:0 30px;text-wrap:wrap;white-space:pre-wrap;white-space:-moz-pre-wrap;white-space:-pre-wrap;white-space:-o-pre-wrap;word-wrap:break-word;}
 div.projects>p{padding-bottom:15px;}
 #sitename{float:right;color:#333;font-size:120%;}
@@ -24,6 +24,7 @@ article>footer{margin-top:20px;}
 article>footer>p,article>footer>span{color:#999;font-size:13px;}
 article>img{border:1px solid #CCC;opacity:.9;}
 article>img:hover{border-color:#AAA;opacity:1.0;}
+#simple code{font:13px/18px Menlo,Monaco,'Bitstream Vera Sans Mono','Courier New',monospace;background-color:#eee;}
 #related-posts{color:#333;font-size:14px;}
 #related-posts h3{padding-bottom:10px;}
 #related-posts ul{padding-left:40px;}

@@ -5,21 +5,21 @@ tags:
 - android
 - motion detection
 ---
-For learning purposes I've written <a href="http://www.intransitione.com/software/#pim" alt="PicInMotion description">PicInMotion</a>, a small Android application that automatically takes a picture when it detects motion in the camera preview. 
+<p>For learning purposes I've written <a href="http://www.intransitione.com/software/#pim" alt="PicInMotion description">PicInMotion</a>, a small Android application that automatically takes a picture when it detects motion in the camera preview.</p>
 
-This article explains how the simple motion detection mechanism works.
+<p>This article explains how the simple motion detection mechanism works.</p>
 
-<em>UPDATE: source code is available at <a href="https://github.com/mdinacci/PicInMotion/tree/standalone" title="github">github</a>, be sure to clone the <strong>standalone</strong> repository.</em>
+<p><code class="simple">UPDATE: source code is available at <a href="https://github.com/mdinacci/PicInMotion/tree/standalone" title="github">github</a>, be sure to clone the <strong>standalone</strong> repository.</code></p>
 
 <h3>Strategy</h3>
-The strategy is dead simple, we store a frame and we compare it to the next, if the differences in the two frames are above a certain threshold, we declare that motion is detected. Common image detection techniques are far more complicated than what I'm using here and image processing operations (like erode, dilate and some other form of noise reduction) are normally applied to frames in order to reduce digital noise.
+<p>Dead simple. I store a frame and compare it to the next, if the differences in the two frames are above a certain threshold then motion is detected. Common image detection techniques are far more complicated than what I'm using here and image processing operations (like erode, dilate and some other form of noise reduction) are normally applied to frames in order to reduce digital noise.</p>
 
-Since I wanted to focus on learning Android more than some new image processing techniques, I kept the image operations to the absolute minimum.
+<p>Since I wanted to focus on learning Android more than some new image processing techniques, I kept the image operations to the absolute minimum.</p>
 
 <h3>Acquiring data</h3>
-First, we need to acquire the raw image data from the camera. To do it, we implement the <tt>Camera.PreviewCallback</tt> and override the <tt>onPreviewFrame</tt> method. This method is called every time a new frame is ready. 
+<p>First, we need to acquire the raw image data from the camera. To do it, we implement the <code class="simple">Camera.PreviewCallback</code> and override the <code class="simple">onPreviewFrame</code> method. This method is called every time a new frame is ready.</p>
 
-Here's the code:
+<p>Here's the code:</p>
 
 {% highlight java %}
 @Override
@@ -42,7 +42,7 @@ public void onPreviewFrame(byte[] data, Camera camera) {
 }
 {% endhighlight %}
 
-<tt>data</tt> is a byte array containing the raw data coming from the camera hardware. Its format may change depending on the device and if the hardware supports multiple formats you can change it using:
+<p><code class="simple">data</code> is a byte array containing the raw data coming from the camera hardware. Its format may change depending on the device and if the hardware supports multiple formats you can change it using:</p>
 
 {% highlight java %}
 Camera.Parameters parameters = mCamera.getParameters();
@@ -50,12 +50,12 @@ parameters.setPreviewFormat(...);
 mCamera.setParameters(parameters);
 {% endhighlight %}
 
-In this post I'll assume the image format is <tt>PixelFormat.YCbCr_420_SP</tt> (now deprecated and to be replaced with<tt>ImageFormat.NV21</tt>.
+<p>In this post I'll assume the image format is <code class="simple">PixelFormat.YCbCr_420_SP</code> (now deprecated and to be replaced with<code class="simple">ImageFormat.NV21</code>.</p>
 
 <h3>Detecting movement</h3>
-The advantage of using <tt>ImageFormat.NV21</tt> is that being a YUV based, not RGB based, format, the first <tt>height * width</tt> bytes contains the <a href="http://en.wikipedia.org/wiki/Luminance" alt="Luminance article on Wikipedia">luminance</a> data. You can think of the luminance data as a grayscale version of your image.
+<p>The advantage of using <code class="simple">ImageFormat.NV21</code> is that being a YUV based, not RGB based, format, the first <code class="simple">height * width</code> bytes contains the <a href="http://en.wikipedia.org/wiki/Luminance" alt="Luminance article on Wikipedia">luminance</a> data. You can think of the luminance data as a grayscale version of your image.</p>
 
-We can perform the motion detection on the luminance data only, it will be much faster than comparing two RGB images.
+<p>We can perform the motion detection on the luminance data only, it will be much faster than comparing two RGB images.</p>
 
 {% highlight java %}
 public boolean detect(byte[] data) {		
@@ -85,7 +85,7 @@ public boolean detect(byte[] data) {
 } 
 {% endhighlight %}
 
-<tt>AndroidImageFactory</tt> is a simple factory class I've created that create a specific class depending on the image format. An extract:
+<p><code class="simple">AndroidImageFactory</code> is a simple factory class I've created that create a specific class depending on the image format. An extract:</p>
 
 {% highlight java %}
 public static AndroidImage createImage(byte[] data, Size<Integer,
@@ -104,10 +104,10 @@ public static AndroidImage createImage(byte[] data, Size<Integer,
     ...
 {% endhighlight %}
 
-<tt>AndroidImage</tt> and AndroidImage_NV21 are also classes I've created and that are part of my <tt>commons</tt> library. I'm not releasing yet the source code for these classes but you don't need it anyway.
+<p><code class="simple">AndroidImage</code> and AndroidImage_NV21 are also classes I've created and that are part of my <code class="simple">commons</code> library. I'm not releasing yet the source code for these classes but you don't need it anyway.</p>
 
 <h3>Comparing the images by luminance values</h3>
-This is the bulk of the article, here the <tt>isDifferent</tt> method in my <tt>AndroidImage_NV21</tt> class.
+<p>This is the bulk of the article, here the <code class="simple">isDifferent</code> method in my <code class="simple">AndroidImage_NV21</code> class.</p>
 
 {% highlight java %}
 @Override
@@ -144,16 +144,15 @@ public boolean isDifferent(AndroidImage other, int pixel_threshold,
 }
 {% endhighlight %}
 
-I use two different thresholds. The first acts on the pixel values and could be defined as:
+<p>I use two different thresholds. The first acts on the pixel values and could be defined as:</p>
 
-<tt>reference_pixel - threshold < new_pixel < reference_pixel + threshold </tt>
+<p><code class="simple">reference_pixel - threshold < new_pixel < reference_pixel + threshold </code></p>
 
-So the <tt>new_pixel</tt> must be bigger than the <tt>reference_pixel</tt> minus the <tt>threshold</tt> but smaller than <tt>new_pixel</tt> plus <tt>threshold</tt>.
+<p>So the <code class="simple">new_pixel</code> must be bigger than the <code class="simple">reference_pixel</code> minus the <code class="simple">threshold</code> but smaller than <code class="simple">new_pixel</code> plus <code class="simple">threshold</code>.</p>
 
-If the pixel is different I increment <tt>totDifferentPixels</tt>. At the end I check how many different pixels I have, if the value is greater than the second threshold, then the image is different.
+<p>If the pixel is different I increment <code class="simple">totDifferentPixels</code>. At the end I check how many different pixels I have, if the value is greater than the second threshold, then the image is different.</p>
 
-As a reference, I use <tt>25</tt> as value for pixel value threshold (~10% difference) and 3% (9216 for a 640x480 image) as total pixel threshold.
+<p>As a reference, I use <code class="simple">25</code> as value for pixel value threshold (~10% difference) and 3% (9216 for a 640x480 image) as total pixel threshold.</p>
 
 Questions ? write a comment.
 
-Marco
