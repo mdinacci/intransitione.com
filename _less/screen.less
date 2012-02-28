@@ -1,4 +1,4 @@
-//@import "reset.less";
+@import "normalize.css";
 @import "helpers.less";
 
 body > * {
@@ -36,7 +36,7 @@ body {
     background-color: #fff;
     color: #333;
     //font: 14px/20px 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font: 14px/20px 'Corben', serif, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font: 14px/20px 'Cantarell', sans-serif;//, 'Helvetica Neue', Helvetica, Arial, sans-serif;
     margin: 20px;
     overflow-y: scroll !important;
     text-rendering: optimizelegibility;
@@ -64,6 +64,7 @@ h2 {
 h3 {
     font-size: 20px;
     .text-header;
+    padding-bottom:5px;
     border-bottom:1px solid #ddd;
 }
 
@@ -83,7 +84,7 @@ pre {
 }
 
 div.projects > p {
-    padding-bottom:15px;
+    padding-bottom:10px;
 }
 
 #sitename {
@@ -94,6 +95,8 @@ div.projects > p {
 
 div.highlight {
     margin: 10px;
+    padding: 10px;
+    .border-radius;
 }
 
 // Articles
@@ -134,11 +137,28 @@ article > img:hover {
     opacity: 1.0;
 }
 
+#like-and-subscribe {
+    display: inline-block;
+    float: right;
+    margin-top: 4px;
+}
+
 /* Post and project lists */
 
-#simple code {
+/* Code outside a code block */
+.simple {
     font: 13px/18px Menlo, Monaco, 'Bitstream Vera Sans Mono', 'Courier New', monospace;
     background-color: #eee;
+    .border-radius;
+    padding: 3px;
+    border: solid #ccc 1px;
+}
+
+.headsup {
+    .alert;
+    background-color: #d9edf7;
+    border-color: #bce8f1;
+    color: #3a87ad;
 }
 
 #related-posts {
@@ -196,8 +216,75 @@ div.project-list li {
 div.project-list h4 {
     border-bottom: 1px solid #ddd;
     font-weight: normal;
-    margin-bottom: 5px;
-    padding-bottom: 5px;
+    //margin-bottom: 5px;
+    //padding-bottom: 5px;
+}
+
+
+/* Share buttons at the bottom of each blog post */
+
+#share-buttons {
+    display: inline-block;
+    height: 20px;
+    margin: 0 0 20px 0;
+    padding: 0;
+}
+
+#share-buttons-label {
+    display: inline-block;
+    margin-right: 8px;
+    vertical-align: 4px;
+}
+
+iframe.twitter-share-button {
+    margin-right: 10px;
+}
+
+iframe.facebook-like-button {
+    border: 0;
+    height: 20px;
+    margin-right: 9px;
+    overflow: hidden;
+    width: 50px;
+}
+
+span.IN-widget {
+    margin-right: 10px;
+}
+
+iframe.twitter-follow-button {
+    display: block;
+    margin-top: 5px;
+}
+
+/* Thumbnails, taken from bootstrap.css */
+.thumbnail {
+  display: block;
+  padding: 4px;
+  line-height: 1;
+  border: 1px solid #ddd;
+  
+  border: 1px solid #ddd;
+  .border-radius();
+  .box-shadow(0, 1px, 1px, 0.075);
+}
+
+a.thumbnail:hover {
+  border-color: #0088cc;
+  -webkit-box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25);
+  -moz-box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25);
+  box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25);
+}
+
+.thumbnail > img {
+  display: block;
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.thumbnail .caption {
+  padding: 9px;
 }
 
 @import "mobile.less";

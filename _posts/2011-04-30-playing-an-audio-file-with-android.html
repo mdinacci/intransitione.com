@@ -6,21 +6,19 @@ tags:
 - android
 - audio
 ---
-Playing an audio file is as easy as setting up a MediaPlayer and a MediaController.
+<p class="headsup"><strong>Update:</strong> The complete source code for this demo <a href="/code/android/play_audio_demo.zip">is available for download</a>.</p>
 
-First create a new activity that implements the MediaPlayerControl interface.
+<p>Playing an audio file is as easy as setting up a <code class="simple">MediaPlayer</code> and a <code class="simple">MediaController</code>.</p>
 
+<p>First create a new activity that implements the <code class="simple">MediaPlayerControl</code> interface.</p>
 {% highlight java %} 
 public class PlayAudioActivity extends Activity implements MediaPlayerControl {
         private MediaController mMediaController;
         private MediaPlayer mMediaPlayer;
         private Handler mHandler = new Handler();
 {% endhighlight %}
-<!--more-->
 
-In the onCreate method we create and configure a MediaPlayer and a MediaController. The first is the object that perform the typical operations on an audio file like playing, pausing and seeking. The second is a view containing the buttons that launch the just mentioned operations through our MediaPlayerControl class.
-
-Let's see the onCreate code:
+<p>In the <code class="simple">onCreate</code> method we create and configure a <code class="simple">MediaPlayer</code> and a <code class="simple">MediaController</code>. The first is the object that perform the typical operations on an audio file like playing, pausing and seeking. The second is a view containing the buttons that launch the just mentioned operations through our <code class="simple">MediaPlayerControl</code> class. Let's see the <code class="simple">onCreate</code> code:</p>
 {% highlight java %}
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -53,9 +51,10 @@ Let's see the onCreate code:
         });
     }
 {% endhighlight %}
-In addition to configuring our MediaController and MediaPlayer we create an anonymous OnPreparedListener in order to start the player only when the media source is ready for playback.
 
-Remember to cleanup the media player when the Activity is destroyed.
+<p>In addition to configuring our <code class="simple">MediaController</code> and <code class="simple">MediaPlayer</code> we create an anonymous <code class="simple">OnPreparedListener</code> in order to start the player only when the media source is ready for playback.</p>
+
+<p>Remember to cleanup the media player when the <code class="simple">Activity</code> is destroyed.</p>
 {% highlight java %}
     @Override
     protected void onDestroy() {
@@ -64,7 +63,8 @@ Remember to cleanup the media player when the Activity is destroyed.
         mMediaPlayer.release();
     }
 {% endhighlight %}
-At last we implement the MediaPlayerControl interface. The code is very straightforward:
+
+<p>At last we implement the <code class="simple">MediaPlayerControl</code> interface. The code is very straightforward:</p>
 
 {% highlight java %}
     @Override
@@ -128,18 +128,17 @@ At last we implement the MediaPlayerControl interface. The code is very straight
     }
 }
 {% endhighlight %}
-As a final touch we override the onTouchEvent in order to show the MediaController buttons when the user click on the screen.
 
-Since we create our MediaController programmatically, the layout is very simple:
+<p>As a final touch we override the <code class="simple">onTouchEvent</code> in order to show the <code class="simple">MediaController</code> buttons when the user click on the screen.</p>
+
+<p>Since we create our <code class="simple">MediaController</code> programmatically, the layout is very simple:</p>
 {% highlight xml %}
-&lt;?xml version="1.0" encoding="utf-8"?%gt;
-&lt;LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:id="@+id/audioView"
-    &gt;
-&lt;/LinearLayout&gt;
+    />
+</LinearLayout>
 {% endhighlight %}
-
-The complete source code for this demo <a href="http://www.intransitione.com/code/android/play_audio_demo.zip">is available</a>.

@@ -3,9 +3,10 @@ pygments: true
 auto: true
 permalink: /blog/:title
 domain: intransitione.com
+title: intransitione.com
+url: http://www.intransitione.com
+feed: http://feeds.feedburner.com/Intransitionecom
 
-feedburner:
-    id: Intransitionecom
 #
 # # google_analytics:
 # #   account: UA-XXXXX-X

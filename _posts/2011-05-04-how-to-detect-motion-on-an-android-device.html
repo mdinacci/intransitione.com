@@ -9,7 +9,7 @@ tags:
 
 <p>This article explains how the simple motion detection mechanism works.</p>
 
-<p><code class="simple">UPDATE: source code is available at <a href="https://github.com/mdinacci/PicInMotion/tree/standalone" title="github">github</a>, be sure to clone the <strong>standalone</strong> repository.</code></p>
+<p class="headsup"><strong>Update: </strong> source code is available at <a href="https://github.com/mdinacci/PicInMotion/tree/standalone" title="github">github</a>, be sure to clone the <strong>standalone</strong> repository.</p>
 
 <h3>Strategy</h3>
 <p>Dead simple. I store a frame and compare it to the next, if the differences in the two frames are above a certain threshold then motion is detected. Common image detection techniques are far more complicated than what I'm using here and image processing operations (like erode, dilate and some other form of noise reduction) are normally applied to frames in order to reduce digital noise.</p>

@@ -1,7 +1,7 @@
 /* 
  This file initialise the Google Visualization API and perform the AJAX calls
  to retrieve the data for all the charts.
- It requires JQuery, Google Visualization API and RaphaelJS
+ It requires JQuery, Google Visualization API and ArborJS
  */
 
 String.prototype.ucfirst = function() {
@@ -19,7 +19,7 @@ function load() {
 function fetchData(vizURL) {
     return $.ajax({
         type: "GET",
-        url: "/cgi-bin/proxy.php?v=" + vizURL,
+        url: "/code/careers/proxy.php?v=" + vizURL,
         dataType:"json",
         async: false
         }).responseText;
@@ -81,7 +81,7 @@ function drawTagsRelated() {
 		}
     	var row_height = 90;
     	var row_width = 600;
-        var paper = Raphael("tagsgraph", row_width, row_height * size);
+        var paper = Raphael("tagsgraph", row_width, row_height * (size+1));
 		
 		var max_radius = 43, min_radius = 9;
 		var factor = (max_radius - min_radius)/max_occurrence ;
@@ -92,8 +92,7 @@ function drawTagsRelated() {
 		for (key in data) {
 		   if (data.hasOwnProperty(key))  {
 			   var x=115;
-
-			   paper.text(35, y, key.ucfirst() + ": ").attr("font-size",14);
+			   paper.text(35, y, key.ucfirst() + ": ").attr("font-size",15);
 			   var length = data[key].length;
 			   for(var i=0; i < length; i++) {
 			   		   occurrence = data[key][i][1]

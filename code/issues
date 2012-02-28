@@ -1,0 +1,81 @@
+#!/usr/bin/env python
+# -*- coding: utf-8-*-
+
+"""
+Filename: issues.py
+Author: Marco Dinacci <dev@dinointeractive.com>
+License: BSD
+
+This module parse a set of files looking for strings like TODO, FIXME etc..
+and present a pretty(...) output at the end.
+"""
+
+RECURSIVE = False # not yet implemented
+
+import os,re
+
+class IssueFinder(object):
+	regexps = {'TODO':re.compile(r'TODO:'),\
+			'FIXME':re.compile(r'FIXME:'),\
+			'NOTE':re.compile(r'NOTE:'),\
+			'XXX':re.compile(r'XXX:'), \
+			'HACK':re.compile(r'HACK:'),\
+			'FUTURE':re.compile(r'FUTURE:')}
+
+	ignore = ['svn','pyc','pyo','out','class','cvs','pch']
+	
+	def __init__(self):
+		self.matches = {}
+		for regexpKey in self.regexps.keys():
+			self.matches[regexpKey] = []
+	
+	def _toBeIgnored(self, file):
+		return file.split(".")[0] in self.ignore
+	
+	def printIssues(self):
+		for tag,matchList in self.matches.items():
+			if len(matchList) == 0: continue
+			print "\n%s %s %s" % ('='*30, tag.center(6), '='*30)
+			for match in matchList:
+				print "%s:%d: %s" % (match[0], match[1], match[2])
+	
+	def find(self,locations):	
+		for location in locations:
+			if not os.path.exists(location): return ""
+
+			if os.path.isdir(location):
+				os.chdir(location)
+			else:
+				raise Exception("Search is supported only on directories")
+
+			for f in os.listdir("."):
+				if os.path.isdir(f):
+					if RECURSIVE:
+						pass # TODO: recursive search inside the dir
+					else: continue
+				if self._toBeIgnored(f): continue
+
+				lineCounter = 0
+				for line in open(f).readlines():
+					lineCounter += 1
+					for tag,regexp in self.regexps.items():
+						result = regexp.search(line)
+						if result:
+							# strip tag from line
+							strippedLine = line[:result.start()] + line[result.end():]
+							self.matches[tag].append((f,lineCounter, strippedLine.strip())) 
+							break
+		
+def usage():
+	pass
+		
+if __name__ == '__main__':
+	import sys
+
+	where = ["."]
+	if len(sys.argv) >= 2: where = sys.argv[1:]
+	
+	issueFinder = IssueFinder()
+	issueFinder.find(where)
+	issueFinder.printIssues()
+
