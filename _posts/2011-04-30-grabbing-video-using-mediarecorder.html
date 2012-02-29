@@ -7,9 +7,11 @@ tags:
 - mediarecorder
 - video
 ---
-The MediaRecorder is normally used to perform audio and/or video recording. The class has a straightforward API but as it's based on a simple state machine the methods must be called in the proper order in order to avoid IllegalStateException from popping up.
+<p class="headsup"><strong>Update! </strong> The full source code for this demo <a href="/code/android/media_recorder_recipe_code.zip">is available.</a></p>
 
-Create a new Activity and override the onCreate method with the following:
+<p>The <code class="simple">MediaRecorder</code> is normally used to perform audio and/or video recording. The class has a straightforward API but as it's based on a simple state machine the methods must be called in the proper order in order to avoid <code class="simple">IllegalStateException</code> from popping up.</p>
+
+<p>Create a new <code class="simple">Activity</code> and override the <code class="simple">onCreate</code> method with the following:</p>
 
 {% highlight java %}
     @Override
@@ -45,9 +47,9 @@ Create a new Activity and override the onCreate method with the following:
         });
     }  
 {% endhighlight %}
-The preview frames from the camera will be displayed on a SurfaceView. Recording is controlled by a toggle button. After the recording is over, we stop the MediaRecorder. Since the stop method resets all the state machine variables in order to be able to grab another video we reset the state machine and call our initRecorder once more.
+<p>The preview frames from the camera will be displayed on a <code class="simple">SurfaceView</code>. Recording is controlled by a toggle button. After the recording is over, we stop the <code class="simple">MediaRecorder</code>. Since the stop method resets all the state machine variables in order to be able to grab another video we reset the state machine and call our <code class="simple">initRecorder</code> once more.</p>
 
-initRecorder is where we configure the MediaRecorder and the camera:
+<p><code class="simple">initRecorder</code> is where we configure the <code class="simple">MediaRecorder</code> and the camera:</p>
 {% highlight java %}
     /* Init the MediaRecorder, the order the methods are called is vital to
      * its correct functioning. 
@@ -89,9 +91,9 @@ initRecorder is where we configure the MediaRecorder and the camera:
         mInitSuccesful = true;
     }
 {% endhighlight %}
-It is important to create and unlock a Camera object before of the creation of a MediaRecorder. setPreviewDisplay and setCamera must be called immediately after the creation of the MediaRecorder. The choice of the format and the output file is obligatory. Other options are optional but they must be called in the order outlined in the code above.
+<p>It is important to create and unlock a <code class="simple">Camera</code> object before of the creation of a <code class="simple">MediaRecorder</code>. <code class="simple">setPreviewDisplay</code> and <code class="simple">setCamera</code> must be called immediately after the creation of the <code class="simple">MediaRecorder</code>. The choice of the format and the output file is obligatory. Other options are optional but they must be called in the order outlined in the code above.</p>
 
-The MediaRecorder is best initialized when the surface has been created. We register our Activity as a SurfaceHolder.Callback listener in order to be notified of this and override the surfaceCreated method to call our initialization code:
+<p>The <code class="simple">MediaRecorder</code> is best initialized when the surface has been created. We register our <code class="simple">Activity</code> as a <code class="simple">SurfaceHolder.Callback</code> listener in order to be notified of this and override the <code class="simple">surfaceCreated</code> method to call our initialization code:</p>
 {% highlight java %}
         @Override
         public void surfaceCreated(SurfaceHolder holder) {
@@ -104,7 +106,7 @@ The MediaRecorder is best initialized when the surface has been created. We regi
                 }
         }   
 {% endhighlight %}
-When you're done with the surface, don't forget to release the resources, the camera is a shared object and may be used by other applications as well:
+<p>When you're done with the surface, don't forget to release the resources, the camera is a shared object and may be used by other applications as well:</p>
 {% highlight java %}
         private void shutdown() {
             // Release MediaRecorder and especially the Camera as it's a shared
@@ -118,7 +120,7 @@ When you're done with the surface, don't forget to release the resources, the ca
             mCamera = null;
         }
 {% endhighlight %}
-Override the surfaceDestroyed method so the previous code can be called automatically when the user is done with the Activity:
+<p>Override the <code class="simple">surfaceDestroyed</code> method so the previous code can be called automatically when the user is done with the <code class="simple">Activity:</code></p>
 {% highlight java %}
         @Override
         public void surfaceDestroyed(SurfaceHolder holder) {
@@ -126,4 +128,4 @@ Override the surfaceDestroyed method so the previous code can be called automati
         }
 {% endhighlight %}
 
-The full source code for this demo <a href="http://www.intransitione.com/intransitione.com/code/android/media_recorder_recipe_code.zip">is available.</a>
+<p></p>

@@ -6,57 +6,62 @@ tags:
 - python
 - gtk
 ---
-Recently I wanted to extract the sound track from a MP4 file.
-You actually need a single command-line to do that, either using <a href="www.mplayerhq.hu">Mplayer</a> or <a href="http://gstreamer.freedesktop.org/">GStreamer</a>.
-It's amazing what you can do with GStreamer pipelines, but unfortunately I ran into several problems trying to play H.264 video files with AAC audio  (the files are produced by a Sanyo camera and make Totem crash after about few seconds...) so I gave up and I took a look at MPlayer. After all I really didn't need all the GStreamer functionalities.
-A single line actually does the job:
+<p class="headsup">You can find the complete (but fairly hackish) source code for the article here:
+<a id="mbef" title="Download the full example' source code" href="/code/audioextractor.zip">AudioExtractor.zip</a></p>
+
+<p>Recently I wanted to extract the sound track from a MP4 file.
+You actually need a single command-line to do that, either using <a href="www.mplayerhq.hu">Mplayer</a> or <a href="http://gstreamer.freedesktop.org/">GStreamer</a>.</p>
+<p>It's amazing what you can do with GStreamer pipelines, but unfortunately I ran into several problems trying to play H.264 video files with AAC audio  (the files are produced by a Sanyo camera and make Totem crash after about few seconds...) so I gave up and I took a look at MPlayer. After all I really didn't need all the GStreamer functionalities.</p>
+<p>A single line actually does the job:</p>
 {% highlight bash %}mplayer -ao pcm:file=$OUTPUT_FILE $INPUT_FILE{% endhighlight %}
-Couldn't be easier.
+<p>Couldn't be easier.</p>
 
-Nevertheless, I wanted to command the extraction from a GUI as it makes it more user friendly for people that don't deal with shells everyday. Additionally, I didn't want the MPlayer window to popup, I actually wanted to embed Mplayer inside my application.
+<p>Nevertheless, I wanted to command the extraction from a GUI as it makes it more user friendly for people that don't deal with shells everyday. Additionally, I didn't want the MPlayer window to popup, I actually wanted to embed Mplayer inside my application.</p>
 
-Again, it turns out that a single line does the job:
+<p>Again, it turns out that a single line does the job:</p>
 {% highlight bash %}mplayer -ao pcm:file=$OUTPUT_FILE -wid $WINDOW_XID{% endhighlight %}
-The <strong>-wid</strong> option tells Mplayer to connect to the window represented by the ID $WINDOW_XID.
+<p>The <strong>-wid</strong> option tells Mplayer to connect to the window represented by the ID $WINDOW_XID.
 This ID is actually the identifier given by the X Server to the window.
-We'll see later how to retrieve it.
+We'll see later how to retrieve it.</p>
 
-With this setup, the video is shown in the application, the problem is that there is no indication about the progress. What I wanted was to periodically ask to MPlayer the status of the playback, and displaying it in a progress bar. Checking the MPlayer's man page I discovered that it can be controlled by putting it into a <em>slave</em> mode and by sending him the commands through a named pipe. Bingo !
+<p>With this setup, the video is shown in the application, the problem is that there is no indication about the progress. What I wanted was to periodically ask to MPlayer the status of the playback, and displaying it in a progress bar. Checking the MPlayer's man page I discovered that it can be controlled by putting it into a <em>slave</em> mode and by sending him the commands through a named pipe. Bingo !</p>
 
-To start the mplayer in slave mode, I modified the command line to look like this:
-{% highlight bash %}mplayer -ao pcm:file=$OUTPUT_FILE -wid $WINDOW_XID -slave -idle \n
--input file=$FIFO{% endhighlight %}
-where FIFO is the absolute path of the named pipe where the commands are sent
-(for a complete list of commands, type <em>mplayer -input cmdlist</em>).
+<p>To start the mplayer in slave mode, I modified the command line to look like this:</p>
+{% highlight bash %}
+mplayer -ao pcm:file=$OUTPUT_FILE -wid $WINDOW_XID -slave -idle \n
+-input file=$FIFO
+{% endhighlight %}
+<p>where FIFO is the absolute path of the named pipe where the commands are sent
+(for a complete list of commands, type <em>mplayer -input cmdlist</em>).</p>
 
-On the Python side, you have to embed the video in a <strong>GtkDrawingArea</strong>.
+<p>On the Python side, you have to embed the video in a <strong>GtkDrawingArea</strong>.
 The documentation for this component just says:
 <cite>The GtkDrawingArea widget is used for creating custom user interface elements.
-It's essentially a blank widget; you can draw on widget-&gt;window</cite>
+It's essentially a blank widget; you can draw on widget-&gt;window</cite></p>
 
-It is actually everything I need, as the only thing required to do is to get the X ID of the window and pass it to Mplayer. You do it like this:
+<p>It is actually everything I need, as the only thing required to do is to get the X ID of the window and pass it to Mplayer. You do it like this:</p>
 {% highlight python %}xid = canvas.window.xid # where canvas is an instance of GtkDrawingArea{% endhighlight %}
-We have almost everything required to start Mplayer, the only missing thing is the FIFO.
-In Python, you create a FIFO using
+<p>We have almost everything required to start Mplayer, the only missing thing is the FIFO.
+In Python, you create a FIFO using</p>
 {% highlight python %}os.mkfifo("path_to_fifo"){% endhighlight %}
-The full code to start Mplayer in another process would then be:
+<p>The full code to start Mplayer in another process would then be:</p>
 {% highlight python %}command = "mplayer -ao pcm:file=%s -wid %i -slave -idle \n
 -input file=%s" % (outputFile,xid,fifo)
 command = command.split().append("input_video_file.mp4")
 subprocess.Popen(command, stdout=logfile, stderr=logfile){% endhighlight %}
-I added the input file after the call to split because if there are whitespaces in the filename or in a parent directory, then the filename would break down in multiple tokens with the call to split.
+<p>I added the input file after the call to split because if there are whitespaces in the filename or in a parent directory, then the filename would break down in multiple tokens with the call to split.</p>
 
-Now that MPlayer has started, we have to tell him what to do. To do that, we write to the pipe:
+<p>Now that MPlayer has started, we have to tell him what to do. To do that, we write to the pipe:</p>
 {% highlight python %}mplayerClient = open(FIFO,"w")
 mplayerClient.write("play\n") # commands must ends with a newline{% endhighlight %}
-(Actually, I still haven't get MPlayer to not start automatically the playback, even if I'm using the <em>-idle</em> option. Please post a comment if you can shed a light on the subject...)
+<p>(Actually, I still haven't get MPlayer to not start automatically the playback, even if I'm using the <em>-idle</em> option. Please post a comment if you can shed a light on the subject...)</p>
 
-At this point the application is showing the video, but as we said before, we also want to update a progress bar to show the progress, and to do that we've to repeatedly ask the status to Mplayer.
+<p>At this point the application is showing the video, but as we said before, we also want to update a progress bar to show the progress, and to do that we've to repeatedly ask the status to Mplayer.</p>
 
-The easiest way to do that, since I was using Gtk, is to use the <strong>gobject.timeout_add call</strong>, like this:
+<p>The easiest way to do that, since I was using Gtk, is to use the <strong>gobject.timeout_add call</strong>, like this:</p>
 {% highlight python %}# call the myUpdateFunction each UPDATE_INTERVAL milliseconds
 gobject.timeout_add(UPDATE_INTERVAL, myUpdateFunction){% endhighlight %}
-and <span style="font-weight: bold">myUpdateFunction</span> is defined as:
+and <code class="simple">myUpdateFunction</code> is defined as:
 {% highlight python %}def myUpdateFunction():
     keepGoing = True
     mplayerClient.write("get_percent_pos\n")
@@ -71,13 +76,12 @@ and <span style="font-weight: bold">myUpdateFunction</span> is defined as:
         keepGoing = False
 
 return keepGoing{% endhighlight %}
-That's it, <span style="font-style: italic">progressBar</span> is a normal GtkProgressBar object and <span style="font-style: italic">logfile</span> is where I previously redirected Mplayer <em>stdout</em> and <em>stderr</em>.
+<p>That's it, <code class="simple">progressBar</code> is a normal <code class="simple">GtkProgressBar</code> object and <code class="simple">logfile</code> is where I previously redirected Mplayer <em>stdout</em> and <em>stderr</em>.</p>
 
-The above code won't actually works out of the box as there are some corner cases you have to deal with, for example it can happen that the update function is called before MPlayer starts to play the video (which should actually happen with the <em>-idle</em> option, but I couldn't get it to work). In that case line would be an empty string and the playback will immediately stop as <span style="font-style: italic">myUpdateFunction</span> will return <span style="font-style: italic">False.</span>
-
-You can find the complete but fairly hackish code here:
-<a id="mbef" title="Download the full example' source code" href="http://www.dinointeractive.com/code/audioextractor.zip">AudioExtractor.zip</a>
+<p>The above code won't actually works out of the box as there are some corner cases you have to deal with, for example it can happen that the update function is called before MPlayer starts to play the video (which should actually happen with the <em>-idle</em> option, but I couldn't get it to work). In that case line would be an empty string and the playback will immediately stop as <code class="simple">myUpdateFunction</code> will return <code class="simple">False.</code></p>
 
 <img src="/img/ae.png" alt="AudioExtractor" />
 
-The program also pops up a dialog asking you if you want to burn the file with <em>Serpentine </em>or save it to a different location. I can't guarantee it will work for you as I've been written it mostly as an educational tool.
+<p>Note that the program also pops up a dialog asking you if you want to burn the file with <em>Serpentine </em>or save it to a different location.</p>
+
+<p>Thanks for reading</p>

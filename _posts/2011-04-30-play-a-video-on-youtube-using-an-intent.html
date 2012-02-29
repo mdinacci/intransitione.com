@@ -7,7 +7,7 @@ tags:
 - video
 - youtube
 ---
-For this demo to work the user needs the Youtube application installed on his device.
+<p class="warning"><strong>Warning! </strong> For this demo to work the user needs the Youtube application installed on his device.</p>
 
 {% highlight java %}
 public void onCreate(Bundle savedInstanceState) {
@@ -25,10 +25,10 @@ public void onCreate(Bundle savedInstanceState) {
     startActivity(intent);
 }
 {% endhighlight %}
-The example uses a standard Youtube URL. The
+<p>The example uses a standard Youtube URL. The</p>
 
 {% highlight java %}
 uri.getQueryParameter("v")
 {% endhighlight %}
-is used to extract the video ID from the URI itself, in this example the ID is
-{% highlight bash %}opZ69P-0Jbc{% endhighlight %}
+<p>is used to extract the video ID from the URI itself, in this example the ID is
+<code class="simple">opZ69P-0Jbc</code></p>

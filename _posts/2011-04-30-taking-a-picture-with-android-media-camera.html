@@ -7,9 +7,9 @@ tags:
 - camera
 - picture
 ---
-Sometimes you may want more control over the stages involved when taking a picture or you may want to access and modify the raw image data acquired by the camera. In these cases, using a simple Intent to take a picture is not enough.
+<p>Sometimes you may want more control over the stages involved when taking a picture or you may want to access and modify the raw image data acquired by the camera. In these cases, using a simple <code class="simple">Intent</code> to take a picture is not enough.</p>
 
-We're going to create a new Activity and customize the view to make it full screen inside the onCreate method.
+<p>We're going to create a new <code class="simple">Activity</code> and customize the view to make it full screen inside the <code class="simple">onCreate</code> method.</p>
 
 {% highlight java %}
 public class TakePictureActivity extends Activity {
@@ -32,9 +32,9 @@ public class TakePictureActivity extends Activity {
     }
 }
 {% endhighlight %}
-The Preview class is the bulk of the recipe. It handle the Surface where the pixels are drawn and the Camera object.
+<p>The <code class="simple">Preview</code> class is the bulk of the recipe. It handles the <code class="simple">Surface</code> where the pixels are drawn and the <code class="simple">Camera</code> object.</p>
 
-We define a ClickListener in the constructor so the user can take a picture by just tapping once on the screen. Once we get the notification of the click we take a picture passing as parameters four (all optional) callbacks.
+<p>We define a <code class="simple">ClickListener</code> in the constructor so the user can take a picture by just tapping once on the screen. Once we get the notification of the click we take a picture passing as parameters four (all optional) callbacks.</p>
 
 {% highlight java %}
 class Preview extends SurfaceView implements SurfaceHolder.Callback, PictureCallback  {
@@ -61,7 +61,7 @@ class Preview extends SurfaceView implements SurfaceHolder.Callback, PictureCall
         });
     }
 {% endhighlight %}
-The Preview class implement the SurfaceHolder.Callback interface in order to be notified when underlying surface is created, changed and destroyed. We'll use these callbacks to properly handle the Camera object.
+<p>The <code class="simple">Preview</code> class implement the <code class="simple">SurfaceHolder.Callback</code>interface in order to be notified when underlying surface is created, changed and destroyed. We'll use these callbacks to properly handle the <code class="simple">Camera</code> object.</p>
 {% highlight java %}
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width,
@@ -92,7 +92,7 @@ The Preview class implement the SurfaceHolder.Callback interface in order to be 
         closeCamera();
     }
 {% endhighlight %}
-As soon as the camera is created we call configure in order to set the parameters the camera will use to take a picture. Things like flash mode, effects, picture format, picture size, scene mode and so on. Since not all devices support all kind of features always ask which features are supported before setting them.
+<p>As soon as the camera is created we call configure in order to set the parameters the camera will use to take a picture. Things like flash mode, effects, picture format, picture size, scene mode and so on. Since not all devices support all kind of features always ask which features are supported before setting them.</p>
 {% highlight java %}
     private void configure(Camera camera) {
         Camera.Parameters params = camera.getParameters();
@@ -127,7 +127,7 @@ As soon as the camera is created we call configure in order to set the parameter
         camera.setParameters(params);
     }
 {% endhighlight %}
-When the surface is destroyed we close the camera and free its resources:
+<p class="danger"><strong>Attention!</strong> Once the surface is destroyed we must close the camera and free its resources:</p>
 {% highlight java %}
     private void closeCamera() {
         if (mCamera != null) {
@@ -137,7 +137,7 @@ When the surface is destroyed we close the camera and free its resources:
         }
     }
 {% endhighlight %}
-The Jpeg callback is the last one called, this is where we restart the preview and save the file on disk.
+<p>The Jpeg callback is the last one called, this is where we restart the preview and save the file on disk.</p>
 {% highlight java %}
     @Override
     public void onPictureTaken(byte[] jpeg, Camera camera) {
@@ -148,7 +148,7 @@ The Jpeg callback is the last one called, this is where we restart the preview a
     }
 }
 {% endhighlight %}
-Finally we implement the ShutterCallback and again PictureCallback to receive the uncompressed raw image data.
+<p>Finally we implement the <code class="simple">ShutterCallback</code> and again <code class="simple">PictureCallback</code> to receive the uncompressed raw image data.</p>
 
 {% highlight java %}
 class RawCallback implements ShutterCallback, PictureCallback {
@@ -165,3 +165,6 @@ class RawCallback implements ShutterCallback, PictureCallback {
     }       
 }
 {% endhighlight %}
+
+<p>Done.</p>
+
