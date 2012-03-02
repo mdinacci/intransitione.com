@@ -154,6 +154,13 @@ article > img:hover {
     border: solid #ccc 1px;
 }
 
+.success {
+    .alert;
+    background-color: #dff0d8;
+    border-color: #d6e9c6;
+    color: #468847;
+}
+
 .headsup {
     .alert;
     background-color: #d9edf7;
@@ -304,6 +311,38 @@ a.thumbnail:hover {
 
 .thumbnail .caption {
   padding: 9px;
+}
+
+// Disqus
+/* Disqus comments */
+
+#disqus_thread {
+    border-top: 4px solid #ddd;
+}
+#dsq-content {
+    font-size: 13px !important;
+}
+#dsq-content #dsq-global-toolbar, #dsq-content ul.dsq-login-buttons, #dsq-content div.dsq-options,
+#dsq-content #dsq-comments, #dsq-content #dsq-pagination {
+    margin-bottom: 20px !important;
+}
+div.dsq-tooltip-small {
+    width: auto;
+}
+#dsq-content ul.dsq-login-buttons {
+    padding-top: 10px !important;
+}
+#dsq-comment-count {
+    background: url('/resources/comment.png') no-repeat left top;
+    padding-left: 20px;
+    text-transform: lowercase;
+    white-space: nowrap;
+}
+#dsq-footer a > em {
+    text-decoration: none !important;
+}
+a.dsq-brlink {
+    font-size: 13px !important;
 }
 
 @import "mobile.less";

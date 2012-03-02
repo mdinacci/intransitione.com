@@ -6,13 +6,4 @@ domain: intransitione.com
 title: intransitione.com
 url: http://www.intransitione.com
 feed: http://feeds.feedburner.com/Intransitionecom
-
-#
-# # google_analytics:
-# #   account: UA-XXXXX-X
-#
-# # github:
-# #   username: ghusername
-#
-# # disqus:
-# #   id: disqusid
+disqus_shortname: intransitionecom
