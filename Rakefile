@@ -37,7 +37,9 @@ end
 desc 'Check links for site already running on localhost:4000'
 task :check_links do
   begin
+    require 'rubygems'
     require 'anemone'
+
     root = 'http://localhost:4000/'
     Anemone.crawl(root, :discard_page_bodies => true) do |anemone|
       anemone.after_crawl do |pagestore|

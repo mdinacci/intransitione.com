@@ -6,8 +6,8 @@ comments: true
         <header>
         <h2><a title="Permalink to {{ page.title }}" href="{{ site.url }}{{ page.url }}">{{ page.title }}</a></h2>
         Posted by <a href="/about.html">Marco Dinacci</a>
-        on <time datetime="{{ page.date | date: '%Y-%m-%d' }}" pubdate="pubdate">{{ page.date | date_to_string }}</time>
-        <a id="dsq-comment-count" data-disqus-identifier="{{ site.url }}{{ page.url }}" href="{{ page.url }}#disqus_thread">0 comments</a>
+        on <time datetime="{{ page.date | date: '%Y-%m-%d' }}" pubdate="pubdate">{{ page.date | date_to_string }}</time> 
+        <a id="dsq-comment-count" data-disqus-identifier="{{ site.url }}{{ page.url }}" href="#disqus_thread">0 comments</a>
         </header>
 
         {{ content }}
