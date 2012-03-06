@@ -66,6 +66,7 @@ h3 {
     .text-header;
     padding-bottom:5px;
     border-bottom:1px solid #ddd;
+    font-weight:bold;
 }
 
 h4, h5, h6 {
@@ -83,8 +84,9 @@ pre {
     .wrap;
 }
 
+
 div.projects > p {
-    padding-bottom:10px;
+    padding-bottom:20px;
 }
 
 #sitename {
@@ -154,6 +156,20 @@ article > img:hover {
     border: solid #ccc 1px;
 }
 
+.project-icon {
+    width:48px;
+    height:48px;
+    padding-right:5px;
+    vertical-align:middle;
+    opacity: .9;
+}
+
+.project-icon:hover {
+    opacity: 1.0;
+}
+
+/* Bootstrap-style boxes */
+
 .success {
     .alert;
     background-color: #dff0d8;
@@ -179,6 +195,8 @@ article > img:hover {
     color: #b94a48;
 }
 
+/* Related posts stuff */
+
 #related-posts {
     color: #333;
     font-size: 14px;
@@ -195,6 +213,9 @@ article > img:hover {
     margin-left: .4em;
     white-space: nowrap;
 }
+
+/* Post list */
+
 ul.post-list {
     font-size: 16px;
     list-style: none;
@@ -218,6 +239,9 @@ ul.post-list > li > time {
     zoom: 1;
     *display: inline;
 }
+
+/* Blog Archive */
+
 #blog-archive > h3 {
     color: #999;
     float: left;
@@ -228,6 +252,9 @@ ul.post-list > li > time {
 #blog-archive > ul.post-list > li {
     margin-left: 60px;
 }
+
+/* Project List */
+
 div.project-list li {
     padding: 5px 0;
 }
@@ -237,7 +264,6 @@ div.project-list h4 {
     //margin-bottom: 5px;
     //padding-bottom: 5px;
 }
-
 
 /* Sharing section */
 
@@ -283,7 +309,7 @@ iframe.twitter-follow-button {
     margin-top: 5px;
 }
 
-/* Thumbnails, taken from bootstrap.css */
+/* Thumbnails, like in bootstrap.css */
 .thumbnail {
   display: block;
   padding: 4px;
@@ -313,7 +339,6 @@ a.thumbnail:hover {
   padding: 9px;
 }
 
-// Disqus
 /* Disqus comments */
 
 #disqus_thread {
