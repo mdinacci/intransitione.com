@@ -15,8 +15,13 @@ task :less do
   lessc
 end
 
+desc 'Check and minify CSS and JS code'
+task :minify do
+    minify
+end
+
 desc 'Build site with Jekyll'
-task :build => [:clean,:less] do
+task :build => [:clean,:less,:minify] do
   jekyll('--no-server --no-auto')
 end
 
@@ -85,3 +90,9 @@ def lessc(opts = '')
     sh 'lessc -x _less/contact.less css/contact.css'
 end
 
+def minify(opts = '')
+    sh 'juicer merge --force _css/screen.css -o css/screen.css'
+    sh 'juicer merge --force _css/syntax.css -o css/syntax.css'
+    sh 'juicer merge --force _css/contact.css -o css/contact.css'
+    sh 'juicer merge --force _css/mdpopup.css -o css/mdpopup.css'
+end
