@@ -1,0 +1,58 @@
+#overlay-effect
+{
+    display:none;
+    position:fixed;
+    opacity:0.7;
+    filter: alpha(opacity = 70);
+    height:100%;
+    width:100%;
+    top:0;
+    left:0;
+    background: -moz-linear-gradient(rgba(11,11,11,0.1), rgba(11,11,11,0.6)) repeat-x rgba(11,11,11,0.2);
+    background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(rgba(11,11,11,0.1)), to(rgba(11,11,11,0.6))) repeat-x rgba(11,11,11,0.2);
+    z-index:1;
+}
+
+#popup-container
+{
+    position:fixed;
+    text-align:center;
+    left:50%;
+    top:50%;
+    z-index:2;
+    padding:0px;
+    -moz-box-shadow: 0 0 2px rgba(255, 255, 255, 0.6) inset;
+    -webkit-box-shadow: 0 0 2px rgba(255, 255, 255, 0.6) inset;
+    box-shadow: 0 0 2px rgba(255, 255, 255, 0.6) inset;
+    
+}
+
+#popup-close
+{
+    background:url("x.png") no-repeat center center;
+    cursor:pointer;
+    width:32px;
+    height:32px;
+    position:fixed;
+    z-index:3200;
+    position:absolute;
+    top:-25px;
+    right:-25px;
+}
+
+.popup-trigger
+{
+    background:url("view-icon.png") no-repeat center center;
+    padding-left:10px;
+    padding-right:10px;
+    border-width:0px;
+    vertical-align:center; 
+    opacity:0.7;
+    filter: alpha(opacity = 70);
+}
+
+.popup-trigger:hover 
+{
+    opacity:1;
+    filter: alpha(opacity = 100);
+}
