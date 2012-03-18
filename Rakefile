@@ -95,4 +95,7 @@ def minify(opts = '')
     sh 'juicer merge --force _css/syntax.css -o css/syntax.css'
     sh 'juicer merge --force _css/contact.css -o css/contact.css'
     sh 'juicer merge --force _css/mdpopup.css -o css/mdpopup.css'
+
+    sh 'juicer merge -s _js/mdpopup.js -o js/mdpopup.js'
+    sh 'juicer merge -s _js/main.js -o js/main.js'
 end
