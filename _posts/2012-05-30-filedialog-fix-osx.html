@@ -1,0 +1,238 @@
+--- 
+layout: post
+title: Fix for the OpenJDK FileDialog on OSX
+tags: 
+- Java
+- OSX
+- OpenJDK
+---
+
+<script>
+$(document).ready(function()
+{
+  $("#patch").hide();
+  $("#patchtoggle").click(function()
+  {
+    $(this).next("#patch").slideToggle(600);
+  });
+});
+</script>
+
+<p>The OpenJDK FileDialog on OSX does not allow to select directories even if the <strong>apple.awt.fileDialogForDirectories</strong> property is set to true.</p>
+<p><a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7161437" title="Bug 7161437">A bug has been reported</a> a bit more than a month ago but
+it seem there wasn't any intention to fix it as it's been closed as a duplicate of a <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6927978">RFE</a> aimed at improving the FileDialog functionalities.
+This is all nice and good except for the fact that the RFE is almost two years and a half old so the chances to see 7161437 fixed anytime soon are pretty slim.</p>
+
+<p>For those who can't wait until 7u8 or more to have this basic functionality in, 
+<a href="/code/7161437.patch" title="Patch for bug 7161437"/>here's a patch</a> that solves the issue.</p>
+
+&gt; <a name="" id="patchtoggle">See diff and test case</a>
+
+<div id="patch">
+{% highlight diff %}
+diff -r 6432464ffec2 src/macosx/classes/sun/lwawt/macosx/CFileDialog.java
+--- a/src/macosx/classes/sun/lwawt/macosx/CFileDialog.java  Sat May 26 08:01:40 2012 -0700
++++ b/src/macosx/classes/sun/lwawt/macosx/CFileDialog.java  Tue May 29 17:56:51 2012 +0100
+@@ -49,20 +49,28 @@ class CFileDialog implements FileDialogP
+ 
+                 navigateApps = true;
+ 
+                 String title = target.getTitle();
+                 if (title == null) {
+                     title = " ";
+                 }
+ 
++                String chooseDirectoriesValue = System.getProperty("apple.awt.fileDialogForDirectories");
++                boolean chooseDirectories = false;
++                if(chooseDirectoriesValue != null && 
++                        chooseDirectoriesValue.equalsIgnoreCase("true")) {
++                    chooseDirectories = true;
++                }
++
+                 String[] userFileNames = nativeRunFileDialog(title,
+                         dialogMode,
+                         target.isMultipleMode(),
+                         navigateApps,
++                        chooseDirectories,
+                         target.getFilenameFilter() != null,
+                         target.getDirectory(),
+                         target.getFile());
+ 
+                 String directory = null;
+                 String file = null;
+                 File[] files = null;
+ 
+@@ -137,18 +145,18 @@ class CFileDialog implements FileDialogP
+             File directoryObj = new File(fileObj.getParent());
+             String nameOnly = fileObj.getName();
+             ret = ff.accept(directoryObj, nameOnly);
+         }
+         return ret;
+     }
+ 
+     private native String[] nativeRunFileDialog(String title, int mode,
+-            boolean multipleMode, boolean shouldNavigateApps, boolean hasFilenameFilter,
+-            String directory, String file);
++            boolean multipleMode, boolean shouldNavigateApps, boolean canChooseDirectories, 
++            boolean hasFilenameFilter, String directory, String file);
+ 
+     @Override
+     public void setDirectory(String dir) {
+     }
+ 
+     @Override
+     public void setFile(String file) {
+     }
+diff -r 6432464ffec2 src/macosx/native/sun/awt/CFileDialog.h
+--- a/src/macosx/native/sun/awt/CFileDialog.h   Sat May 26 08:01:40 2012 -0700
++++ b/src/macosx/native/sun/awt/CFileDialog.h   Tue May 29 17:56:51 2012 +0100
+@@ -47,16 +47,19 @@
+     jint fMode;
+ 
+     // Indicates whether the user can select multiple files
+     BOOL fMultipleMode;
+ 
+     // Should we navigate into apps?
+     BOOL fNavigateApps;
+ 
++    // Can the dialog choose directories ?
++    BOOL fChooseDirectories;
++
+     // Contains the absolute paths of the selected files as URLs
+     NSArray *fURLs;
+ }
+ 
+ // Allocator
+ - (id) initWithFilter:(jboolean)inHasFilter
+            fileDialog:(jobject)inDialog
+                 title:(NSString *)inTitle
+diff -r 6432464ffec2 src/macosx/native/sun/awt/CFileDialog.m
+--- a/src/macosx/native/sun/awt/CFileDialog.m   Sat May 26 08:01:40 2012 -0700
++++ b/src/macosx/native/sun/awt/CFileDialog.m   Tue May 29 17:56:51 2012 +0100
+@@ -38,30 +38,32 @@
+ - (id)initWithFilter:(jboolean)inHasFilter
+           fileDialog:(jobject)inDialog
+                title:(NSString *)inTitle
+            directory:(NSString *)inPath
+                 file:(NSString *)inFile
+                 mode:(jint)inMode
+         multipleMode:(BOOL)inMultipleMode
+       shouldNavigate:(BOOL)inNavigateApps
++canChooseDirectories:(BOOL)inChooseDirectories
+              withEnv:(JNIEnv*)env;
+ {
+     if (self == [super init]) {
+         fHasFileFilter = inHasFilter;
+         fFileDialog = JNFNewGlobalRef(env, inDialog);
+         fDirectory = inPath;
+         [fDirectory retain];
+         fFile = inFile;
+         [fFile retain];
+         fTitle = inTitle;
+         [fTitle retain];
+         fMode = inMode;
+         fMultipleMode = inMultipleMode;
+         fNavigateApps = inNavigateApps;
++        fChooseDirectories = inChooseDirectories;
+         fPanelResult = NSCancelButton;
+     }
+ 
+     return self;
+ }
+ 
+ -(void) disposer {
+     if (fFileDialog != NULL) {
+@@ -104,17 +106,17 @@
+         if (fNavigateApps) {
+             [thePanel setTreatsFilePackagesAsDirectories:YES];
+         }
+ 
+         if (fMode == java_awt_FileDialog_LOAD) {
+             NSOpenPanel *openPanel = (NSOpenPanel *)thePanel;
+             [openPanel setAllowsMultipleSelection:fMultipleMode];
+             [openPanel setCanChooseFiles:YES];
+-            [openPanel setCanChooseDirectories:NO];
++            [openPanel setCanChooseDirectories:fChooseDirectories];
+             [openPanel setCanCreateDirectories:YES];
+         }
+ 
+         [thePanel setDelegate:self];
+         fPanelResult = [thePanel runModalForDirectory:fDirectory file:fFile];
+         [thePanel setDelegate:nil];
+ 
+         if ([self userClickedOK]) {
+@@ -177,17 +179,17 @@
+  * Class:     sun_lwawt_macosx_CFileDialog
+  * Method:    nativeRunFileDialog
+  * Signature: (Ljava/lang/String;ILjava/io/FilenameFilter;
+  *             Ljava/lang/String;Ljava/lang/String;)[Ljava/lang/String;
+  */
+ JNIEXPORT jobjectArray JNICALL
+ Java_sun_lwawt_macosx_CFileDialog_nativeRunFileDialog
+ (JNIEnv *env, jobject peer, jstring title, jint mode, jboolean multipleMode,
+- jboolean navigateApps, jboolean hasFilter, jstring directory, jstring file)
++ jboolean navigateApps, jboolean chooseDirectories, jboolean hasFilter, jstring directory, jstring file)
+ {
+     jobjectArray returnValue = NULL;
+ 
+ JNF_COCOA_ENTER(env);
+     NSString *dialogTitle = JNFJavaToNSString(env, title);
+     if ([dialogTitle length] == 0) {
+         dialogTitle = @" ";
+     }
+@@ -195,16 +197,17 @@ JNF_COCOA_ENTER(env);
+     CFileDialog *dialogDelegate = [[CFileDialog alloc] initWithFilter:hasFilter
+                                                            fileDialog:peer
+                                                                 title:dialogTitle
+                                                             directory:JNFJavaToNSString(env, directory)
+                                                                  file:JNFJavaToNSString(env, file)
+                                                                  mode:mode
+                                                          multipleMode:multipleMode
+                                                        shouldNavigate:navigateApps
++                                                 canChooseDirectories:chooseDirectories
+                                                               withEnv:env];
+ 
+     [JNFRunLoop performOnMainThread:@selector(safeSaveOrLoad)
+                                  on:dialogDelegate
+                          withObject:nil
+                       waitUntilDone:YES];
+ 
+     if ([dialogDelegate userClickedOK]) {
+
+{% endhighlight %}
+
+{% highlight java %}
+
+import java.awt.FileDialog;
+import java.io.File;
+import javax.swing.JFrame;
+
+public class FileDialogTest extends JFrame {
+
+    public String selectFolder() {
+        FileDialog fd = new FileDialog(this, "Select Folder Test", FileDialog.LOAD); 
+        fd.setDirectory(System.getProperty("user.home")); 
+        fd.setLocation(50,50);
+        fd.setVisible(true); 
+
+        return fd.getFile();
+    }
+
+    public static void main(String[] args) {
+        System.setProperty("apple.awt.fileDialogForDirectories", "true");
+
+        FileDialogTest fdt = new FileDialogTest();
+        String selectedFolder = fdt.selectFolder();
+
+        System.out.println("The selected file was: " + selectedFolder);
+
+        System.setProperty("apple.awt.fileDialogForDirectories", "false");
+        System.exit(0);
+    }
+
+}
+{% endhighlight %}
+</div>
+
+<br/>
+<p>Marco</p>
