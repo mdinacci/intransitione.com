@@ -18,7 +18,6 @@ Although the App Store guidelines explicitly forbids applications to rely on dep
 <ol>
     <li><a href="#tutorial">Tutorial</a></li>
     <li><a href="#knownproblems">Known Problems</a></li>
-    <li><a href="#whatsmissing">What's missing</a></li>
     <li><a href="#goodies">Goodies</a></li>
 </ol>
 
@@ -31,11 +30,9 @@ Although the App Store guidelines explicitly forbids applications to rely on dep
 
 <ol>
     <li><a href="#stepone">Gather the requirements</a></li>
-    <li><a href="#stepthree">Make your application sandbox-proof</a></li>
-    <li><a href="#stepfour">Migrate existing data and preferences</a></li>
-    <li><a href="#stepfive">Build and sign a package for your application bundle</a></li>
-    <li><a href="#stepsix">Install the application on your machine for testing</a></li>
-    <li><a href="#stepseven">Submit your application to the App Store</a></li>
+    <li><a href="#steptwo">Make your application sandbox-proof</a></li>
+    <li><a href="#stepthree">Migrate existing data and preferences</a></li>
+    <li><a href="#stepfour">Build and sign a package for your application bundle</a></li>
 </ol>
 
 <p></p>
@@ -120,7 +117,7 @@ Although the App Store guidelines explicitly forbids applications to rely on dep
 {% endhighlight %}
 <p></p>
 
-<a name="#stepthree"></a>
+<a name="#steptwo"></a>
 <h3>Make your application sandbox proof</h3>
 
 <p>Starting from the 1st of June all applications submitted to the App Store must be sandbox ready.</p> 
@@ -189,7 +186,7 @@ Java_com_foobar_OSXAdapter_getApplicationSupportFolder
 
 <p></p>
 
-<a name="#stepfour"></a>
+<a name="#stepthree"></a>
 <h3>Migrate existing application data and preferences</h3>
 
 <p>If you're not releasing a new application chances is that you are already saving your application data and preferences somewhere, most likely in <em>~/Library/Application Support</em>.</p>
@@ -258,7 +255,7 @@ Java_com_foobar_OSXAdapter_getApplicationSupportFolder
 <h4>Crash when opening an application from a registered file</h4>
 <p><a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7170716">Bug</a> and <a href="">Discussion</a>.
 
-<h4><em>awt.brush.metalLook</em> is not observed. </h4>
+<h4><em>awt.brush.metalLook</em> is not observed.</h4>
     <p><a href="http://mail.openjdk.java.net/pipermail/macosx-port-dev/2012-May/004227.html">Planned to be fixed in jdk7u6</a>.</p>
 
 <h4>Crash in OSXAPP_SetApplicationDelegate.</h4>
@@ -268,14 +265,9 @@ Java_com_foobar_OSXAdapter_getApplicationSupportFolder
 <h4>Sandbox Violation on Runtime Exec</h4>
     <p><a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7175692">Bug description</a> and <a href="http://mail.openjdk.java.net/pipermail/macosx-port-dev/2012-June/004375.html">ML discussion</a>. Because of the sandbox an application can't create a child process; there are a few workarounds but they all involve writing native code.</p>
 
-<h3>What's missing</h3>
-
-<p>If your application register itself with some one or more kind of files, than there are two problems left, first the OpenJDK fix, second you need to add a section to the Info.plist</p>. 
-<p>AppBundler does not generate it yet so you have to add it manually. I found best to generate the Info.plist with AppBundler once, modifying it to add the other keys I need and then copy it over the generated one before the application is bundled.</p>
-
 <h2>Goodies</h2>
 
-<p>I created a <a href="">git repository</a> with a skeleton project including an ant file, all the AppBundler and OpenJDK patches I've used and an XCode project to create a native library. Feel free to fork and contribute.</p> 
+<p>I created a <a href="https://github.com/mdinacci/openjdk-osx-starter-kit" title="GitHub repo">git repository</a> with a skeleton project including an ant file and the AppBundler and OpenJDK patches I've used.</p> 
 
 <p>If you have any questions, leave a comment here or on <a href="http://twitter.com/MarcoDinacci">Twitter</a></p>
 
