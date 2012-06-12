@@ -1,0 +1,241 @@
+--- 
+layout: post
+title: OpenJDK on OSX crashes when opening an application with a registered file 
+tags: 
+- Java
+- OSX
+- OpenJDK
+---
+
+<script>
+$(document).ready(function()
+{
+  $("#patch").hide();
+  $("#patchtoggle").click(function()
+  {
+    $(this).next("#patch").slideToggle(600);
+  });
+});
+</script>
+
+<p>Here's fix for a <b>low</b> priority <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7170716" title="Bug 7170716">bug</a> which was unfortunately <b>critical</b> for my application and I suspect for every application that is registered to open a particular set of files.</p>
+
+<p>I'll explain this bug with an example. </p>
+
+<p>
+    Say you download a Java PDF reader and you have the latest Java 7 (or OpenJDK) distribution. You would expect that if you click on a PDF file your PDF reader would open so you could read it, right ?....<br/>No, unfortunately the PDF reader will crash before it could even show its window. You can still open the PDF reader and then open the file, but who would release (and use) an application that crashes so easily ?
+</p>
+
+<p>The OpenJDK OSX code relies on closures ("blocks" in Objective-C) to defer some events, like the opening of a document when the application is starting, until the application has been fully initialized. Here's an example from <em>QueuingApplicationDelegate.m</em>.</p> 
+
+<div>
+{% highlight Objective-C %}
+- (void)application:(NSApplication *)theApplication openFiles:(NSArray *)fileNames
+{
+    [self->queue addObject:^(){
+        [realDelegate application:theApplication openFiles:fileNames];
+    }];
+}
+{% endhighlight%}
+</div>
+
+<p>If you already know how blocks are allocated you should have already spotted the error. The block literal is <strong>stack allocated</strong>, as such the <strong>retain</strong> that is performed by the container has absolutely no effect. When the function exits, the stack will be deleted and the block with it, leaving you with a dangling pointer inside the array.</p> 
+
+<p>The solution is to call <strong><em>copy</em></strong> on the block which will move the memory allocated on the stack to the heap</p>
+
+<div>
+{% highlight Objective-C %}
+- (void)application:(NSApplication *)theApplication openFiles:(NSArray *)fileNames
+{
+    [self->queue addObject:[^(){
+        [realDelegate application:theApplication openFiles:fileNames];
+    } copy]];
+}
+
+{% endhighlight%}
+</div>
+
+<p>Once the block has been used it also has to be released:</p>
+{% highlight Objective-C %}
+NSUInteger i;
+NSUInteger count = [self->queue count];
+for (i = 0; i < count; i++) {
+    void (^event)() = (void (^)())[self->queue objectAtIndex: i];
+    event();
+    [event release];
+}
+{% endhighlight%}
+
+<p>
+<a href="/code/7170716.patch.patch" title="Patch for bug 7170716.patch"/>Download</a> or <a name="" id="patchtoggle">see</a> the patch that fixes this issue.
+</p>
+
+<div id="patch">
+{% highlight diff %}
+diff -r 96dd3a52e76c src/macosx/native/sun/osxapp/NSApplicationAWT.m
+--- a/src/macosx/native/sun/osxapp/NSApplicationAWT.m   Thu May 31 16:35:25 2012 +0100
++++ b/src/macosx/native/sun/osxapp/NSApplicationAWT.m   Mon Jun 11 16:49:04 2012 +0100
+@@ -334,17 +334,17 @@ AWT_ASSERT_APPKIT_THREAD;
+ }
+ 
+ @end
+ 
+ 
+ void OSXAPP_SetApplicationDelegate(id <NSApplicationDelegate> delegate)
+ {
+ AWT_ASSERT_APPKIT_THREAD;
+-    applicationDelegate = delegate;
++    applicationDelegate = [delegate retain];
+ 
+     if (NSApp != nil) {
+         [NSApp setDelegate: applicationDelegate];
+ 
+         if (applicationDelegate && qad) {
+             [qad processQueuedEventsWithTargetDelegate: applicationDelegate];
+             qad = nil;
+         }
+diff -r 96dd3a52e76c src/macosx/native/sun/osxapp/QueuingApplicationDelegate.m
+--- a/src/macosx/native/sun/osxapp/QueuingApplicationDelegate.m Thu May 31 16:35:25 2012 +0100
++++ b/src/macosx/native/sun/osxapp/QueuingApplicationDelegate.m Mon Jun 11 16:49:04 2012 +0100
+@@ -104,110 +104,110 @@ static id <NSApplicationDelegate> realDe
+     self->queue = nil;
+ 
+     [super dealloc];
+ }
+ 
+ 
+ - (void)_handleOpenURLEvent:(NSAppleEventDescriptor *)openURLEvent withReplyEvent:(NSAppleEventDescriptor *)replyEvent
+ {
+-    [self->queue addObject:^(){
++    [self->queue addObject:[^(){
+         [realDelegate _handleOpenURLEvent:openURLEvent withReplyEvent:replyEvent];
+-    }];
++    } copy]];
+ }
+ 
+ - (void)application:(NSApplication *)theApplication openFiles:(NSArray *)fileNames
+ {
+-    [self->queue addObject:^(){
++    [self->queue addObject:[^(){
+         [realDelegate application:theApplication openFiles:fileNames];
+-    }];
++    } copy]];
+ }
+ 
+ - (NSApplicationPrintReply)application:(NSApplication *)application printFiles:(NSArray *)fileNames withSettings:(NSDictionary *)printSettings showPrintPanels:(BOOL)showPrintPanels
+ {
+     if (!fHandlesDocumentTypes) {
+         return NSPrintingCancelled;
+     }
+ 
+-    [self->queue addObject:^(){
++    [self->queue addObject:[^(){
+         [realDelegate application:application printFiles:fileNames withSettings:printSettings showPrintPanels:showPrintPanels];
+-    }];
++    } copy]];
+ 
+     // well, a bit premature, but what else can we do?..
+     return NSPrintingSuccess;
+ }
+ 
+ - (void)_willFinishLaunching
+ {
+-    QueuingApplicationDelegate * q = self;
+-    [self->queue addObject:^(){
++    [self->queue addObject:[^(){
+         [[realDelegate class] _willFinishLaunching];
+-    }];
++    } copy]];
+ }
+ 
+ - (BOOL)applicationShouldHandleReopen:(NSApplication *)theApplication hasVisibleWindows:(BOOL)flag
+ {
+-    [self->queue addObject:^(){
++    [self->queue addObject:[^(){
+         [realDelegate applicationShouldHandleReopen:theApplication hasVisibleWindows:flag];
+-    }];
++    } copy]];
+     return YES;
+ }
+ 
+ - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)app
+ {
+-    [self->queue addObject:^(){
++    [self->queue addObject:[^(){
+         [realDelegate applicationShouldTerminate:app];
+-    }];
++    } copy]];
+     return NSTerminateLater;
+ }
+ 
+ - (void)_systemWillPowerOff
+ {
+-    [self->queue addObject:^(){
++    [self->queue addObject:[^(){
+         [[realDelegate class] _systemWillPowerOff];
+-    }];
++    } copy]];
+ }
+ 
+ - (void)_appDidActivate
+ {
+-    [self->queue addObject:^(){
++    [self->queue addObject:[^(){
+         [[realDelegate class] _appDidActivate];
+-    }];
++    } copy]];
+ }
+ 
+ - (void)_appDidDeactivate
+ {
+-    [self->queue addObject:^(){
++    [self->queue addObject:[^(){
+         [[realDelegate class] _appDidDeactivate];
+-    }];
++    } copy]];
+ }
+ 
+ - (void)_appDidHide
+ {
+-    [self->queue addObject:^(){
++    [self->queue addObject:[^(){
+         [[realDelegate class] _appDidHide];
+-    }];
++    } copy]];
+ }
+ 
+ - (void)_appDidUnhide
+ {
+-    [self->queue addObject:^(){
++    [self->queue addObject:[^(){
+         [[realDelegate class] _appDidUnhide];
+-    }];
++    } copy]];
+ }
+ 
+ - (void)processQueuedEventsWithTargetDelegate:(id <NSApplicationDelegate>)delegate
+ {
++    realDelegate = [delegate retain];
++
+     NSUInteger i;
+     NSUInteger count = [self->queue count];
+ 
+-    realDelegate = delegate;
+-
+     for (i = 0; i < count; i++) {
+         void (^event)() = (void (^)())[self->queue objectAtIndex: i];
+         event();
++        [event release];
+     }
+ 
+     [self->queue removeAllObjects];
+ }
+ 
+ @end
+ 
+{% endhighlight %}
+
+</div>
+
+<br/>
+<p>Marco</p>
