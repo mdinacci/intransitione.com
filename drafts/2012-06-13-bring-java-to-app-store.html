@@ -248,19 +248,16 @@ Java_com_foobar_OSXAdapter_getApplicationSupportFolder
     <p><a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7161437">Bug report</a>, 
     <a href="http://mail.openjdk.java.net/pipermail/macosx-port-dev/2012-May/004295.html">discussion</a> and <a href="http://intransitione.com/code/7161437.patch">my patch</a>.</p>
 
-<h4>JFileChooser completely broken in the sandbox.</h4>
-    <p><a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7172752">Bug report</a>  (not available, it seems Oracle think this is not a bug).
+<h4>JFileChooser broken in the sandbox.</h4>
+    <p><a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7172752">Bug report</a>  (not available, may Oracle think this is not a bug).
     <a href=""></a>. There is no workaround for this, except to switch to <em>FileDialog</em>.
 
 <h4>Crash when opening an application from a registered file</h4>
-<p><a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7170716">Bug</a> and <a href="">Discussion</a>.
+<a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7170716" title="Bug">Bug report</a> and <a href="http://mail.openjdk.java.net/pipermail/macosx-port-dev/2012-May/004226.html" title="Discussion">Discussion</a>.
+    <p>If a user double click on a file to open your application the application will crash before even showing its main window. Oracle judged it a low priority bug, I disagree, I think that if you download for instance a PDF reader and you double-click on a PDF file <strong>the absolute minimum</strong> would be that your application opens...</p>
 
 <h4><em>awt.brush.metalLook</em> is not observed.</h4>
     <p><a href="http://mail.openjdk.java.net/pipermail/macosx-port-dev/2012-May/004227.html">Planned to be fixed in jdk7u6</a>.</p>
-
-<h4>Crash in OSXAPP_SetApplicationDelegate.</h4>
-    <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7170716" title="Bug">Bug report</a> and <a href="http://mail.openjdk.java.net/pipermail/macosx-port-dev/2012-May/004226.html" title="Discussion">Discussion</a>.
-    <p>If a user double click on a file to open your application the application will crash before even showing its main window. Oracle judged it a low priority bug, I disagree, I think that if you download for instance a PDF reader and you double-click on a PDF file <strong>the absolute minimum</strong> would be that your application opens...</p>
 
 <h4>Sandbox Violation on Runtime Exec</h4>
     <p><a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7175692">Bug description</a> and <a href="http://mail.openjdk.java.net/pipermail/macosx-port-dev/2012-June/004375.html">ML discussion</a>. Because of the sandbox an application can't create a child process; there are a few workarounds but they all involve writing native code.</p>

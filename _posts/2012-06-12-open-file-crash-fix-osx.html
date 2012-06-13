@@ -29,7 +29,7 @@ $(document).ready(function()
 <p>The OpenJDK OSX code relies on closures ("blocks" in Objective-C) to defer some events, like the opening of a document when the application is starting, until the application has been fully initialized. Here's an example from <em>QueuingApplicationDelegate.m</em>.</p> 
 
 <div>
-{% highlight Objective-C %}
+{% highlight objc %}
 - (void)application:(NSApplication *)theApplication openFiles:(NSArray *)fileNames
 {
     [self->queue addObject:^(){
@@ -44,7 +44,7 @@ $(document).ready(function()
 <p>The solution is to call <strong><em>copy</em></strong> on the block which will move the memory allocated on the stack to the heap</p>
 
 <div>
-{% highlight Objective-C %}
+{% highlight objc %}
 - (void)application:(NSApplication *)theApplication openFiles:(NSArray *)fileNames
 {
     [self->queue addObject:[^(){
@@ -56,7 +56,7 @@ $(document).ready(function()
 </div>
 
 <p>Once the block has been used it also has to be released:</p>
-{% highlight Objective-C %}
+{% highlight objc %}
 NSUInteger i;
 NSUInteger count = [self->queue count];
 for (i = 0; i < count; i++) {
@@ -66,9 +66,9 @@ for (i = 0; i < count; i++) {
 }
 {% endhighlight%}
 
-<p>
-<a href="/code/7170716.patch.patch" title="Patch for bug 7170716.patch"/>Download</a> or <a name="" id="patchtoggle">see</a> the patch that fixes this issue.
-</p>
+<p class="headsup"><a href="/code/7170716.patch" title="Patch for bug 7170716"/>Download</a> the patch.</p>
+
+<a name="" id="patchtoggle">View/Hide patch</a>
 
 <div id="patch">
 {% highlight diff %}
