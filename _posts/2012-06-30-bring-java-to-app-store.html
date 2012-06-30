@@ -1,0 +1,345 @@
+--- 
+layout: post
+title: It is time to bring your Java application to the App Store.
+tags: 
+- Java
+- App Store
+- Mac
+- OpenJDK
+---
+
+<p>In this guide I'll go through all the steps required to port your Java Swing application to OpenJDK with the goal of preparing it for the submission into the App Store.
+Although the App Store guidelines explicitly forbids applications to rely on deprecated or optionally installed technologies (Apple no longer bundles their JDK port so applications can't rely on the user to have it installed), you can still distribute your Java application on the App Store by embedding the <a href="http://openjdk.java.net/">OpenJDK 7 OSX port</a> in a native OSX application.
+</p>
+
+<a href="http://openjdk.java.net"><img src="/img/openjdk.png" border="0"/></a>
+
+<p></p>
+
+<p>It may sounds obvious but the procedure that follows can be performed only on OSX, not from Windows, Linux or any other OS.</p>
+
+Follow this steps:
+
+<ol>
+    <li><a href="#stepone">Gather the requirements</a></li>
+    <li><a href="#steptwo">Make your application sandbox-proof</a></li>
+    <li><a href="#stepthree">Migrate existing data and preferences</a></li>
+    <li><a href="#stepfour">Build and sign a package for your application bundle</a></li>
+</ol>
+
+and be sure to take a look at the <a href="#knownproblems">known problems</a>.
+
+<p style="margin-bottom:20px"></p>
+
+<a name="#stepone"></a>
+<h3>Requirements</h3>
+
+<h4>OpenJDK</h4>
+<p>First of all, you need to acquire the OpenJDK OSX port. There are 3½ ways:</p>
+
+<ul>
+    <li> Download the <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">Oracle binary distribution</a>.</li>
+    <li><a href="http://openjdk.java.net/projects/macosx-port/">Clone the Mercurial repository</a>. Compile it with Java 6 or 7 if you already have it.</li>
+    <li>Download one of the excellent Henry Gomez's <a href="http://code.google.com/p/openjdk-osx-build/">pre-built packages</a>.</li>
+</ul>
+
+<p><strong>Don't know which one to choose ?</strong></p>
+<p>Getting the source should be the only reasonable option if you're serious about bringing your application to the App Store. However if you want to get started quickly and are not interested in the bleeding edge version, download the Oracle distribution. If you want the latest version of the code but don't want to build it yourself, download one of the Henry Gomez's pre-built images.</p>
+<p>Note that the Oracle bundle and the OpenJDK have different licences, the first is released under the <a href="http://www.oracle.com/technetwork/java/javase/terms/license/index.html">Binary Code License</a> agreement , the second under the <a href="http://openjdk.java.net/legal/gplv2+ce.html">GPL version 2 with Classpath Exception</a>. Make your choice.</p>
+
+<p class="headsup"><b>The absolute best setup</b> would be to clone the official repo and then replace the <em>jdk</em> subrepo with <a href="http://infinitekind.com">our</a> <a href="https://bitbucket.org/sreilly/openjdk7u-jdk">stable</a> or <a href="https://bitbucket.org/mdinacci/openjdk7u-jdk">my slightly more experimental</a> fork.</p>
+
+<p>If you want to know more of what's included in the fork you may find useful reading my other article <a href="www.intransitione.com/blog/forking-jdk-for-fun-and-profit">forking the JDK for fun and profit.</a></p>
+
+<h4>AppBundler</h4>
+<p>Once you have finished downloading the OpenJDK you need to install <strong>AppBundler</strong> to package your application.</p>
+
+<p><a href="http://java.net/projects/appbundler" title="Download AppBundler">AppBundler</a> is an ant task so just put the downloaded jar in the <em>lib</em> folder in your ant distribution and then <a href="http://java.net/projects/appbundler/pages/Home" title="AppBundler instructions">follow the instructions</a> to package your application. It still misses many features like the ability to sign your bundle or to register your application with a particular file type but it allows the most important thing which is to include a Java runtime within the application bundle and building an <strong>Info.plist</strong> file with most of the required keys.</p>
+
+<p class="headsup">At one point, you'll feel the AppBundler will miss many features you need. Luckily for you, we have again a <a href="https://bitbucket.org/sreilly/appbundler">stable</a> and <a href="https://bitbucket.org/mdinacci/openjdk7u-jdk">a slightly more experimental</a> fork that add plenty more features.</p>
+
+<p>Note that some keys are compulsory and your application won't be accepted if they're missing so be sure they're present. You must declare at least:</p>
+
+<ul>
+    <li>CFBundleIdentifier</li>
+    <li>CFBundleVersion</li>
+    <li>NSHumanReadableCopyright</li>
+    <li>LSApplicationCategoryType</li>
+</ul>
+
+<p>Refer to <a href="https://developer.apple.com/library/mac/#documentation/MacOSX/Conceptual/BPRuntimeConfig/Articles/ConfigFiles.html" title="Apple Documentation">Apple documentation</a> for the meaning of these keys or just follow this example to be sure they're always included:</p> 
+
+{% highlight xml %}
+
+<target name="bundle" depends="...">
+    <!-- Import the AppBundlerTaks from ant lib directory -->
+    <taskdef name="bundleapp" 
+           classname="com.oracle.appbundler.AppBundlerTask"/>
+
+    <bundleapp outputdirectory="."
+        name="MyApp"
+        displayname="MyApp"
+        identifier="com.foobarbaz.MyApp"
+        shortversion="1.0"
+        icon="MyApp.icns"
+        mainclassname="MyAppMain"
+        copyright="2012 FooBarBaz LLC."
+        applicationCategory="public.app-category.entertainment">
+
+        <!-- The directory where your OpenJDK runtime is. -->
+        <runtime dir="/path/to/openjdk/Contents/Home"/>
+
+        <!-- The bundleapp task doesn't support classpathref so all 
+            the run classpath entries must be stated here too.
+        -->
+        <classpath file="MyApp.jar"/>
+        <classpath file="dependencies.jar"/>
+      
+        <!-- Workaround since the icon parameter for bundleapp 
+             doesn't work. (It's not a bug in AppBundler but 
+             in the JavaAppLauncher, see Known Problems).
+        -->
+        <option value="-Xdock:icon=Contents/Resources/${bundle.icon}"/>
+
+        <!-- OSX specific options, optional -->
+        <option value="-Dapple.laf.useScreenMenuBar=true"/>
+        <option value="-Dcom.apple.macos.use-file-dialog-packages=true"/>
+        <option value="-Dcom.apple.macos.useScreenMenuBar=true"/>
+        <option value="-Dcom.apple.mrj.application.apple.menu.about.name=MyApp"/>
+        <option value="-Dcom.apple.smallTabs=true"/>
+
+        <option value="-Xmx1024M"/>
+    </bundleapp>
+</target>   
+
+{% endhighlight %}
+<p></p>
+
+<p>If you decide to use my fork, you can do much more:</p>
+{% highlight xml %}
+<target name="bundle">
+  <taskdef name="bundleapp" 
+    classpath="appbundler-1.0ea.jar"
+    classname="com.oracle.appbundler.AppBundlerTask"/>
+
+  <bundleapp 
+      classpathref="runclasspathref"
+      name="MyApp"
+        displayname="MyApp"
+        identifier="com.foobarbaz.MyApp"
+        shortversion="1.0"
+        version="build 325"
+        icon="MyApp.icns"
+        mainclassname="MyAppMain"
+        copyright="2012 FooBarBaz LLC."
+        applicationCategory="public.app-category.entertainment">
+
+      <runtime dir="${runtime}/Contents/Home"/>
+
+      <!-- Specify which architectures you want to support -->
+      <arch name="x86_64"/>
+      <arch name="i386"/>
+
+      <!-- Register the application as an editor for PNG and JPG files -->
+      <bundledocument extensions="png,jpg"
+        icon="${bundle.icon}"
+        name="Images"
+        role="editor">
+      </bundledocument>
+
+      <!-- Register the application as a viewer for PDF files -->
+      <bundledocument extensions="pdf"
+        icon="${bundle.icon}"
+        name="PDF files"
+        role="viewer">
+      </bundledocument>
+
+      <!-- Register the application with your custom format, bundled as a package -->
+      <bundledocument extensions="custom"
+        icon="${bundle.icon}"
+        name="Custom data"
+        role="editor"
+        isPackage="true">
+      </bundledocument>
+
+      <!-- Workaround since the icon parameter for bundleapp doesn't work -->
+      <option value="-Xdock:icon=Contents/Resources/${bundle.icon}"/>
+
+      <option value="-Dapple.laf.useScreenMenuBar=true"/>
+      <option value="-Dcom.apple.macos.use-file-dialog-packages=true"/>
+      <option value="-Dcom.apple.macos.useScreenMenuBar=true"/>
+      <option value="-Dcom.apple.mrj.application.apple.menu.about.name=${bundle.name}"/>
+      <option value="-Dcom.apple.smallTabs=true"/>
+
+      <option value="-Xmx1024M"/>
+  </bundleapp>
+</target>
+{% endhighlight %}
+
+<p>See how I used <em>classpathref</em> to declare an external classpath, <em>arch</em> to declare the supported architectures and <em>bundledocument</em> to register the application with particular file types.</p>
+
+<p></p>
+<a name="#steptwo"></a>
+<h3>Make your application sandbox proof</h3>
+
+<p>Starting from the 1st of June all applications submitted to the App Store must be sandbox ready.</p> 
+<p>For a comprehensive explanation of what the sandbox is refers to the <a href="http://developer.apple.com/library/mac/#documentation/Security/Conceptual/AppSandboxDesignGuide/AboutAppSandbox/AboutAppSandbox.html">Apple documentation</a>.
+In short though, the sandbox is an access control mechanism which restricts interaction of your application with the operating system.</p>
+
+<p>The <em>container</em> is the directory where your application can safely read/write the files required for its correct functioning. It is physically located in <strong><em>~/Library/Containers/yourapp.bundle.id</em></strong>; I doubt this is likely to change anytime soon so if you have a very simple application you <b>may</b> hardcode this path instead of relying on a native library to return it for you. I say may because I can't possibly know how Apple will react if you hardcode the path of the container instead of obtaining it by using the API.</p>
+
+<p>If your application will require storing user documents in the container or writing temporary files and you don't want to risk any surprise you'll have to build a native extension to get the appropriate directories. A JNI wrapper is the easiest route, the only problem I encountered is that <strong>javah</strong> generate headers files with the line: 
+
+{% highlight c %}
+#include <jni.h>
+{% endhighlight %}
+
+<p>which I had to change to </p>
+
+{% highlight c %}
+#include <JavaVM/jni.h>
+{% endhighlight %}
+
+<p>Here's a simple Makefile to generate the headers and fix this include line:</p>
+
+{% highlight bash %}
+#!/bin/sh
+
+DIST = jni_headers
+CP = foobaz.jar
+CLASS = com.foobaz.yourclass
+
+all:
+    mkdir -p $(DIST)
+    javah -jni -d $(DIST) -cp $(CP) $(CLASS)
+    sed -i ""  's/jni.h/JavaVM\/jni.h/' $(DIST)/*.h
+
+clean:
+    rm *.o *.class
+{% endhighlight %}
+
+<p>Now that you have your C header you can create a function that will return for example the <em>Application Support</em> folder for your application, which is located inside the appplication container:</p>
+
+{% highlight c %}
+JNIEXPORT jstring JNICALL 
+Java_com_foobar_OSXAdapter_getApplicationSupportFolder
+(JNIEnv *env, jobject jthis) {
+    jstring path;
+    
+    @autoreleasepool {
+        
+        JNF_COCOA_ENTER(env);
+        
+        NSArray *paths = NSSearchPathForDirectoriesInDomains(
+                                NSApplicationSupportDirectory, 
+                                NSUserDomainMask, YES);
+        NSString *basePath = [paths objectAtIndex:0];
+        
+        // Convert the NSString to a jstring
+        const char *cString = [basePath UTF8String];
+        path = (*env)->NewStringUTF(env, cString);
+        
+        JNF_COCOA_EXIT(env);
+    }
+    
+    return path;
+}
+{% endhighlight %}
+
+<p></p>
+
+<a name="#stepthree"></a>
+<h3>Migrate existing application data and preferences</h3>
+
+<p>If you're not releasing a new application chances is that you are already saving your application data and preferences somewhere, most likely in <em>~/Library/Application Support/YourApp</em>.</p>
+
+<p>Once your updated application is executed in the sandbox, that folder will be inaccessible for your program, but luckily Apple thought of a migration mechanism, which happens automatically the first time the user start the application. Here's an example of how you would migrate the preferences in <em>~/Library/Application Support/YourApp</em> to <em>~/Library/Container/com.yourcompany.YourApp/Data/Library/Application Support/YourApp</em>.</p>
+
+{% highlight xml %}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+   <key>Move</key>
+   <array>
+      <string>${Library}/YourApp</string>
+  </array>
+</dict>
+</plist>
+{% endhighlight %}
+
+<p style="margin-bottom:20px"><a href="https://developer.apple.com/library/mac/#documentation/Security/Conceptual/AppSandboxDesignGuide/MigratingALegacyApp/MigratingAnAppToASandbox.html#//apple_ref/doc/uid/TP40011183-CH6-SW1">Check the Apple documentation</a> for more complex examples.</p>
+
+<a name="#knownproblems"></a>
+<h2>Known problems</h2>
+
+<p>Plenty unfortunately, however I fixed most of them. The easiest way to get the fixes is to clone our <a href="https://bitbucket.org/sreilly/openjdk7u-jdk">jdk</a> and <a href="https://bitbucket.org/sreilly/openjdk7u-jdk">AppBundler</a> stable forks.</p>
+
+<p>Here's a list of most of the problems I've encountered and their solution, where available:</p>
+
+<h4>Launch failure <em>(LSOpenURLsWithRole() failed with error...)</em></h4>
+
+    <p><a href="http://mail.openjdk.java.net/pipermail/macosx-port-dev/2012-May/004116.html"/>Mailing list Discussion</a>. <a href="https://bitbucket.org/sreilly/appbundler">Our AppBundler fork</a> work around this problem.</p> 
+    <p>This is not a bug in the AppBundler but it is related to <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7159381">this bug</a> which should be fixed soon.</p>
+
+<h4>libfreetype absolute reference causes applications inside a sandbox to crash</h4>
+    <p><a href="http://mail.openjdk.java.net/pipermail/macosx-port-dev/2012-May/004187.html" title="ML discussion">Mailing list discussion</a></p>
+
+    <p>All Swing/AWT apps won't even open because they rely on the freetype lib installed on the user system but the sandbox will immediately block your application the access to it and your application will crash.</p>
+
+    <p>The proper solution would be to fix the OpenJDK makefiles otherwise a quick workaround is to use two nifty tools called <b>otool</b> and <b>install_name_tools</b>:
+
+    <p>First, find out where <em>libfontmanager.dylib</em>,located in the lib directory of your VM, expects to find freetype.</p>
+
+    <p>Open a shell and type:</p>
+
+    {% highlight bash %}
+    $ otool -L libfontmanager.dylib
+    {% endhighlight %}
+
+    <p>Take note of the libfreetype path, likely <em>/usr/X11/libfreetype.6.dylib</em> unless you have built freetype yourself and installed it somewhere else. Now type:</p>
+
+    {% highlight bash %}
+    $ sudo install_name_tool -change /usr/X11/libfreetype.6.dylib @rpath/libfreetype.dylib libfontmanager.dylib
+    {% endhighlight %}
+
+    <p>Type again <em>otool -L libfontmanager.dylib</em> and you should see the change.
+    We have changed the path to where libfontmanager look for libfreetype to a relative one. So now you have to copy the system or your custom-build freetype library inside the JVM in the same location as libfontmanager.dylib. <br />Relaunch your application, you should at least be able to see it now :)</p>
+</li>
+
+<h4><em>segmentedTextured</em> buttons not working</h4>
+    <p><a href="http://mail.openjdk.java.net/pipermail/macosx-port-dev/2012-May/004073.html" title="ML discussion">Mailing list Discussion.</a></p>
+    <p>I didn't find a solution for this, but it seems that increasing the margin around the button make the problem go away. I couldn't afford to have too much empty space though so I just replaced the decorations with an image.</p>
+
+<h4>OpenJDK Universal build not available</h4>
+    <a href="http://openjdk-osx-build.googlecode.com/svn/trunk/patches-jdk7u-osx/universal-build.patch">Patch by Henry Gomez</a>. A slightly different one has been applied in <a href="https://bitbucket.org/sreilly/openjdk7u-jdk">our jdk fork</a>.
+
+<h4>AppBundler universal binary</h4>
+    <p>There's no point to have a 32/64 OpenJDK if your JavaAppLauncher only supports a 64bit architecture. Again, head over to our BitBuckets repos to get the fix.</p>
+
+<h4>Dock Icon defaults to Generic Java Application</h4>
+    <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7159381">Dock Icon defaults to Generic Java Application</a>
+    <p>The (temporary) solution here is to specify both <em>CFBundleIconFile</em> and <em>-Xdock:icon=Contents/Resources/your-icon</em> in your <em>Info.plist</em> file. This could be done easily with AppBundler, I've written an example above.</p>
+
+<h4><em>apple.awt.fileDialogForDirectories</em> property not working.</h4>
+    <p><a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7161437">Bug report</a>, 
+    <a href="http://mail.openjdk.java.net/pipermail/macosx-port-dev/2012-May/004295.html">discussion</a> and <a href="http://intransitione.com/code/7161437.patch">a standalone patch</a>.</p>
+
+<h4>JFileChooser broken in the sandbox.</h4>
+    <p><a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7172752">Bug report</a>.
+    <a href="http://">Discussion</a>. There is no workaround for this, except to switch to a <em>FileDialog</em>
+    .The bug has been incorrectly closed as duplicate of another issue with <em>Runtime.exec()</em>.</p>
+
+<h4>Crash when opening an application from a registered file</h4>
+<a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7170716" title="Bug">Bug report</a> and <a href="http://mail.openjdk.java.net/pipermail/macosx-port-dev/2012-May/004226.html" title="Discussion">Discussion</a>.
+    <p>If a user double click on a file to open your application the application will crash before even showing its main window. My patch has been integrated in JDK8 and soon will be in JDK7u.</p>
+
+<h4><em>awt.brush.metalLook</em> is not observed.</h4>
+    <p><a href="http://mail.openjdk.java.net/pipermail/macosx-port-dev/2012-May/004227.html">Planned to be fixed in jdk7u6</a>.</p>
+
+<h4>Sandbox Violation on Runtime Exec</h4>
+    <p><a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7175692">Bug description</a> and <a href="http://mail.openjdk.java.net/pipermail/macosx-port-dev/2012-June/004375.html">ML discussion</a>. Because of the sandbox an application can't create a child process; there are a few workarounds but they all involve writing native code. The real solution is to use <em>posix_spawn</em>.</p>
+
+<p>If you have any questions, leave a comment here or on <a href="http://twitter.com/marcodinacci">Twitter</a></p>
+
+Marco
