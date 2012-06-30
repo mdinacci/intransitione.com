@@ -1,6 +1,6 @@
 --- 
 layout: post
-title: It is time to bring your Java application to the App Store.
+title: Take your Java application to the App Store.
 tags: 
 - Java
 - App Store
@@ -35,7 +35,7 @@ and be sure to take a look at the <a href="#knownproblems">known problems</a>.
 <h3>Requirements</h3>
 
 <h4>OpenJDK</h4>
-<p>First of all, you need to acquire the OpenJDK OSX port. There are 3½ ways:</p>
+<p>First of all, you need to acquire the OpenJDK OSX port. There are 3(½) ways:</p>
 
 <ul>
     <li> Download the <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">Oracle binary distribution</a>.</li>
@@ -47,16 +47,16 @@ and be sure to take a look at the <a href="#knownproblems">known problems</a>.
 <p>Getting the source should be the only reasonable option if you're serious about bringing your application to the App Store. However if you want to get started quickly and are not interested in the bleeding edge version, download the Oracle distribution. If you want the latest version of the code but don't want to build it yourself, download one of the Henry Gomez's pre-built images.</p>
 <p>Note that the Oracle bundle and the OpenJDK have different licences, the first is released under the <a href="http://www.oracle.com/technetwork/java/javase/terms/license/index.html">Binary Code License</a> agreement , the second under the <a href="http://openjdk.java.net/legal/gplv2+ce.html">GPL version 2 with Classpath Exception</a>. Make your choice.</p>
 
-<p class="headsup"><b>The absolute best setup</b> would be to clone the official repo and then replace the <em>jdk</em> subrepo with <a href="http://infinitekind.com">our</a> <a href="https://bitbucket.org/sreilly/openjdk7u-jdk">stable</a> or <a href="https://bitbucket.org/mdinacci/openjdk7u-jdk">my slightly more experimental</a> fork.</p>
+<p class="headsup">(½) <b>The absolute best setup</b> would be to clone the official repo and then replace the <em>jdk</em> subrepo with <a href="http://infinitekind.com">our</a> <a href="https://bitbucket.org/sreilly/openjdk7u-jdk">stable</a> or <a href="https://bitbucket.org/mdinacci/openjdk7u-jdk">my slightly more experimental</a> fork. At the time of writing the stable and experimental forks are the same but they may diverge in the future.</p>
 
-<p>If you want to know more of what's included in the fork you may find useful reading my other article <a href="www.intransitione.com/blog/forking-jdk-for-fun-and-profit">forking the JDK for fun and profit.</a></p>
+<p>If you want to know more of what's included in the fork you may find useful reading my other article <a href="http://intransitione.com/blog/forking-jdk-for-fun-and-profit">forking the JDK for fun and profit.</a></p>
 
 <h4>AppBundler</h4>
 <p>Once you have finished downloading the OpenJDK you need to install <strong>AppBundler</strong> to package your application.</p>
 
-<p><a href="http://java.net/projects/appbundler" title="Download AppBundler">AppBundler</a> is an ant task so just put the downloaded jar in the <em>lib</em> folder in your ant distribution and then <a href="http://java.net/projects/appbundler/pages/Home" title="AppBundler instructions">follow the instructions</a> to package your application. It still misses many features like the ability to sign your bundle or to register your application with a particular file type but it allows the most important thing which is to include a Java runtime within the application bundle and building an <strong>Info.plist</strong> file with most of the required keys.</p>
+<p><a href="http://java.net/projects/appbundler" title="Download AppBundler">AppBundler</a> is an ant task so just put the downloaded jar in the <em>lib</em> folder in your ant distribution and then <a href="http://java.net/projects/appbundler/pages/Home" title="AppBundler instructions">follow the instructions</a> to package your application. It still misses a few features like the ability to register your application with a particular file type but it allows to include a Java runtime within the application bundle and building an <strong>Info.plist</strong> file with most of the required keys.</p>
 
-<p class="headsup">At one point, you'll feel the AppBundler will miss many features you need. Luckily for you, we have again a <a href="https://bitbucket.org/sreilly/appbundler">stable</a> and <a href="https://bitbucket.org/mdinacci/openjdk7u-jdk">a slightly more experimental</a> fork that add plenty more features.</p>
+<p class="headsup">At one point, you'll feel the AppBundler will miss some of features you need. Luckily for you, we have again a <a href="https://bitbucket.org/sreilly/appbundler">stable</a> and <a href="https://bitbucket.org/mdinacci/appbundler">a slightly more experimental</a> fork that add plenty more features. If you're interested <a href="http://intransitione.com/blog/forking-jdk-for-fun-and-profit">you can read more</a> about what's included in this fork.</p>
 
 <p>Note that some keys are compulsory and your application won't be accepted if they're missing so be sure they're present. You must declare at least:</p>
 
@@ -122,9 +122,11 @@ and be sure to take a look at the <a href="#knownproblems">known problems</a>.
     classpath="appbundler-1.0ea.jar"
     classname="com.oracle.appbundler.AppBundlerTask"/>
 
+    <!-- Note the usage of classpathref to avoid copy-pasting all 
+    your classpath entries from another target. -->
   <bundleapp 
-      classpathref="runclasspathref"
-      name="MyApp"
+        classpathref="runclasspathref"
+        name="MyApp"
         displayname="MyApp"
         identifier="com.foobarbaz.MyApp"
         shortversion="1.0"
@@ -154,7 +156,8 @@ and be sure to take a look at the <a href="#knownproblems">known problems</a>.
         role="viewer">
       </bundledocument>
 
-      <!-- Register the application with your custom format, bundled as a package -->
+      <!-- Register the application with your custom format, 
+      bundled as a package -->
       <bundledocument extensions="custom"
         icon="${bundle.icon}"
         name="Custom data"
@@ -165,6 +168,7 @@ and be sure to take a look at the <a href="#knownproblems">known problems</a>.
       <!-- Workaround since the icon parameter for bundleapp doesn't work -->
       <option value="-Xdock:icon=Contents/Resources/${bundle.icon}"/>
 
+      <!-- OSX specific options, optional -->
       <option value="-Dapple.laf.useScreenMenuBar=true"/>
       <option value="-Dcom.apple.macos.use-file-dialog-packages=true"/>
       <option value="-Dcom.apple.macos.useScreenMenuBar=true"/>
@@ -176,7 +180,7 @@ and be sure to take a look at the <a href="#knownproblems">known problems</a>.
 </target>
 {% endhighlight %}
 
-<p>See how I used <em>classpathref</em> to declare an external classpath, <em>arch</em> to declare the supported architectures and <em>bundledocument</em> to register the application with particular file types.</p>
+<p>See how I used <b>classpathref</b> to declare an external classpath, <b>arch</b> to declare the supported architectures and <b>bundledocument</b> to register the application with particular file types.</p>
 
 <p></p>
 <a name="#steptwo"></a>
@@ -270,16 +274,80 @@ Java_com_foobar_OSXAdapter_getApplicationSupportFolder
 
 <p style="margin-bottom:20px"><a href="https://developer.apple.com/library/mac/#documentation/Security/Conceptual/AppSandboxDesignGuide/MigratingALegacyApp/MigratingAnAppToASandbox.html#//apple_ref/doc/uid/TP40011183-CH6-SW1">Check the Apple documentation</a> for more complex examples.</p>
 
+<a name="#stepfour"></a>
+<h3>Build and sign the application bundle</h3>
+<p>This is where you need to have a Mac developer account. You could technically sign your bundle with a test key but you won't be able to submit your app nor to install it.</p>
+
+<p>The process is made of three steps:</p>
+
+<ol>
+    <li>Write an entitlements file to specify the permissions your application requires.</li>
+    <li>Sign the bundle.</li>
+    <li>Package it.</li>
+</ol>
+
+<p>The first step require writing a <em>plist</em> file listing the permissions you need. Head over to the Apple website and <a href="https://developer.apple.com/library/mac/#documentation/Miscellaneous/Reference/EntitlementKeyReference/EnablingAppSandbox/EnablingAppSandbox.html#//apple_ref/doc/uid/TP40011195-CH4-SW1">check the documentation</a> to find out which keys are available. </p>
+
+<p>I'll show a simple example and I'll later demonstrate how to include it in your bundle:</p>
+
+{% highlight xml %}
+?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- Activates the sandbox, required. -->
+    <key>com.apple.security.app-sandbox</key>
+    <true/>
+    <!-- Allow your application read/write access to the user downloads folder -->
+    <key>com.apple.security.files.downloads.read-write</key>
+    <true/>
+    <!-- Allow your application read/write access to the file selected by the user. -->
+    <key>com.apple.security.files.user-selected.read-write</key>
+    <true/>
+    <!-- Allow your application to initiate network requests -->
+    <key>com.apple.security.network.client</key>
+    <true/>
+    <!-- Allow your application to listen for network requests -->
+    <key>com.apple.security.network.server</key>
+    <true/>
+    <!-- Allow your application to use the printer -->
+    <key>com.apple.security.print</key>
+    <true/>
+</dict>
+</plist>
+{% endhighlight %}
+
+<p>It's not very difficult to understand what's going on in the above example, especially with the comments, but <em>com.apple.security.files.user-selected.read-write</em> deserves a more detailed explanation. The user selected file corresponds to the selected file or directory in a file dialog (either open or save). Note that on OSX this means that <b>you're obliged to use the <em>FileDialog</em> instead of the <em>JFileChooser</em></b>, this is because the former uses the native <em>NSOpenDialog</em> and <em>NSSaveDialog</em> which are compatible with the sandbox.</p>
+
+<p>Now let's see how to sign your bundle (that you have generated using AppBundler):</p>
+<p>I assume that you have downloaded and installed the two keys required for signing the bundle from the Apple developer website. Of course you need to be registered as a Mac developer.</p>
+
+<p>All you have to do is execute the following command from a terminal: </p>
+{% highlight bash %}
+codesign -v -f -s SIGNING_ID_APP --entitlements YourApp.entitlements YourApp.app
+{% endhighlight %}
+
+<p>SIGNING_ID_APP is the name of your key which is named something like <b>3rt Party Mac Developer Application: <em>your name here</em></b></p>
+
+<p>Finally you can create a <em>.pkg</em> ready for submission:</p>
+{% highlight bash %}
+productbuild --component YourApp.app /Applications --sign SIGNING_ID_INSTALLER YourApp.pkg
+{% endhighlight %}
+
+<p>SIGNING_ID_APP is the name of your <em>installer</em> key which is named something like <b>3rt Party Mac Developer Installer: <em>your name here</em></b></p>
+
+<p style="margin-bottom:25px">Congratulations, your app is ready for submission! </p>
+
 <a name="#knownproblems"></a>
 <h2>Known problems</h2>
 
-<p>Plenty unfortunately, however I fixed most of them. The easiest way to get the fixes is to clone our <a href="https://bitbucket.org/sreilly/openjdk7u-jdk">jdk</a> and <a href="https://bitbucket.org/sreilly/openjdk7u-jdk">AppBundler</a> stable forks.</p>
+<p>Plenty unfortunately, however I fixed most of the ones I've encountered and included the fixes in our forks. The easiest way to get them is to clone our <a href="https://bitbucket.org/sreilly/openjdk7u-jdk">jdk</a> and <a href="https://bitbucket.org/sreilly/openjdk7u-jdk">AppBundler</a> stable forks. Or the <a href="https://bitbucket.org/mdinacci/openjdk7u-jdk">experimental jdk</a> and <a href="https://bitbucket.org/mdinacci/openjdk7u-jdk">AppBundler</a> if you like.</p>
 
 <p>Here's a list of most of the problems I've encountered and their solution, where available:</p>
 
 <h4>Launch failure <em>(LSOpenURLsWithRole() failed with error...)</em></h4>
 
-    <p><a href="http://mail.openjdk.java.net/pipermail/macosx-port-dev/2012-May/004116.html"/>Mailing list Discussion</a>. <a href="https://bitbucket.org/sreilly/appbundler">Our AppBundler fork</a> work around this problem.</p> 
+    <p><a href="http://mail.openjdk.java.net/pipermail/macosx-port-dev/2012-May/004116.html"/>Mailing list Discussion</a>. 
     <p>This is not a bug in the AppBundler but it is related to <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7159381">this bug</a> which should be fixed soon.</p>
 
 <h4>libfreetype absolute reference causes applications inside a sandbox to crash</h4>
