@@ -1,6 +1,6 @@
 --- 
 layout: post
-title: Take your Java application to the App Store.
+title: Take your Java application to the Mac App Store.
 tags: 
 - Java
 - App Store
@@ -12,7 +12,7 @@ tags:
 Although the App Store guidelines explicitly forbids applications to rely on deprecated or optionally installed technologies (Apple no longer bundles their JDK port so applications can't rely on the user to have it installed), you can still distribute your Java application on the App Store by embedding the <a href="http://openjdk.java.net/">OpenJDK 7 OSX port</a> in a native OSX application.
 </p>
 
-<a href="http://openjdk.java.net"><img src="/img/openjdk.png" border="0"/></a>
+<div align="center"><img src="/img/java_app_store.png" border="0"/></div>
 
 <p></p>
 
@@ -39,7 +39,7 @@ and be sure to take a look at the <a href="#knownproblems">known problems</a>.
 
 <ul>
     <li> Download the <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">Oracle binary distribution</a>.</li>
-    <li><a href="http://openjdk.java.net/projects/macosx-port/">Clone the Mercurial repository</a>. Compile it with Java 6 or 7 if you already have it.</li>
+    <li><a href="http://openjdk.java.net/projects/macosx-port/">Clone the Mercurial repository</a>. Compile it with Java 6 or 7 if you already have it. Pick OpenJDK7u to get the stability of OpenJDK7 and the backwards updates from OpenJDK 8.</li>
     <li>Download one of the excellent Henry Gomez's <a href="http://code.google.com/p/openjdk-osx-build/">pre-built packages</a>.</li>
 </ul>
 
@@ -408,6 +408,6 @@ productbuild --component YourApp.app /Applications --sign SIGNING_ID_INSTALLER Y
 <h4>Sandbox Violation on Runtime Exec</h4>
     <p><a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7175692">Bug description</a> and <a href="http://mail.openjdk.java.net/pipermail/macosx-port-dev/2012-June/004375.html">ML discussion</a>. Because of the sandbox an application can't create a child process; there are a few workarounds but they all involve writing native code. The real solution is to use <em>posix_spawn</em>.</p>
 
-<p>If you have any questions, leave a comment here or on <a href="http://twitter.com/marcodinacci">Twitter</a></p>
+<p>It took me ages to make this post, if there are any errors or if you have any questions, leave a comment here or on <a href="http://twitter.com/marcodinacci">Twitter</a></p>
 
 Marco
