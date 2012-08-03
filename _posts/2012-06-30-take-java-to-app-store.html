@@ -322,12 +322,23 @@ Java_com_foobar_OSXAdapter_getApplicationSupportFolder
 <p>Now let's see how to sign your bundle (that you have generated using AppBundler):</p>
 <p>I assume that you have downloaded and installed the two keys required for signing the bundle from the Apple developer website. Of course you need to be registered as a Mac developer.</p>
 
-<p>All you have to do is execute the following command from a terminal: </p>
+<p>First, you have to sign the application bundle, which you do by executing the following command from a terminal: </p>
 {% highlight bash %}
 codesign -v -f -s SIGNING_ID_APP --entitlements YourApp.entitlements YourApp.app
 {% endhighlight %}
 
 <p>SIGNING_ID_APP is the name of your key which is named something like <b>3rt Party Mac Developer Application: <em>your name here</em></b></p>
+
+<p>Second, you need to sign every jar and dylib (the jvm obiously have plenty) contained in the bundle:</p>
+{% highlight bash %}
+find YourApp.app/Contents/ -type f \( -name "*.jar" -or -name "*.dylib" \) -exec codesign --verbose -f -s SIGNING_ID_APP --entitlements YourApp.entitlements {} \;
+{% endhighlight %}
+
+<p>It doesn't harm to verify that the signing process went well:</p>
+{% highlight bash %}
+echo "Verify all libraries have been signed..."
+find YourApp.app/Contents/ -type f \( -name "*.jar" -or -name "*.dylib" \) -exec codesign --verbose --verify {} \;
+{% endhighlight %}
 
 <p>Finally you can create a <em>.pkg</em> ready for submission:</p>
 {% highlight bash %}
