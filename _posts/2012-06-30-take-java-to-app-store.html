@@ -419,6 +419,10 @@ productbuild --component YourApp.app /Applications --sign SIGNING_ID_INSTALLER Y
 <h4>Sandbox Violation on Runtime Exec</h4>
     <p><a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7175692">Bug description</a> and <a href="http://mail.openjdk.java.net/pipermail/macosx-port-dev/2012-June/004375.html">ML discussion</a>. Because of the sandbox an application can't create a child process; there are a few workarounds but they all involve writing native code. The real solution is to use <em>posix_spawn</em>.</p>
 
-<p>It took me ages to make this post, if there are any errors or if you have any questions, leave a comment here or on <a href="http://twitter.com/marcodinacci">Twitter</a></p>
+<h4>Private API usage</h4>
+    <p>Our first app submission failed because some awt files use some functions defined in some Apple private frameworks. I replaced the functions I've found with public API and added a patch to the bug report.</p>
+    <p><a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7187834">Bug report</a> and <a href="http://mail.openjdk.java.net/pipermail/macosx-port-dev/2012-July/004664.html">ml discussion</a>.</p>
+
+<p>It took me ages to make this post and I try as much as possible to keep it updated, if there are any errors or if you have any questions, leave a comment here or on <a href="http://twitter.com/marcodinacci">Twitter</a> or <a href="http://www.intransitione.com/support.html">send me an e-mail</a>.</p>
 
 Marco
