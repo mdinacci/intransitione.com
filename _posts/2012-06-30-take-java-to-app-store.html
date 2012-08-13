@@ -397,10 +397,14 @@ productbuild --component YourApp.app /Applications --sign SIGNING_ID_INSTALLER Y
     <p>There's no point to have a 32/64 OpenJDK if your JavaAppLauncher only supports a 64bit architecture. Again, head over to our BitBuckets repos to get the fix.</p>
 
 <h4>Dock Icon defaults to Generic Java Application</h4>
+    <p class="success"><b>UPDATE:</b> I believe this has been fixed too but I haven't found the reference yet.</p>
+
     <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7159381">Dock Icon defaults to Generic Java Application</a>
     <p>The (temporary) solution here is to specify both <em>CFBundleIconFile</em> and <em>-Xdock:icon=Contents/Resources/your-icon</em> in your <em>Info.plist</em> file. This could be done easily with AppBundler, I've written an example above.</p>
 
 <h4><em>apple.awt.fileDialogForDirectories</em> property not working.</h4>
+    <p class="success"><b>UPDATE:</b> this patch has been accepted, it's already in OpenJDK 8 and will be soon in OpenJDK 7u</p>
+
     <p><a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7161437">Bug report</a>, 
     <a href="http://mail.openjdk.java.net/pipermail/macosx-port-dev/2012-May/004295.html">discussion</a> and <a href="http://intransitione.com/code/7161437.patch">a standalone patch</a>.</p>
 
@@ -410,11 +414,13 @@ productbuild --component YourApp.app /Applications --sign SIGNING_ID_INSTALLER Y
     .The bug has been incorrectly closed as duplicate of another issue with <em>Runtime.exec()</em>.</p>
 
 <h4>Crash when opening an application from a registered file</h4>
+    <p class="success"><b>UPDATE:</b> my patch has been integrated into OpenJDK 8 and backported to OpenJDK 7u.</p>
 <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7170716" title="Bug">Bug report</a> and <a href="http://mail.openjdk.java.net/pipermail/macosx-port-dev/2012-May/004226.html" title="Discussion">Discussion</a>.
-    <p>If a user double click on a file to open your application the application will crash before even showing its main window. My patch has been integrated in JDK8 and soon will be in JDK7u.</p>
+    <p>If a user double click on a file to open your application the application will crash before even showing its main window.
 
 <h4><em>awt.brush.metalLook</em> is not observed.</h4>
-    <p><a href="http://mail.openjdk.java.net/pipermail/macosx-port-dev/2012-May/004227.html">Planned to be fixed in jdk7u6</a>.</p>
+    <p class="success">This has been fixed, see <a href="http://cr.openjdk.java.net/~serb/7124513/webrev.01/">webrev</a>.</p>
+    <p><del><a href="http://mail.openjdk.java.net/pipermail/macosx-port-dev/2012-May/004227.html">Planned to be fixed in jdk7u6</a></del>.</p>
 
 <h4>Sandbox Violation on Runtime Exec</h4>
     <p><a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7175692">Bug description</a> and <a href="http://mail.openjdk.java.net/pipermail/macosx-port-dev/2012-June/004375.html">ML discussion</a>. Because of the sandbox an application can't create a child process; there are a few workarounds but they all involve writing native code. The real solution is to use <em>posix_spawn</em>.</p>
@@ -423,6 +429,7 @@ productbuild --component YourApp.app /Applications --sign SIGNING_ID_INSTALLER Y
     <p>Our first app submission failed because some awt files use some functions defined in some Apple private frameworks. I replaced the functions I've found with public API and added a patch to the bug report.</p>
     <p><a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7187834">Bug report</a> and <a href="http://mail.openjdk.java.net/pipermail/macosx-port-dev/2012-July/004664.html">ml discussion</a>.</p>
 
+<br/>
 <p>It took me ages to make this post and I try as much as possible to keep it updated, if there are any errors or if you have any questions, leave a comment here or on <a href="http://twitter.com/marcodinacci">Twitter</a> or <a href="http://www.intransitione.com/support.html">send me an e-mail</a>.</p>
 
 Marco
