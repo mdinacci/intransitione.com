@@ -6,6 +6,33 @@ tags:
 - android
 - camera
 - picture
+- java
+blurb: |
+        <p>Sometimes you may want more control over the stages involved when taking a picture or you may want to access and modify the raw image data acquired by the camera. In these cases, using a simple <code class="simple">Intent</code> to take a picture is not enough.</p>
+
+        <p>We're going to create a new <code class="simple">Activity</code> and customize the view to make it full screen inside the <code class="simple">onCreate</code> method.</p>
+
+        {% highlight java %}
+        public class TakePictureActivity extends Activity {
+            private Preview mCameraView;
+
+            @Override
+            public void onCreate(Bundle savedInstanceState) {
+                super.onCreate(savedInstanceState);
+                
+                // Force screen in landscape mode as showing a video in 
+                // potrait mode is not easily doable on all devices
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                        
+                // Hide window title and go fullscreen
+                requestWindowFeature(Window.FEATURE_NO_TITLE);
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+                mCameraView= new Preview(this);
+                setContentView(mCameraView);
+            }
+        }
+        {% endhighlight %}
 ---
 <p>Sometimes you may want more control over the stages involved when taking a picture or you may want to access and modify the raw image data acquired by the camera. In these cases, using a simple <code class="simple">Intent</code> to take a picture is not enough.</p>
 

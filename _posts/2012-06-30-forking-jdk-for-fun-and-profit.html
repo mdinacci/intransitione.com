@@ -2,12 +2,17 @@
 layout: post
 title: Forking the OpenJDK for fun and profit.
 tags: 
-- Java
-- OSX
-- OpenJDK
-- AppBundler
-- BitBucket
-- Open Source
+  ["Java", "OSX", "OpenJDK", "AppBundler", "Open Source"]
+blurb: |
+      <p>At <a href="http://infinitekind.com">my current job</a> I'm tasked with bringing a Java Swing application to the App Store.</p>
+
+      <p>The way to do it, on OSX, is to bundle a Java distribution within the application as by Apple's terms it is no longer possible to distribute applications that rely on technologies optionally installed. As such, I started looking how to bundle the OpenJDK inside an OSX application.</p>
+
+      <a href="http://openjdk.java.net"><img src="/img/openjdk.png" border="0"/></a>
+
+      <p>It turns out <a href="java.net/projects/appbundler">AppBundler</a> does exactly that. So, task finished ? no, not quite...In the process of testing and improving our application I discovered several bugs in the OpenJDK and after a few patches we finally decided to maintain our own branch.</p> 
+
+      <p>Our OpenJDK fork currently provides: </p>
 ---
 
 <p>At <a href="http://infinitekind.com">my current job</a> I'm tasked with bringing a Java Swing application to the App Store.</p>

@@ -5,6 +5,17 @@ published: true
 tags: 
 - android
 - audio
+- java
+blurb: |
+        <p>Playing an audio file is as easy as setting up a <code class="simple">MediaPlayer</code> and a <code class="simple">MediaController</code>.</p>
+
+        <p>First create a new activity that implements the <code class="simple">MediaPlayerControl</code> interface.</p>
+        {% highlight java %} 
+        public class PlayAudioActivity extends Activity implements MediaPlayerControl {
+                private MediaController mMediaController;
+                private MediaPlayer mMediaPlayer;
+                private Handler mHandler = new Handler();
+        {% endhighlight %}
 ---
 <p class="headsup"><strong>Update:</strong> The complete source code for this demo <a href="/code/android/play_audio_demo.zip">is available for download</a>.</p>
 

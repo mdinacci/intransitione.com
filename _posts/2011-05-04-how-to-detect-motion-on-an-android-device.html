@@ -4,6 +4,16 @@ title: How to detect motion on an Android device
 tags: 
 - android
 - motion detection
+- java
+blurb: |
+        <p>For learning purposes I've written <a href="http://www.intransitione.com/software/#pim" alt="PicInMotion description">PicInMotion</a>, a small Android application that automatically takes a picture when it detects motion in the camera preview.</p>
+
+        <p>This article explains how the simple motion detection mechanism works.</p>
+
+        <p class="headsup"><strong>Update: </strong> source code is available at <a href="https://github.com/mdinacci/PicInMotion/tree/standalone" title="github">github</a>, be sure to clone the <strong>standalone</strong> repository.</p>
+
+        <h3>Strategy</h3>
+        <p>Dead simple. I store a frame and compare it to the next, if the differences in the two frames are above a certain threshold then motion is detected. Common image detection techniques are far more complicated than what I'm using here and image processing operations (like erode, dilate and some other form of noise reduction) are normally applied to frames in order to reduce digital noise.</p>
 ---
 <p>For learning purposes I've written <a href="http://www.intransitione.com/software/#pim" alt="PicInMotion description">PicInMotion</a>, a small Android application that automatically takes a picture when it detects motion in the camera preview.</p>
 
@@ -31,13 +41,13 @@ public void onPreviewFrame(byte[] data, Camera camera) {
         // I set PICTURE_DELAY to 3000 ms, your degree may vary.
         // mReferenceTime is simply 0 at the beginning.
         long now = System.currentTimeMillis();
-	if (now > mReferenceTime + PICTURE_DELAY) {  			 
+    if (now > mReferenceTime + PICTURE_DELAY) {              
             mReferenceTime = now + PICTURE_DELAY;
-	    camera.takePicture(null, null, this);
-	} else {
-	    Log.i(TAG, "Not taking picture because not enough time has "
-	    + "passed since the creation of the Surface");
-	}
+        camera.takePicture(null, null, this);
+    } else {
+        Log.i(TAG, "Not taking picture because not enough time has "
+        + "passed since the creation of the Surface");
+    }
     }
 }
 {% endhighlight %}
@@ -58,21 +68,21 @@ mCamera.setParameters(parameters);
 <p>We can perform the motion detection on the luminance data only, it will be much faster than comparing two RGB images.</p>
 
 {% highlight java %}
-public boolean detect(byte[] data) {		
+public boolean detect(byte[] data) {        
     // Create the "background" picture, the one that will be used
     // to check the next frame against.
     if(mBackground == null) {
         mBackground = AndroidImageFactory.createImage(data,   
             mSize.value, mPixelFormat.value);
-	Log.i(TAG, "Creating background image");
-	return false;
+    Log.i(TAG, "Creating background image");
+    return false;
     }
-		
+        
     boolean motionDetected = false;
-		
+        
     mAndroidImage=AndroidImageFactory.createImage(data,
         mSize.value, mPixelFormat.value);
-		
+        
     motionDetected = mAndroidImage.isDifferent(mBackground, 
         mPixelThreshold.value, mThreshold.value);
    
@@ -80,7 +90,7 @@ public boolean detect(byte[] data) {
     // This is an oversimplification, you would normally blend the two
     // images to create a new one.
     mBackground = mAndroidImage;
-	
+    
     return motionDetected;
 } 
 {% endhighlight %}
@@ -92,14 +102,14 @@ public static AndroidImage createImage(byte[] data, Size<Integer,
     Integer> size, int format) {
     
     AndroidImage im = null;
-		
+        
     String imgType = "";
-		
+        
     switch (format) {
         case IMAGE_FORMAT_NV21:
-	    im = new AndroidImage_NV21(data,size);
-	    imgType = "NV_21";
-	    break;
+        im = new AndroidImage_NV21(data,size);
+        imgType = "NV_21";
+        break;
    
     ...
 {% endhighlight %}
@@ -112,35 +122,35 @@ public static AndroidImage createImage(byte[] data, Size<Integer,
 {% highlight java %}
 @Override
 public boolean isDifferent(AndroidImage other, int pixel_threshold, 
-	int threshold) {
-		
+    int threshold) {
+        
         if(!assertImage(other))
             return false;
-		
-	byte[] otherData = other.get();
-	int totDifferentPixels = 0;
-		
-	int size= mHeight * mWidth;
-	for (int i = 0, ij=0; i < mHeight; i++) {
-	    for (int j = 0; j < mWidth; j++,ij++) {
-	        int pix = (0xff & ((int) mData[ij])) - 16;
-		int otherPix = (0xff & ((int) otherData[ij])) - 16;
-				
-		if (pix < 0) pix = 0;
-		if (pix > 255) pix = 255;
-		if (otherPix < 0) otherPix = 0;
-		if (otherPix > 255) otherPix = 255;
+        
+    byte[] otherData = other.get();
+    int totDifferentPixels = 0;
+        
+    int size= mHeight * mWidth;
+    for (int i = 0, ij=0; i < mHeight; i++) {
+        for (int j = 0; j < mWidth; j++,ij++) {
+            int pix = (0xff & ((int) mData[ij])) - 16;
+        int otherPix = (0xff & ((int) otherData[ij])) - 16;
+                
+        if (pix < 0) pix = 0;
+        if (pix > 255) pix = 255;
+        if (otherPix < 0) otherPix = 0;
+        if (otherPix > 255) otherPix = 255;
 
-		if(Math.abs(pix - otherPix) >= pixel_threshold)
-			totDifferentPixels++;
-	    }
-	}
-		
-	if(totDifferentPixels == 0) totDifferentPixels = 1;
-	Log.d(TAG, "Number of different pixels: " + totDifferentPixels + "> " 
+        if(Math.abs(pix - otherPix) >= pixel_threshold)
+            totDifferentPixels++;
+        }
+    }
+        
+    if(totDifferentPixels == 0) totDifferentPixels = 1;
+    Log.d(TAG, "Number of different pixels: " + totDifferentPixels + "> " 
             + (100 / ( size / totDifferentPixels) ) + "%");
-		
-	return totDifferentPixels > threshold;
+        
+    return totDifferentPixels > threshold;
 }
 {% endhighlight %}
 

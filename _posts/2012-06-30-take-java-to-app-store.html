@@ -2,10 +2,13 @@
 layout: post
 title: Take your Java application to the Mac App Store.
 tags: 
-- Java
-- App Store
-- Mac
-- OpenJDK
+  ["OpenJDK", "Java", "App Store", "Mac", "OpenJDK"]
+blurb: |
+      <p>In this guide I'll go through all the steps required to port your Java Swing application to OpenJDK with the goal of preparing it for the submission into the App Store.
+      Although the App Store guidelines explicitly forbids applications to rely on deprecated or optionally installed technologies (Apple no longer bundles their JDK port so applications can't rely on the user to have it installed), you can still distribute your Java application on the App Store by embedding the <a href="http://openjdk.java.net/">OpenJDK 7 OSX port</a> in a native OSX application.
+      </p>
+
+      <div align="center"><img src="/img/java_app_store.png" border="0"/></div>
 ---
 
 <p>In this guide I'll go through all the steps required to port your Java Swing application to OpenJDK with the goal of preparing it for the submission into the App Store.
@@ -419,7 +422,7 @@ productbuild --component YourApp.app /Applications --sign SIGNING_ID_INSTALLER Y
     <p>If a user double click on a file to open your application the application will crash before even showing its main window.
 
 <h4><em>awt.brush.metalLook</em> is not observed.</h4>
-    <p class="success">This has been fixed, see <a href="http://cr.openjdk.java.net/~serb/7124513/webrev.01/">webrev</a>.</p>
+    <p class="success"><b>Update: </b>this has been fixed, see <a href="http://cr.openjdk.java.net/~serb/7124513/webrev.01/">webrev</a>.</p>
     <p><del><a href="http://mail.openjdk.java.net/pipermail/macosx-port-dev/2012-May/004227.html">Planned to be fixed in jdk7u6</a></del>.</p>
 
 <h4>Sandbox Violation on Runtime Exec</h4>

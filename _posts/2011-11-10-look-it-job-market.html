@@ -7,6 +7,8 @@ tags:
 - javascript
 - jquery
 - ruby
+blurb: |
+        <p>Few weeks ago I bought an <a href="http://pragprog.com/book/btlang/seven-languages-in-seven-weeks" title="Seven Languages In Seven Weeks">amazing book</a> whose first chapter is an introduction to the Ruby language. I've never really been interested in Ruby before as I'm perfectly happy with Python but I think there's always something to learn when studying a new language. With this in mind, and considering that I'm looking for a job, I thought to learn Ruby by writing a tool to analyze the technical skills most required by the market today. </p><p>I selected the website that in my opinion offers the more interesting jobs, <a href="http://careers.stackoverflow.com" title="careers.stackoverflow.com" target="_blank">careers.stackoverflow.com</a>, did a bit of scraping and made some visualisations to help me understand the data collected (which, BTW, is limited only to the last 5 weeks). </p>
 ---
 <script type="text/javascript" src="/js/crawler/requirements.js"></script>
 <script type="text/javascript" src="/js/crawler/charts.js"></script>
@@ -48,13 +50,13 @@ I selected the website that in my opinion offers the more interesting jobs, <a h
 
 <br/>
 <p>Although the data is limited (again, only 5 weeks), we can make some interesting comparisons:
-	<ul>
-		<li>There's more demand of <strong>Java</strong> developers than <strong>C#</strong> developers. </li>
-		<li>More jobs require <strong>Android</strong> knowledge rather than <strong>iOS</strong>, maybe this is also why Java > C#. </li>
-		<li><strong>MySQL</strong> beats any other database, including NoSQL ones.</li>
-		<li><strong>Javascript</strong> is the most frequent tag, immediately followed by Java.</li>
-		<li><strong>Ruby</strong> is less requested than I thought, but maybe requests are distributed among the tags <strong>ruby</strong> and <strong>ruby-on-rails</strong>, I don't know.</li>
-	</ul>
+    <ul>
+        <li>There's more demand of <strong>Java</strong> developers than <strong>C#</strong> developers. </li>
+        <li>More jobs require <strong>Android</strong> knowledge rather than <strong>iOS</strong>, maybe this is also why Java > C#. </li>
+        <li><strong>MySQL</strong> beats any other database, including NoSQL ones.</li>
+        <li><strong>Javascript</strong> is the most frequent tag, immediately followed by Java.</li>
+        <li><strong>Ruby</strong> is less requested than I thought, but maybe requests are distributed among the tags <strong>ruby</strong> and <strong>ruby-on-rails</strong>, I don't know.</li>
+    </ul>
 </p>
 
 <p>This knowledge is useful but too superficial. Most of the companies are looking for candidates with a knowledge of a <strong>set</strong> of technologies strongly related between them so I made a graph to see which groups of technologies are the most requested. This visualization takes the 20 most occurring tags and analyze which other tags appear with. I shortened some of the words to make the visualization more readable, eg. <em>ror</em> stands for Ruby on Rails while <em>js</em> represents Javascript. 

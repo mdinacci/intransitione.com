@@ -21,7 +21,7 @@ task :minify do
 end
 
 desc 'Build site with Jekyll'
-task :build => [:clean,:less,:minify] do
+task :build => [:clean,:lessdev,:minify] do
   jekyll('--no-server --no-auto')
 end
 
@@ -96,6 +96,6 @@ def minify(opts = '')
     sh 'juicer merge --force _css/contact.css -o css/contact.css'
     sh 'juicer merge --force _css/mdpopup.css -o css/mdpopup.css'
 
-    sh 'juicer merge -s _js/mdpopup.js -o js/mdpopup.js'
-    sh 'juicer merge -s _js/main.js -o js/main.js'
+    sh 'juicer merge -s --force _js/mdpopup.js -o js/mdpopup.js'
+    sh 'juicer merge -s --force _js/main.js -o js/main.js'
 end

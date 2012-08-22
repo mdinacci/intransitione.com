@@ -4,6 +4,34 @@ title: Adding control to the OpenGL spinning cube
 tags: 
 - android
 - opengl
+- java
+blurb: |
+        <p>This demo extends on the <a href="http://www.intransitione.com/blog/create-a-spinning-cube-with-opengl-es-and-android/" alt="Create a spinning cube with OpenGL ES">Create a spinning cube OpenGL</a> to show how to control the cube using a D-pad. 
+        We're going to increment the speed rotation along the X and Y axes using the directional keys of the D-pad.</p>
+
+        <p>The biggest change is that we now have our custom class that extends the <code class="simple">SurfaceView</code>.
+        We do this so we can override the <code class="simple">onKeyUp</code> method and be notified when the user uses the D-pad.</p>
+
+        <p>The <code class="simple">onCreate</code> of our <code class="simple">Activity</code> looks like this:</p>
+        {% highlight java %}
+        public class SpinningCubeActivity2 extends Activity {
+            @Override
+            public void onCreate(Bundle savedInstanceState) {
+                super.onCreate(savedInstanceState);
+                
+                // go fullscreen
+                requestWindowFeature(Window.FEATURE_NO_TITLE);
+                getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                
+                // create our custom view
+                GLSurfaceView view = new OpenGLSurfaceView(this);
+                view.setRenderer((Renderer)view);
+                setContentView(view);
+            }
+        }
+        {% endhighlight %}
+
 ---
 <p>This demo extends on the <a href="http://www.intransitione.com/blog/create-a-spinning-cube-with-opengl-es-and-android/" alt="Create a spinning cube with OpenGL ES">Create a spinning cube OpenGL</a> to show how to control the cube using a D-pad. 
 We're going to increment the speed rotation along the X and Y axes using the directional keys of the D-pad.</p>

@@ -2,9 +2,16 @@
 layout: post
 title: OpenJDK on OSX crashes when opening an application with a registered file 
 tags: 
-- Java
-- OSX
-- OpenJDK
+  ["Java", "OSX", "OpenJDK"]
+blurb: |
+      <p>Here's fix for a <b>low</b> priority <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7170716" title="Bug 7170716">bug</a> which was unfortunately <b>critical</b> for my application and I suspect for every application that is registered to open a particular set of files.</p>
+
+      <p>I'll explain this bug with an example. </p>
+
+      <p>
+        Say you download a Java PDF reader and you have the latest Java 7 (or OpenJDK) distribution. You would expect that if you click on a PDF file your PDF reader would open so you could read it, right ?....<br/>No, unfortunately the PDF reader will crash before it could even show its window. You can still open the PDF reader and then open the file, but who would release (and use) an application that crashes so easily ?
+      </p> 
+
 ---
 
 <script>

@@ -6,6 +6,12 @@ tags:
 - android
 - arrayadapter
 - listview
+blurb: |
+        <p>The Android documentation says that the <code class="simple">ListView</code> widget is easy to use. It is true if you just want to display a simple list of strings but as soon as you want to customize your list things become more complicated.</p>
+
+        <p>The following is a tutorial on how to write a <code class="simple">ListView</code> that displays a static list of images and strings, similar to the settings list on your phone. </p>
+
+        <p>For the impatients, here's the <a href="http://www.intransitione.com/code/android/adv_listview_demo.zip">Eclipse project code</a> and a picture of the final result:
 ---
 <p>The Android documentation says that the <code class="simple">ListView</code> widget is easy to use. It is true if you just want to display a simple list of strings but as soon as you want to customize your list things become more complicated.</p>
 
@@ -27,12 +33,12 @@ public class AdvancedListViewActivity extends ListActivity {
         setContentView(R.layout.main);
         
         Context ctx = getApplicationContext();
-	Resources res = ctx.getResources();
+    Resources res = ctx.getResources();
 
-	String[] options = res.getStringArray(R.array.country_names);
-	TypedArray icons = res.obtainTypedArray(R.array.country_icons);
-		
-	setListAdapter(new ImageAndTextAdapter(ctx, R.layout.main_list_item, options, icons));
+    String[] options = res.getStringArray(R.array.country_names);
+    TypedArray icons = res.obtainTypedArray(R.array.country_icons);
+        
+    setListAdapter(new ImageAndTextAdapter(ctx, R.layout.main_list_item, options, icons));
     }
 }
 {% endhighlight %}
@@ -71,53 +77,53 @@ public class AdvancedListViewActivity extends ListActivity {
 {% highlight java %}
 public class ImageAndTextAdapter extends ArrayAdapter<String> {
 
-	private LayoutInflater mInflater;
-	
-	private String[] mStrings;
-	private TypedArray mIcons;
-	
-	private int mViewResourceId;
-	
-	public ImageAndTextAdapter(Context ctx, int viewResourceId,
-			String[] strings, TypedArray icons) {
-		super(ctx, viewResourceId, strings);
-		
-		mInflater = (LayoutInflater)ctx.getSystemService(
-				Context.LAYOUT_INFLATER_SERVICE);
-		
-		mStrings = strings;
-		mIcons = icons;
-		
-		mViewResourceId = viewResourceId;
-	}
+    private LayoutInflater mInflater;
+    
+    private String[] mStrings;
+    private TypedArray mIcons;
+    
+    private int mViewResourceId;
+    
+    public ImageAndTextAdapter(Context ctx, int viewResourceId,
+            String[] strings, TypedArray icons) {
+        super(ctx, viewResourceId, strings);
+        
+        mInflater = (LayoutInflater)ctx.getSystemService(
+                Context.LAYOUT_INFLATER_SERVICE);
+        
+        mStrings = strings;
+        mIcons = icons;
+        
+        mViewResourceId = viewResourceId;
+    }
 
-	@Override
-	public int getCount() {
-		return mStrings.length;
-	}
+    @Override
+    public int getCount() {
+        return mStrings.length;
+    }
 
-	@Override
-	public String getItem(int position) {
-		return mStrings[position];
-	}
+    @Override
+    public String getItem(int position) {
+        return mStrings[position];
+    }
 
-	@Override
-	public long getItemId(int position) {
-		return position;
-	}
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
 
-	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
-		convertView = mInflater.inflate(mViewResourceId, null);
-		
-		ImageView iv = (ImageView)convertView.findViewById(R.id.option_icon);
-		iv.setImageDrawable(mIcons.getDrawable(position));
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        convertView = mInflater.inflate(mViewResourceId, null);
+        
+        ImageView iv = (ImageView)convertView.findViewById(R.id.option_icon);
+        iv.setImageDrawable(mIcons.getDrawable(position));
 
-		TextView tv = (TextView)convertView.findViewById(R.id.option_text);
-		tv.setText(mStrings[position]);
-		
-		return convertView;
-	}
+        TextView tv = (TextView)convertView.findViewById(R.id.option_text);
+        tv.setText(mStrings[position]);
+        
+        return convertView;
+    }
 }
 {% endhighlight %}
 
@@ -131,17 +137,17 @@ We first use a <code class="simple">LayoutInflater</code> to create a <code clas
 {% highlight xml %}
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android">
-	<ImageView
-	android:id="@+id/option_icon"
-	android:layout_width="48dp"
-	android:layout_height="fill_parent"/>
-	<TextView
-	   android:id="@+id/option_text"
-	    android:layout_width="fill_parent"
-	    android:layout_height="fill_parent"
-	    android:padding="10dp"
-	    android:textSize="16dp" >
-	</TextView>
+    <ImageView
+    android:id="@+id/option_icon"
+    android:layout_width="48dp"
+    android:layout_height="fill_parent"/>
+    <TextView
+       android:id="@+id/option_text"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:padding="10dp"
+        android:textSize="16dp" >
+    </TextView>
 </LinearLayout>
 {% endhighlight %}
 

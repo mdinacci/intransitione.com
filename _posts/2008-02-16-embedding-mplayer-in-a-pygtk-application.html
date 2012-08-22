@@ -5,6 +5,11 @@ tags:
 - pygtk
 - python
 - gtk
+blurb: |
+        <p>Recently I wanted to extract the sound track from a MP4 file.
+        You actually need a single command-line to do that, either using <a href="http://www.mplayerhq.hu">Mplayer</a> or <a href="http://gstreamer.freedesktop.org/">GStreamer</a>.</p>
+        <p>It's amazing what you can do with GStreamer pipelines, but unfortunately I ran into several problems trying to play H.264 video files with AAC audio  (the files are produced by a Sanyo camera and make Totem crash after about few seconds...) so I gave up and I took a look at MPlayer. After all I really didn't need all the GStreamer functionalities.</p>
+        <p>A single line actually does the job:</p>
 ---
 <p class="headsup">You can find the complete (but fairly hackish) source code for the article here:
 <a id="mbef" title="Download the full example' source code" href="/code/audioextractor.zip">AudioExtractor.zip</a></p>

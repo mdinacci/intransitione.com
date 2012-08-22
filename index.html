@@ -1,27 +1,32 @@
 ---
 layout: default
-title: Marco Dinacci
+title: Blog
 ---
-<div id="home">
-    <h2>Recent posts</h2>
-    <p></p>
-    <ul class="post-list">
-        {% for post in site.posts limit: 8 %}
-            <li><time datetime="{{ post.date | date: '%Y-%m-%d' }}">{{ post.date | date: '%b %d %Y' }}</time>
-            <a href="{{ post.url }}">{{ post.title }}</a></li>
-        {% endfor %}
-    </ul>
-    <p>&rarr; <a href="/blog.html">Browse all {{ site.posts | size }} posts</a></p>
-        <!--
-    <h2>Recent Photos</h2>
-    <section class="photos">
-        {% include photos.html %}
-    </section>
-    -->
-    <br>
-    <h2>Projects</h2>
-    <p></p>
-    <section class="projects">
-        {% include projects.html %}
-    </section>
-</div>
+<div id="home">                                                                
+{% for post in paginator.posts %}                                              
+<article>                                                                      
+  <header>                                                                     
+    <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>                     
+    <time datetime="{{ post.date | date: '%Y-%m-%d' }}">Posted on: {{ post.date | date: '%b %d %Y' }}</time>
+  </header>                                                                    
+  <p>{{ post.blurb }}</p>                                             
+  <footer>
+      <p><a href="{{ post.url }}#continue">Read More...</a></p>                                                                         
+  </footer>
+</article>                                                                     
+{% endfor %}
+
+</div> 
+<nav id="pagination">
+    {% if paginator.previous_page %}
+      {% if paginator.previous_page == 1 %}
+      <a href="/" title="Previous Page">&laquo; Previous</a>
+      {% else %}
+      <a href="/page{{ paginator.previous_page }}/" title="Previous Page">&laquo; Previous</a>
+      {% endif %}
+    {% endif %}
+    
+    {% if paginator.next_page %} 
+    <a href="/page{{ paginator.next_page }}/" title="Next Page">Next &raquo;</a>
+    {% endif %} 
+</nav>
