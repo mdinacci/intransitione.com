@@ -21,7 +21,7 @@ task :minify do
 end
 
 desc 'Build site with Jekyll'
-task :build => [:clean,:lessdev,:minify] do
+task :build => [:clean,:less,:minify] do
   jekyll('--no-server --no-auto')
 end
 
@@ -86,8 +86,8 @@ def lessdev(opts = '')
 end
 
 def lessc(opts = '')
-    sh 'lessc -x _less/screen.less css/screen.css'
-    sh 'lessc -x _less/contact.less css/contact.css'
+    sh 'lessc -x _less/screen.less _css/screen.css'
+    sh 'lessc -x _less/contact.less _css/contact.css'
 end
 
 def minify(opts = '')
