@@ -20,6 +20,7 @@ h3{font-size:20px;font-weight:bold;line-height:1em;margin:0;padding:5px 0 5px 0;
 h4,h5,h6{font-size:16px;border-bottom:1px solid #ddd;font-weight:normal;}
 pre{padding:0 30px;text-wrap:wrap;white-space:pre-wrap;white-space:-moz-pre-wrap;white-space:-pre-wrap;white-space:-o-pre-wrap;word-wrap:break-word;}
 div.projects>p{padding-bottom:20px;}
+#media_links{float:right;margin-right:0px;}
 #sitename{float:right;color:#333;font-size:120%;}
 div.highlight{margin:5px;padding:5px;-moz-border-radius:5px;-webkit-border-radius:5px;border-radius:5px;}
 article{border-bottom:1px dashed rgba(60, 60, 60, 0.15);margin-bottom:40px;}
