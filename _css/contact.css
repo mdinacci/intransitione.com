@@ -1,3 +1,4 @@
+.main-box{-moz-border-radius:5px;-webkit-border-radius:5px;border-radius:5px;-moz-box-shadow:0 2px 5px rgba(0, 0, 0, 0.5);-webkit-box-shadow:0 2px 5px rgba(0, 0, 0, 0.5);box-shadow:0 2px 5px rgba(0, 0, 0, 0.5);padding-left:30px;padding-right:30px;padding-top:10px;padding-bottom:10px;margin-top:20px;margin-bottom:20px;width:700px;background-image:url(../img/furley_bg_light.png);background-repeat:repeat;}
 .alert{padding:8px 35px 8px 14px;margin-bottom:18px;text-shadow:0 1px 0 rgba(255, 255, 255, 0.5);background-color:#fcf8e3;border:1px solid #fbeed5;-moz-border-radius:4px;-webkit-border-radius:4px;border-radius:4px;}
 .align-right{margin:0;padding:0;margin-left:8px;margin-top:8px;margin-bottom:8px;float:right;}
 .align-left{margin:0;padding:0;margin-right:8px;margin-top:8px;margin-bottom:8px;float:left;}

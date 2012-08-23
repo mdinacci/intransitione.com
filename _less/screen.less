@@ -4,25 +4,30 @@
 body > * {
     clear: both;
     margin: 0 auto;
-    width: 700px;
-}
-
-body > header {
-    border-bottom: 4px solid #ddd;
-    margin-bottom: 20px;
-    padding: 0 0 20px 0;
-    position: relative;
-}
-
-body > footer {
-    border-top: 4px solid #ddd;
-    margin-top: 20px;
-    padding: 10px 0;
 }
 
 #main {
     clear: both;
-    margin-bottom: 20px;
+    .main-box;
+}
+
+body > header {
+    position: relative;
+    .main-box;
+}
+
+body > header > nav {
+    margin-left: auto;
+    margin-right: auto;
+    width:@site_width;
+    text-align:center;
+}
+
+body > footer {
+    .main-box;
+    text-align:center;
+    padding-top:5px;
+    padding-bottom:5px;
 }
 
 /*
@@ -33,13 +38,13 @@ html {
 } */
 
 body {
-    background-color: #fff;
     color: #333;
-    //font: 14px/20px 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font: 14px/20px 'Cantarell', sans-serif;//, 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    margin: 20px;
     overflow-y: scroll !important;
     text-rendering: optimizelegibility;
+    width: 100%;
+    background-image: url(../img/furley_bg.png); 
+    background-repeat: repeat;
 }
 
 a {
@@ -128,6 +133,7 @@ article img {
 article > footer {
     margin-top: 20px;
 }
+
 article > footer > p, article > footer > span {
     color: #999;
     font-size: 13px;
@@ -345,6 +351,11 @@ a.thumbnail:hover {
 
 .thumbnail .caption {
   padding: 9px;
+}
+
+/* Footer */
+#copyright {
+    font-size: 0.8em;
 }
 
 /* Disqus comments */

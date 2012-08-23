@@ -1,3 +1,5 @@
+@site_width: 720px;
+
 .border-radius(@radius: 5px){
   -moz-border-radius: @radius; // FF 1+
   -webkit-border-radius: @radius; // FF 1+
@@ -8,6 +10,20 @@
   -moz-box-shadow: @x @y @blur rgba(0, 0, 0, @alpha);
   -webkit-box-shadow: @x @y @blur rgba(0, 0, 0, @alpha);
   box-shadow: @x @y @blur rgba(0, 0, 0, @alpha);
+}
+
+.main-box {
+    .border-radius;
+    .box-shadow(0,2px,5px,0.5);
+    padding-left:30px;
+    padding-right:30px;
+    padding-top:10px;
+    padding-bottom:10px;
+    margin-top:20px;
+    margin-bottom:20px;
+    width:700px;
+    background-image: url(../img/furley_bg_light.png);                         
+    background-repeat: repeat;
 }
 
 .transition (@prop: all, @time: 1s, @ease: linear) {

@@ -5,6 +5,6 @@ domain: intransitione.com
 production: true
 title: intransitione.com
 url: http://www.intransitione.com
-paginate: 3
+paginate: 5
 feed: http://feeds.feedburner.com/Intransitionecom
 disqus_shortname: intransitionecom
