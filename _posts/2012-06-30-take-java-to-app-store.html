@@ -195,8 +195,21 @@ In short though, the sandbox is an access control mechanism which restricts inte
 
 <p>The <em>container</em> is the directory where your application can safely read/write the files required for its correct functioning. It is physically located in <strong><em>~/Library/Containers/yourapp.bundle.id</em></strong>; I doubt this is likely to change anytime soon so if you have a very simple application you <b>may</b> hardcode this path instead of relying on a native library to return it for you. I say may because I can't possibly know how Apple will react if you hardcode the path of the container instead of obtaining it by using the API.</p>
 
-<p>If your application will require storing user documents in the container or writing temporary files and you don't want to risk any surprise you'll have to build a native extension to get the appropriate directories. A JNI wrapper is the easiest route, the only problem I encountered is that <strong>javah</strong> generate headers files with the line: 
+<p>If your application will require storing user documents in the container or writing temporary files and you don't want to risk any surprise you'll have to build a native extension to get the appropriate directories. A JNI wrapper is the easiest route the only problem I encountered is that <strong>javah</strong> generate headers files with the line: </p>
 
+<p class="headsup"><strong>UPDATE: </strong>The problem was due to the fact I was using Apple's JavaVM framework based on JDK 1.6.</p> 
+
+<p>Instead, include the headers of the OpenJDK you're using, for example: </p>
+
+{% highlight c %}
+-I /Library/Java/JavaVirtualMachines/jdk1.7.0_06.jdk/Contents/Home/include -I /Library/Java/JavaVirtualMachines/jdk1.7.0_06.jdk/Contents/Home/include/darwin  
+{% endhighlight %}
+
+<p>Thanks to Scott Kovatch for pointing it out.</p>
+
+<p>This fix for the headers <b>is no longer necessary</b> but I leave it for reference here below as others can make the same mistake I did.</p> 
+
+<s>
 {% highlight c %}
 #include <jni.h>
 {% endhighlight %}
@@ -224,6 +237,7 @@ all:
 clean:
     rm *.o *.class
 {% endhighlight %}
+</s>
 
 <p>Now that you have your C header you can create a function that will return for example the <em>Application Support</em> folder for your application, which is located inside the appplication container:</p>
 
