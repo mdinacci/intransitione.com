@@ -402,7 +402,7 @@ productbuild --component YourApp.app /Applications --sign SIGNING_ID_INSTALLER Y
     <a href="http://openjdk-osx-build.googlecode.com/svn/trunk/patches-jdk7u-osx/universal-build.patch">Patch by Henry Gomez</a>.
 
 <h4>AppBundler universal binary</h4>
-    <p>There's no point to have a 32/64 OpenJDK if your JavaAppLauncher only supports a 64bit architecture. Again, head over to our BitBuckets repos to get the fix.</p>
+    <p>There's no point to have a 32/64 OpenJDK if your JavaAppLauncher only supports a 64bit architecture. Use <a href="https://bitbucket.org/sreilly/appbundler">this AppBundler</a> instead.</p>
 
 <h4>Dock Icon defaults to Generic Java Application</h4>
     <p class="success"><b>UPDATE:</b> I believe this has been fixed too but I haven't found the reference yet.</p>
@@ -411,7 +411,7 @@ productbuild --component YourApp.app /Applications --sign SIGNING_ID_INSTALLER Y
     <p>The (temporary) solution here is to specify both <em>CFBundleIconFile</em> and <em>-Xdock:icon=Contents/Resources/your-icon</em> in your <em>Info.plist</em> file. This could be done easily with AppBundler, I've written an example above.</p>
 
 <h4><em>apple.awt.fileDialogForDirectories</em> property not working.</h4>
-    <p class="success"><b>UPDATE:</b> this patch has been accepted, it's already in OpenJDK 8 and will be soon in OpenJDK 7u</p>
+    <p class="success"><b>UPDATE:</b> this patch has been accepted, it's already in OpenJDK 8 and <s>will be soon</s> in OpenJDK 7u</p>
 
     <p><a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7161437">Bug report</a>, 
     <a href="http://mail.openjdk.java.net/pipermail/macosx-port-dev/2012-May/004295.html">discussion</a> and <a href="http://intransitione.com/code/7161437.patch">a standalone patch</a>.</p>
@@ -437,12 +437,12 @@ productbuild --component YourApp.app /Applications --sign SIGNING_ID_INSTALLER Y
     <p>If your application uses SSL, you may want to look at <a href="http://mail.openjdk.java.net/pipermail/macosx-port-dev/2012-March/003479.html">this discussion (workaround included)</a>.</p>
 
 <h4>Private API usage</h4>
-    <p class="success">UPDATE: fixed, this will soon be in JDK7u. I updated my repo with the (fixed) patch I proposed.</p>
+    <p class="success">UPDATE: fixed, this will soon be in JDK7u (hopefully 7u8/10). I updated my repo with the (corrected) patch I proposed.</p>
     <p>Our first app submission failed because some awt files use some functions defined in some Apple private frameworks. I replaced the functions I've found with public API and added a patch to the bug report.</p>
     <p><a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7187834">Bug report</a> and <a href="http://mail.openjdk.java.net/pipermail/macosx-port-dev/2012-July/004664.html">ml discussion</a>.</p>
 
 <h4>ActionListener called twice for JMenuItem using ScreenMenuBar</h4>
-  <p class="success">UPDATE: I fixed this in my repo and submitted a patch to Oracle, it will be included in Ju8/10.</p>
+  <p class="success">UPDATE: I fixed this in my repo and submitted a patch to Oracle, it will be included in JDK7u8/10.</p>
   <p>This causes the ActionListener to be called twice when executing an Action that is bound to a JMenuItem if the property
     <b><em>apple.laf.useScreenMenuBar</em></b> is set to true.</p>
     <p><a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7160951">Bug report</a> and <a href="http://mail.openjdk.java.net/pipermail/macosx-port-dev/2012-September/004839.html">patch discussion</a>.</p>
