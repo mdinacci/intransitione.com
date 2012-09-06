@@ -11,6 +11,8 @@ blurb: |
       <div align="center"><img src="/img/java_app_store.png" border="0"/></div>
 ---
 
+<p class="headsup"><strong>Last Update: 6 September 2012</strong>
+
 <p>In this guide I'll go through all the steps required to port your Java Swing application to OpenJDK with the goal of preparing it for the submission into the App Store.
 Although the App Store guidelines explicitly forbids applications to rely on deprecated or optionally installed technologies (Apple no longer bundles their JDK port so applications can't rely on the user to have it installed), you can still distribute your Java application on the App Store by embedding the <a href="http://openjdk.java.net/">OpenJDK 7 OSX port</a> in a native OSX application.
 </p>
@@ -42,7 +44,7 @@ and be sure to take a look at the <a href="#knownproblems">known problems</a>.
 
 <ul>
     <li> Download the <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">Oracle binary distribution</a>.</li>
-    <li><a href="http://openjdk.java.net/projects/macosx-port/">Clone the Mercurial repository</a>. Compile it with Java 6 or 7 if you already have it. Pick OpenJDK7u to get the stability of OpenJDK7 and the backwards updates from OpenJDK 8.</li>
+    <li><a href="http://openjdk.java.net/projects/macosx-port/">Clone the Mercurial repository</a><em>(recommended)</em>. Compile it with Java 6 or 7 if you already have it. Pick OpenJDK7u to get the stability of OpenJDK7 and the backwards updates from OpenJDK 8.</li>
     <li>Download one of the excellent Henry Gomez's <a href="http://code.google.com/p/openjdk-osx-build/">pre-built packages</a>.</li>
 </ul>
 
@@ -50,16 +52,14 @@ and be sure to take a look at the <a href="#knownproblems">known problems</a>.
 <p>Getting the source should be the only reasonable option if you're serious about bringing your application to the App Store. However if you want to get started quickly and are not interested in the bleeding edge version, download the Oracle distribution. If you want the latest version of the code but don't want to build it yourself, download one of the Henry Gomez's pre-built images.</p>
 <p>Note that the Oracle bundle and the OpenJDK have different licences, the first is released under the <a href="http://www.oracle.com/technetwork/java/javase/terms/license/index.html">Binary Code License</a> agreement , the second under the <a href="http://openjdk.java.net/legal/gplv2+ce.html">GPL version 2 with Classpath Exception</a>. Make your choice.</p>
 
-<p class="headsup">(½) <b>The absolute best setup</b> would be to clone the official repo and then replace the <em>jdk</em> subrepo with <a href="http://infinitekind.com">our</a> <a href="https://bitbucket.org/sreilly/openjdk7u-jdk">stable</a> or <a href="https://bitbucket.org/mdinacci/openjdk7u-jdk">my slightly more experimental</a> fork. At the time of writing the stable and experimental forks are the same but they may diverge in the future.</p>
-
-<p>If you want to know more of what's included in the fork you may find useful reading my other article <a href="http://intransitione.com/blog/forking-jdk-for-fun-and-profit">forking the JDK for fun and profit.</a></p>
+<p class="headsup">(½) <b>The absolute best setup</b> would be to clone the official repo and then replace the <em>jdk</em> subrepo with <a href="http://infinitekind.com">our</a> <a href="https://bitbucket.org/sreilly/openjdk7u-jdk">fork</a> which includes more bug fixes for OSX.</p>
 
 <h4>AppBundler</h4>
 <p>Once you have finished downloading the OpenJDK you need to install <strong>AppBundler</strong> to package your application.</p>
 
 <p><a href="http://java.net/projects/appbundler" title="Download AppBundler">AppBundler</a> is an ant task so just put the downloaded jar in the <em>lib</em> folder in your ant distribution and then <a href="http://java.net/projects/appbundler/pages/Home" title="AppBundler instructions">follow the instructions</a> to package your application. It still misses a few features like the ability to register your application with a particular file type but it allows to include a Java runtime within the application bundle and building an <strong>Info.plist</strong> file with most of the required keys.</p>
 
-<p class="headsup">At one point, you'll feel the AppBundler will miss some of features you need. Luckily for you, we have again a <a href="https://bitbucket.org/sreilly/appbundler">stable</a> and <a href="https://bitbucket.org/mdinacci/appbundler">a slightly more experimental</a> fork that add plenty more features. If you're interested <a href="http://intransitione.com/blog/forking-jdk-for-fun-and-profit">you can read more</a> about what's included in this fork.</p>
+<p class="warning">AppBundler is still missing some basic features like file types association. I recommend instead using our <a href="https://bitbucket.org/sreilly/appbundler">fork</a>.</p>
 
 <p>Note that some keys are compulsory and your application won't be accepted if they're missing so be sure they're present. You must declare at least:</p>
 
@@ -195,32 +195,23 @@ In short though, the sandbox is an access control mechanism which restricts inte
 
 <p>The <em>container</em> is the directory where your application can safely read/write the files required for its correct functioning. It is physically located in <strong><em>~/Library/Containers/yourapp.bundle.id</em></strong>; I doubt this is likely to change anytime soon so if you have a very simple application you <b>may</b> hardcode this path instead of relying on a native library to return it for you. I say may because I can't possibly know how Apple will react if you hardcode the path of the container instead of obtaining it by using the API.</p>
 
-<p>If your application will require storing user documents in the container or writing temporary files and you don't want to risk any surprise you'll have to build a native extension to get the appropriate directories. A JNI wrapper is the easiest route the only problem I encountered is that <strong>javah</strong> generate headers files with the line: </p>
+<p>If your application will require storing user documents in the container or writing temporary files and you don't want to risk any surprise you'll have to build a native extension to get the appropriate directories. A JNI wrapper is the easiest route.<s>the only problem I encountered is that <strong>javah</strong> generate headers files with the line: </s></p>
 
-<p class="headsup"><strong>UPDATE: </strong>The problem was due to the fact I was using Apple's JavaVM framework based on JDK 1.6.</p> 
-
-<p>Instead, include the headers of the OpenJDK you're using, for example: </p>
+<p class="headsup"><strong>UPDATE: </strong><em>javah</em> generate the header files just fine, the problem was due to the fact I was using Apple's JavaVM framework based on JDK 1.6; instead, compile including the headers of the OpenJDK you're using, for example: </p> 
 
 {% highlight c %}
 -I /Library/Java/JavaVirtualMachines/jdk1.7.0_06.jdk/Contents/Home/include -I /Library/Java/JavaVirtualMachines/jdk1.7.0_06.jdk/Contents/Home/include/darwin  
 {% endhighlight %}
 
-<p>Thanks to Scott Kovatch for pointing it out.</p>
-
-<p>This fix for the headers <b>is no longer necessary</b> but I leave it for reference here below as others can make the same mistake I did.</p> 
-
-<s>
-{% highlight c %}
-#include <jni.h>
-{% endhighlight %}
-
-<p>which I had to change to </p>
+<p>and include the jni header</p>
 
 {% highlight c %}
 #include <JavaVM/jni.h>
 {% endhighlight %}
 
-<p>Here's a simple Makefile to generate the headers and fix this include line:</p>
+<p>Thanks to Scott Kovatch for pointing it out.</p>
+
+<p>Here's a simple Makefile to generate the headers:</p>
 
 {% highlight bash %}
 #!/bin/sh
@@ -232,12 +223,10 @@ CLASS = com.foobaz.yourclass
 all:
     mkdir -p $(DIST)
     javah -jni -d $(DIST) -cp $(CP) $(CLASS)
-    sed -i ""  's/jni.h/JavaVM\/jni.h/' $(DIST)/*.h
 
 clean:
     rm *.o *.class
 {% endhighlight %}
-</s>
 
 <p>Now that you have your C header you can create a function that will return for example the <em>Application Support</em> folder for your application, which is located inside the appplication container:</p>
 
@@ -369,9 +358,11 @@ productbuild --component YourApp.app /Applications --sign SIGNING_ID_INSTALLER Y
 <a name="#knownproblems"></a>
 <h2>Known problems</h2>
 
-<p>Plenty unfortunately, however I fixed most of the ones I've encountered and included the fixes in our forks. The easiest way to get them is to clone our <a href="https://bitbucket.org/sreilly/openjdk7u-jdk">jdk</a> and <a href="https://bitbucket.org/sreilly/openjdk7u-jdk">AppBundler</a> stable forks. Or the <a href="https://bitbucket.org/mdinacci/openjdk7u-jdk">experimental jdk</a> and <a href="https://bitbucket.org/mdinacci/openjdk7u-jdk">AppBundler</a> if you like.</p>
+<p>Plenty unfortunately, however I fixed most of the ones I've encountered and included the fixes in our forks. The easiest way to get them is to clone our <a href="https://bitbucket.org/sreilly/openjdk7u-jdk">jdk</a> and <a href="https://bitbucket.org/sreilly/openjdk7u-jdk">AppBundler</a> stable forks. </p>
 
 <p>Here's a list of most of the problems I've encountered and their solution, where available:</p>
+
+<p class="warning">When I say that an issue has been fixed it means it's in the official Oracle JDK8 or JDK7u repo.</p>
 
 <h4>Launch failure <em>(LSOpenURLsWithRole() failed with error...)</em></h4>
     <p class="success"><b>UPDATE:</b> this has been fixed.</p>
@@ -393,10 +384,10 @@ productbuild --component YourApp.app /Applications --sign SIGNING_ID_INSTALLER Y
     $ otool -L libfontmanager.dylib
     {% endhighlight %}
 
-    <p>Take note of the libfreetype path, likely <em>/usr/X11/libfreetype.6.dylib</em> unless you have built freetype yourself and installed it somewhere else. Now type:</p>
+    <p>Take note of the libfreetype path, likely <em>/usr/X11/lib/libfreetype.6.dylib</em> unless you have built freetype yourself or installed it somewhere else (maybe using MacPorts or a similar tool). Now type:</p>
 
     {% highlight bash %}
-    $ sudo install_name_tool -change /usr/X11/libfreetype.6.dylib @rpath/libfreetype.dylib libfontmanager.dylib
+    $ sudo install_name_tool -change /usr/X11/lib/libfreetype.6.dylib @rpath/libfreetype.dylib libfontmanager.dylib
     {% endhighlight %}
 
     <p>Type again <em>otool -L libfontmanager.dylib</em> and you should see the change.
@@ -408,7 +399,7 @@ productbuild --component YourApp.app /Applications --sign SIGNING_ID_INSTALLER Y
     <p>I didn't find a solution for this, but it seems that increasing the margin around the button make the problem go away. I couldn't afford to have too much empty space though so I just replaced the decorations with an image.</p>
 
 <h4>OpenJDK Universal build not available</h4>
-    <a href="http://openjdk-osx-build.googlecode.com/svn/trunk/patches-jdk7u-osx/universal-build.patch">Patch by Henry Gomez</a>. A slightly different one has been applied in <a href="https://bitbucket.org/sreilly/openjdk7u-jdk">our jdk fork</a>.
+    <a href="http://openjdk-osx-build.googlecode.com/svn/trunk/patches-jdk7u-osx/universal-build.patch">Patch by Henry Gomez</a>.
 
 <h4>AppBundler universal binary</h4>
     <p>There's no point to have a 32/64 OpenJDK if your JavaAppLauncher only supports a 64bit architecture. Again, head over to our BitBuckets repos to get the fix.</p>
@@ -427,7 +418,7 @@ productbuild --component YourApp.app /Applications --sign SIGNING_ID_INSTALLER Y
 
 <h4>JFileChooser broken in the sandbox.</h4>
     <p><a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7172752">Bug report</a>.
-    <a href="http://">Discussion</a>. There is no workaround for this, except to switch to a <em>FileDialog</em>
+    <a href="http://mail.openjdk.java.net/pipermail/macosx-port-dev/2012-May/004301.html">Discussion</a>. There is no workaround for this, except to switch to a <em>FileDialog</em>
     .The bug has been incorrectly closed as duplicate of another issue with <em>Runtime.exec()</em>.</p>
 
 <h4>Crash when opening an application from a registered file</h4>
@@ -436,7 +427,7 @@ productbuild --component YourApp.app /Applications --sign SIGNING_ID_INSTALLER Y
     <p>If a user double click on a file to open your application the application will crash before even showing its main window.
 
 <h4><em>awt.brush.metalLook</em> is not observed.</h4>
-    <p class="success"><b>Update: </b>this has been fixed, see <a href="http://cr.openjdk.java.net/~serb/7124513/webrev.01/">webrev</a>.</p>
+    <p class="success"><b>UPDATE: </b>this has been fixed, see <a href="http://cr.openjdk.java.net/~serb/7124513/webrev.01/">webrev</a>.</p>
     <p><del><a href="http://mail.openjdk.java.net/pipermail/macosx-port-dev/2012-May/004227.html">Planned to be fixed in jdk7u6</a></del>.</p>
 
 <h4>Sandbox Violation on Runtime Exec</h4>
@@ -446,10 +437,22 @@ productbuild --component YourApp.app /Applications --sign SIGNING_ID_INSTALLER Y
     <p>If your application uses SSL, you may want to look at <a href="http://mail.openjdk.java.net/pipermail/macosx-port-dev/2012-March/003479.html">this discussion (workaround included)</a>.</p>
 
 <h4>Private API usage</h4>
+    <p class="success">UPDATE: fixed, this will soon be in JDK7u. I updated my repo with the (fixed) patch I proposed.</p>
     <p>Our first app submission failed because some awt files use some functions defined in some Apple private frameworks. I replaced the functions I've found with public API and added a patch to the bug report.</p>
     <p><a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7187834">Bug report</a> and <a href="http://mail.openjdk.java.net/pipermail/macosx-port-dev/2012-July/004664.html">ml discussion</a>.</p>
 
-<br/>
+<h4>ActionListener called twice for JMenuItem using ScreenMenuBar</h4>
+  <p class="success">UPDATE: I fixed this in my repo and submitted a patch to Oracle, it will be included in Ju8/10.</p>
+  <p>This causes the ActionListener to be called twice when executing an Action that is bound to a JMenuItem if the property
+    <b><em>apple.laf.useScreenMenuBar</em></b> is set to true.</p>
+    <p><a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7160951">Bug report</a> and <a href="http://mail.openjdk.java.net/pipermail/macosx-port-dev/2012-September/004839.html">patch discussion</a>.</p>
+
+<h4>Main menu shortcuts not displayed when using ScreenMenuBar</h4> 
+    <p class="success">UPDATE: this has been fixed in JDK8 so soon will be avalaible only in JDK7.</p>
+    <p><a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7186371">Bug report</a> and <a href="http://mail.openjdk.java.net/pipermail/macosx-port-dev/2012-June/004430.html" title="discussion">discussion</a>.</p>
+    <p>I fixed this bug in my fork <s>but unfortunately the fix now causes bug #7160951 to manifest again</s>. However I will revert my change once the JDK8 fix will be backported to JDK7u</p>
+
+<p></p><br/>
 <p>It took me ages to make this post and I try as much as possible to keep it updated, if there are any errors or if you have any questions, leave a comment here or on <a href="http://twitter.com/marcodinacci">Twitter</a> or <a href="http://www.intransitione.com/support.html">send me an e-mail</a>.</p>
 
 Marco
