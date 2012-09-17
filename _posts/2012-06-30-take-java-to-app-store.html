@@ -11,7 +11,9 @@ blurb: |
       <div align="center"><img src="/img/java_app_store.png" border="0"/></div>
 ---
 
-<p class="headsup"><strong>Last Update: 6 September 2012</strong>
+<p class="headsup"><strong>Last Update: 17 September 2012</strong>
+
+<p class="success"><a href="http://moneydance.com"><strong>Moneydance</strong></a> is on sale in the <a href="http://itunes.apple.com/us/app/moneydance-personal-finance/id538911179">App Store</a>!</p>
 
 <p>In this guide I'll go through all the steps required to port your Java Swing application to OpenJDK with the goal of preparing it for the submission into the App Store.
 Although the App Store guidelines explicitly forbids applications to rely on deprecated or optionally installed technologies (Apple no longer bundles their JDK port so applications can't rely on the user to have it installed), you can still distribute your Java application on the App Store by embedding the <a href="http://openjdk.java.net/">OpenJDK 7 OSX port</a> in a native OSX application.
@@ -52,14 +54,14 @@ and be sure to take a look at the <a href="#knownproblems">known problems</a>.
 <p>Getting the source should be the only reasonable option if you're serious about bringing your application to the App Store. However if you want to get started quickly and are not interested in the bleeding edge version, download the Oracle distribution. If you want the latest version of the code but don't want to build it yourself, download one of the Henry Gomez's pre-built images.</p>
 <p>Note that the Oracle bundle and the OpenJDK have different licences, the first is released under the <a href="http://www.oracle.com/technetwork/java/javase/terms/license/index.html">Binary Code License</a> agreement , the second under the <a href="http://openjdk.java.net/legal/gplv2+ce.html">GPL version 2 with Classpath Exception</a>. Make your choice.</p>
 
-<p class="headsup">(½) <b>The absolute best setup</b> would be to clone the official repo and then replace the <em>jdk</em> subrepo with <a href="http://infinitekind.com">our</a> <a href="https://bitbucket.org/sreilly/openjdk7u-jdk">fork</a> which includes more bug fixes for OSX.</p>
+<p class="headsup">(½) <b>The absolute best setup</b> would be to clone the official repo and then replace the <em>jdk</em> subrepo with <a href="http://infinitekind.com">our</a> <a href="https://bitbucket.org/infinitekind/openjdk7u-jdk">fork</a> which includes more bug fixes for OSX.</p>
 
 <h4>AppBundler</h4>
 <p>Once you have finished downloading the OpenJDK you need to install <strong>AppBundler</strong> to package your application.</p>
 
 <p><a href="http://java.net/projects/appbundler" title="Download AppBundler">AppBundler</a> is an ant task so just put the downloaded jar in the <em>lib</em> folder in your ant distribution and then <a href="http://java.net/projects/appbundler/pages/Home" title="AppBundler instructions">follow the instructions</a> to package your application. It still misses a few features like the ability to register your application with a particular file type but it allows to include a Java runtime within the application bundle and building an <strong>Info.plist</strong> file with most of the required keys.</p>
 
-<p class="warning">AppBundler is still missing some basic features like file types association. I recommend instead using our <a href="https://bitbucket.org/sreilly/appbundler">fork</a>.</p>
+<p class="warning">AppBundler is still missing some basic features like file types association. I recommend instead using our <a href="https://bitbucket.org/infinitekind/appbundler">fork</a>.</p>
 
 <p>Note that some keys are compulsory and your application won't be accepted if they're missing so be sure they're present. You must declare at least:</p>
 
@@ -358,7 +360,7 @@ productbuild --component YourApp.app /Applications --sign SIGNING_ID_INSTALLER Y
 <a name="#knownproblems"></a>
 <h2>Known problems</h2>
 
-<p>Plenty unfortunately, however I fixed most of the ones I've encountered and included the fixes in our forks. The easiest way to get them is to clone our <a href="https://bitbucket.org/sreilly/openjdk7u-jdk">jdk</a> and <a href="https://bitbucket.org/sreilly/openjdk7u-jdk">AppBundler</a> stable forks. </p>
+<p>Plenty unfortunately, however I fixed most of the ones I've encountered and included the fixes in our forks. The easiest way to get them is to clone our <a href="https://bitbucket.org/infinitekind/openjdk7u-jdk">jdk</a> and <a href="https://bitbucket.org/infinitekind/openjdk7u-jdk">AppBundler</a> stable forks. </p>
 
 <p>Here's a list of most of the problems I've encountered and their solution, where available:</p>
 
@@ -402,7 +404,7 @@ productbuild --component YourApp.app /Applications --sign SIGNING_ID_INSTALLER Y
     <a href="http://openjdk-osx-build.googlecode.com/svn/trunk/patches-jdk7u-osx/universal-build.patch">Patch by Henry Gomez</a>.
 
 <h4>AppBundler universal binary</h4>
-    <p>There's no point to have a 32/64 OpenJDK if your JavaAppLauncher only supports a 64bit architecture. Use <a href="https://bitbucket.org/sreilly/appbundler">this AppBundler</a> instead.</p>
+    <p>There's no point to have a 32/64 OpenJDK if your JavaAppLauncher only supports a 64bit architecture. Use <a href="https://bitbucket.org/infinitekind/appbundler">this AppBundler</a> instead.</p>
 
 <h4>Dock Icon defaults to Generic Java Application</h4>
     <p class="success"><b>UPDATE:</b> I believe this has been fixed too but I haven't found the reference yet.</p>
