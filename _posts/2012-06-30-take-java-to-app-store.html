@@ -11,9 +11,9 @@ blurb: |
       <div align="center"><img src="/img/java_app_store.png" border="0"/></div>
 ---
 
-<p class="headsup"><strong>Last Update: 17 September 2012</strong>
+<p class="headsup"><strong>Last Update: 19 September 2012 - Updated AppBundler discussion in the sandbox section.</strong>
 
-<p class="success"><a href="http://moneydance.com"><strong>Moneydance</strong></a> is on sale in the <a href="http://itunes.apple.com/us/app/moneydance-personal-finance/id538911179">App Store</a>!</p>
+<p class="success"><a href="http://infinitekind.com/mdappstore"><strong>Moneydance</strong></a> is on sale in the App Store!</p>
 
 <p>In this guide I'll go through all the steps required to port your Java Swing application to OpenJDK with the goal of preparing it for the submission into the App Store.
 Although the App Store guidelines explicitly forbids applications to rely on deprecated or optionally installed technologies (Apple no longer bundles their JDK port so applications can't rely on the user to have it installed), you can still distribute your Java application on the App Store by embedding the <a href="http://openjdk.java.net/">OpenJDK 7 OSX port</a> in a native OSX application.
@@ -197,7 +197,36 @@ In short though, the sandbox is an access control mechanism which restricts inte
 
 <p>The <em>container</em> is the directory where your application can safely read/write the files required for its correct functioning. It is physically located in <strong><em>~/Library/Containers/yourapp.bundle.id</em></strong>; I doubt this is likely to change anytime soon so if you have a very simple application you <b>may</b> hardcode this path instead of relying on a native library to return it for you. I say may because I can't possibly know how Apple will react if you hardcode the path of the container instead of obtaining it by using the API.</p>
 
-<p>If your application will require storing user documents in the container or writing temporary files and you don't want to risk any surprise you'll have to build a native extension to get the appropriate directories. A JNI wrapper is the easiest route.<s>the only problem I encountered is that <strong>javah</strong> generate headers files with the line: </s></p>
+<p>If your application will require storing user documents in the container or writing temporary files you'll have to acquire the appropriate directories.One route is to write a JNI wrapper and bundle a small native library with your app, another is to use <a href="https://bitbucket.org/infinitekind/appbundler">our AppBundler fork</a> which pass the directories to the Java app as environment variables.</p>
+
+<p>If you decide to use our AppBundler, from your Java app you can retrieve the directories using these system properties:</p>
+{% highlight java %}
+System.getProperty("LibraryDirectory");
+System.getProperty("DocumentsDirectory");
+System.getProperty("CachesDirectory");
+System.getProperty("ApplicationSupportDirectory");
+System.getProperty("SandboxEnabled");
+System.getProperty("SandboxEnabled");// (the String "true" or "false")
+{% endhighlight %}
+
+<p>Assuming your app identifier is <em>com.acme.MyApp</em>, the variable values will be:</p>
+{% highlight java %}
+// If the app is sandboxed:
+/Users/user/Library/Containers/com.acme.MyApp/Data/Library
+/Users/user/Library/Containers/com.acme.MyApp/Data/Documents
+/Users/user/Library/Containers/com.acme.MyApp/Data/Library/Application Support
+/Users/user/Library/Containers/com.acme.MyApp/Data/Library/Caches
+
+// if the app is not sandboxed
+/Users/user/Library
+/Users/user/Documents
+/Users/user/Library/Application Support
+/Users/user/Library/Caches
+false
+
+{% endhighlight %}
+
+<p>Otherwise, if you decide to go with the native route, this is how you would create a native library and acquire the directories where you can write and store app-specific data:</p>
 
 <p class="headsup"><strong>UPDATE: </strong><em>javah</em> generate the header files just fine, the problem was due to the fact I was using Apple's JavaVM framework based on JDK 1.6; instead, compile including the headers of the OpenJDK you're using, for example: </p> 
 
