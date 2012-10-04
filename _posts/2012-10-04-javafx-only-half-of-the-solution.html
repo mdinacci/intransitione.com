@@ -1,0 +1,43 @@
+--- 
+layout: post
+title: Cross-platform desktop Java applications, JavaFX is not enough.
+tags: 
+  ["Java", "OSX", "OpenJDK", "JavaFX"]
+blurb: |
+      <p>I just finished to watch the <a href="http://medianetwork.oracle.com/video/player/1871712019001">JavaOne 2012 Technical Keynote</a>. Nice, not particularly impressive though. The "Windows moment" (JVM crash) was quite funny. It happens around the 52nd minute I think. No you can't skip and if you advance too much the video won't play. Flash fails.</p>
+      <p>What bothers me and the motivation why I'm writing this post is the excessive focus on the UI in JavaFX. They made it look like it is the only concern in a multi-platform app is the UI. <strong>WRONG</strong>...</p>
+---
+
+<p>I just finished to watch the <a href="http://medianetwork.oracle.com/video/player/1871712019001">JavaOne 2012 Technical Keynote</a>. Nice, not particularly impressive though. The "Windows moment" (JVM crash) was quite funny. It happens around the 52nd minute I think. No you can't skip and if you advance too much the video won't play. Flash fails.</p>
+
+<p>What bothers me and the motivation why I'm writing this post is the excessive focus on the UI in JavaFX. They made it look like it is the only concern in a multi-platform app is the UI. <strong>WRONG.</strong>
+</p>
+
+<p>The UI is only half of the problem. The other half, which becomes more and more complicated thanks to the advent of <strong>app stores</strong> and <strong>sandboxes</strong> is the integration with the host OS.</em></p>
+
+<p class="warning" style="text-align:center"><em>Where do you store application settings and data on Windows, Linux and OSX ?</em></p>
+<p>The era of storing data in the application bundle itself or in <code class="simple">~/.appname</code> or anywhere you want <strong>IS OFFICIALLY OVER.</strong></p>
+<p>Apple doesn't allow a sandboxed application to mess with the filesystem. Windows 8 won't either. You want to store settings ? put them in <code class="simple">Application Support</code> directory. Want to save documents ? do it in the <code class="simple">Documents</code> folder.</p>
+
+<p>There's more, the problem is not only related to <em>writing</em> data. The OSX and Windows 8 sandboxes only allow you full access in the <em>container</em> (<em>AppData</em> on Windows 8) folder. Want to read the pictures folder ? you need to ask the OS where it is and have an <em>entitlement</em> (<em>capability</em> on Windows) declared in the <em>Info.plist</em> (<em>Manifest file</em> on Windows). </p>
+
+<p class="warning" style="text-align:centre">How is a Java application supposed to deal with this in a clean, cross-platform manner ?</p>
+
+<p>Well you can't now, <em>"write once run anywhere"</em> my ass.</p>
+
+<p>They didn't show the dreaded <code class="simple">GateKeeper</code> warning dialog you get when you launch an application coming from an unidentified developer when they demoed their app on OSX. Why ? Because it wasn't sandboxed. Cheaters.</p>
+
+<div style="text-align:centre"><img src="/img/gatekeeper_dialog.jpg"/></div>
+
+<code class="simple"><a href="http://infinitekind.com/mdappstore">Moneydance</a></code> is the first OpenJDK, sandbox-compatible app available in the Mac App Store. It took us months to make it ready. I contributed at least four patches to the OpenJDK OSX port, <a href="http://bitbucket.org/mdinacci/appbundler">I had to fork and improve AppBundler</a> because Oracle doesn't accept contributions on this <strong>Open Source</strong> project (unless it's one line of code...), and write native code where no other Java-only solution existed. <br>
+This whole process was much more time consuming that tuning the interface to be more OSX-like. </p>
+
+<p><em><blockquote>Fancy graphics and animations are pointless if an application can't be executed at all.</blockquote></em></p> 
+
+<p>Oracle must improve the Desktop API and start eating its own dog food. Release complex software on the Apple App Store and start working towards a solution for the Windows 8 store, where the situation is even grimmer. If Oracle itself doesn't show that it's possible to deploy a Java app on the app stores who will ? <a href="http://infinitekind.com">We</a> did our part with <a href="http://infinitekind.com/mdappstore">Moneydance</a>, but it's not enough.</p>
+
+<p><em><blockquote>App stores, whether that's good or bad, are becoming the most accepted and simple way to buy software. What is the point of a cross-platform JavaFX app if you can't deploy it ?</blockquote></em></p>
+
+<p>I'm planning to start an Open Source project in the next few weeks to attempts to solve the problem of accessing user directories consistently over multiple platforms. I'll post more info once I'll have a foundation ready.</p>
+
+<p>Marco</p>
