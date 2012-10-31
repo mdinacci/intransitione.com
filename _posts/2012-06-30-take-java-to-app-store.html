@@ -11,9 +11,9 @@ blurb: |
       <div align="center"><img src="/img/java_app_store.png" border="0"/></div>
 ---
 
-<p class="headsup"><strong>Last Update: 19 September 2012 - Updated AppBundler discussion in the sandbox section.</strong>
+<p class="headsup"><strong>Last Update: 29 October 2012 - Updated recommended OpenJDK discussion.</strong>
 
-<p class="success"><a href="http://infinitekind.com/mdappstore"><strong>Moneydance</strong></a> is on sale in the App Store!</p>
+<p class="success"><a href="https://itunes.apple.com/app/id538911179"><strong>Moneydance</strong></a> is on sale in the App Store!</p>
 
 <p>In this guide I'll go through all the steps required to port your Java Swing application to OpenJDK with the goal of preparing it for the submission into the App Store.
 Although the App Store guidelines explicitly forbids applications to rely on deprecated or optionally installed technologies (Apple no longer bundles their JDK port so applications can't rely on the user to have it installed), you can still distribute your Java application on the App Store by embedding the <a href="http://openjdk.java.net/">OpenJDK 7 OSX port</a> in a native OSX application.
@@ -47,14 +47,14 @@ and be sure to take a look at the <a href="#knownproblems">known problems</a>.
 <ul>
     <li> Download the <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">Oracle binary distribution</a>.</li>
     <li><a href="http://openjdk.java.net/projects/macosx-port/">Clone the Mercurial repository</a><em>(recommended)</em>. Compile it with Java 6 or 7 if you already have it. Pick OpenJDK7u to get the stability of OpenJDK7 and the backwards updates from OpenJDK 8.</li>
-    <li>Download one of the excellent Henry Gomez's <a href="http://code.google.com/p/openjdk-osx-build/">pre-built packages</a>.</li>
+    <li><s>Download one of the excellent Henry Gomez's <a href="http://code.google.com/p/openjdk-osx-build/">pre-built packages</a>.</s>Unfortunately Henry stopped its project but he was kind enough to release all the source code to build the packages.</li>
 </ul>
 
 <p><strong>Don't know which one to choose ?</strong></p>
 <p>Getting the source should be the only reasonable option if you're serious about bringing your application to the App Store. However if you want to get started quickly and are not interested in the bleeding edge version, download the Oracle distribution. If you want the latest version of the code but don't want to build it yourself, download one of the Henry Gomez's pre-built images.</p>
 <p>Note that the Oracle bundle and the OpenJDK have different licences, the first is released under the <a href="http://www.oracle.com/technetwork/java/javase/terms/license/index.html">Binary Code License</a> agreement , the second under the <a href="http://openjdk.java.net/legal/gplv2+ce.html">GPL version 2 with Classpath Exception</a>. Make your choice.</p>
 
-<p class="headsup">(½) <b>The absolute best setup</b> would be to clone the official repo and then replace the <em>jdk</em> subrepo with <a href="http://infinitekind.com">our</a> <a href="https://bitbucket.org/infinitekind/openjdk7u-jdk">fork</a> which includes more bug fixes for OSX.</p>
+<p class="headsup">(½)<s> <b>The absolute best setup</b> would be to clone the official repo and then replace the <em>jdk</em> subrepo with <a href="http://infinitekind.com">our</a> <a href="https://bitbucket.org/infinitekind/openjdk7u-jdk">fork</a> which includes more bug fixes for OSX.</s>The situation is a bit different from when I started writing this post. Oracle has integrated all my patches, so unless you require 32bits support the recommended option is to use an OpenJDK binary distribution (and apply the fix for <em>freetype</em>, see below).</p>
 
 <h4>AppBundler</h4>
 <p>Once you have finished downloading the OpenJDK you need to install <strong>AppBundler</strong> to package your application.</p>
@@ -484,6 +484,7 @@ productbuild --component YourApp.app /Applications --sign SIGNING_ID_INSTALLER Y
     <p>I fixed this bug in my fork <s>but unfortunately the fix now causes bug #7160951 to manifest again</s>. However I will revert my change once the JDK8 fix will be backported to JDK7u</p>
 
 <p></p><br/>
+
 <p>It took me ages to make this post and I try as much as possible to keep it updated, if there are any errors or if you have any questions, leave a comment here or on <a href="http://twitter.com/marcodinacci">Twitter</a> or <a href="http://www.intransitione.com/support.html">send me an e-mail</a>.</p>
 
 Marco
