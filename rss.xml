@@ -7,7 +7,7 @@ layout: nil
     <title>intransitione.com</title>
     <link>http://intransitione.com/</link>
     <atom:link href="http://intransitione.com/rss.xml" rel="self" type="application/rss+xml" />
-    <description>Your Website</description>
+    <description>Java, Go, Python articles. Curated by Marco Dinacci.</description>
     <language>en-us</language>
     <pubDate>{{ site.time | date: "%a, %d %b %Y %H:%M:%S %z" }}</pubDate>
     <lastBuildDate>{{ site.time | date: "%a, %d %b %Y %H:%M:%S %z" }}</lastBuildDate>
@@ -17,7 +17,7 @@ layout: nil
       <title>{{ post.title }}</title>
       <link>http://intransitione.com{{ post.url }}</link>
       <pubDate>{{ post.date | date: "%a, %d %b %Y %H:%M:%S %z" }}</pubDate>
-      <author>marco@intransitione.com (Marco Dinacci)</author>
+      <author>marco.dinacci@intransitione.com (Marco Dinacci)</author>
       <guid>http://intransitione.com{{ post.id }}</guid>
       <description>{{ post.content | xml_escape }}</description>
     </item>
