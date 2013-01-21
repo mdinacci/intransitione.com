@@ -19,7 +19,7 @@
     $recipient = "marco.dinacci@gmail.com";
     $subject = "[intransitione.com][". $topic ."] Feedback";
 
-    $headers = 'From: marco.dinacci@gmail.com' . "\r\n" . 'Reply-To: '. $email . "\r\n";
+    $headers = 'From: ' . $email . "\r\n" . 'Reply-To: '. $email . "\r\n";
     mail($recipient, $subject, $formcontent, $headers) or die("Failure!");
 
     header("Location: http://www.intransitione.com");
