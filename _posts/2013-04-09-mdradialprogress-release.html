@@ -1,0 +1,46 @@
+--- 
+layout: post
+title: MDRadialProgress 0.1
+tags: 
+  ["UIKit", "iOS", "Objective-c"]
+blurb: |
+      <p>I've been using (and still do !) several controls from <a href="http://cocoacontrols.com"/>cocoacontrols.com</a> and from <a href="http://cocoapods.org"/>CocoaPods</a>. It's great to see so many high quality components freely available, I can't calculate how many hours I've saved by using them...</p>
+---
+
+<img src="/img/mdradialprogress.png" style="border:1px solid black;float:left;margin-right:15px;margin-bottom:10px"/><p>
+<p>I've been using (and still do !) several controls from <a href="http://cocoacontrols.com"/>cocoacontrols.com</a> and from <a href="http://cocoapods.org"/>CocoaPods</a>. It's great to see so many high quality components freely available, I can't calculate how many hours I've saved by using them.</p>
+
+<p>I'm happy to finally contribute to these projects by releasing a simple custom <i>UIView</i> that can be used to represent progress in discrete steps. The inspiration comes from <a href="http://www.lumosity.com">lumosity</a>, whose iOS app uses a very similar component to represent the steps done in a game session. I'm quite convinced though not 100% sure that they're using an image instead of a customisable component.</p>
+
+<p>The <a href="http://github.com/mdinacci/MDRadialProgress"/>github project</a> comes with an example (see <code class="simple">ViewController.m</code>) and documentation. 
+You can install it by copying the <code class="simple">MDRadialProgressView.{m|h}</code> into your project or by using Cocoapod by adding this line <code class="simple">pod 'MDRadialProgress', '~> 0.1.1' </code> to your project's Podfile.</p>
+
+<br>
+
+<p>The simplest way to use it is to leave all properties with their default value and just customise <code class="simple">progressTotal</code> and <code class="simple">progressCompleted</code>:</p>
+
+<p style="margin-top:20px">
+{% highlight objc %}
+
+// Create an instance of the view with a width and height (and consequently a diameter) of 50px. 
+CGRect frame = CGRectMake(30, 30, 50, 50);
+MDRadialProgressView *radialView = [[MDRadialProgressView alloc] initWithFrame:frame];
+
+// Total number of steps    
+radialView.progressTotal = 5;
+// Number of steps completed
+radialView.progressCurrent = 2;
+
+// Customise colours and thickness here...see documentation on github
+
+// Add to existing view
+[self.view addSubview:radialView];
+
+{% endhighlight %}
+</p>
+
+It's released under the MIT license, source code and documentation are on <a href="http://github.com/mdinacci/MDRadialProgress"/>github</a>.
+
+<p>Enjoy and <a href="http://twitter.com/mdinacci">let me know</a> if you find it useful.</p>
+
+<p>Marco</p>
