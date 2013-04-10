@@ -12,8 +12,8 @@ body>header{position:relative;-moz-border-radius:5px;-webkit-border-radius:5px;b
 body>header>nav{margin-left:auto;margin-right:auto;width:720px;text-align:center;}
 body>footer{-moz-border-radius:5px;-webkit-border-radius:5px;border-radius:5px;-moz-box-shadow:0 2px 5px rgba(0, 0, 0, 0.5);-webkit-box-shadow:0 2px 5px rgba(0, 0, 0, 0.5);box-shadow:0 2px 5px rgba(0, 0, 0, 0.5);padding-left:30px;padding-right:30px;padding-top:10px;padding-bottom:10px;margin-top:20px;margin-bottom:20px;width:700px;background-image:url(../img/furley_bg_light.png);background-repeat:repeat;text-align:center;padding-top:5px;padding-bottom:5px;}
 body{color:#333;font:14px/20px 'Cantarell',sans-serif;overflow-y:scroll !important;text-rendering:optimizelegibility;width:100%;background-image:url(../img/furley_bg.png);background-repeat:repeat;}
-a{color:#26a;text-decoration:none;}
-a:hover{color:#0e4071;}
+a{color:#4682b4;text-decoration:none;}
+a:hover{color:#87ceeb;}
 h1{font-size:26px;font-weight:bold;line-height:1em;margin:0;padding:5px 0 5px 0;}
 h2{font-size:24px;font-weight:bold;line-height:1em;margin:0;padding:5px 0 5px 0;}
 h3{font-size:20px;font-weight:bold;line-height:1em;margin:0;padding:5px 0 5px 0;padding-bottom:5px;border-bottom:1px solid #ddd;font-weight:bold;}
