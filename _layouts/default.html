@@ -6,9 +6,8 @@
         <meta http-equiv="content-language" content="en" />
         <title>
             {% if page.title %}
-            {{ page.title }} //
+            {{ page.title }}
             {% endif %}  
-            Marco Dinacci
         </title>
         <meta name="author" content="Marco Dinacci" />
         {% if page.summary %}
@@ -19,6 +18,11 @@
         title="{{ site.title }}" type="application/rss2" />
         <link rel="stylesheet" href="/css/screen.css" type="text/css" media="screen, projection" />
         <link rel="stylesheet" href="/css/syntax.css" type="text/css" media="screen, projection" />
+
+        {% if page.title' %}
+        <link rel="author" href="https://plus.google.com/112981284665807000344/posts"/>
+
+        {% endif %}
 
         <!--[if lt IE 9]>
         <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
