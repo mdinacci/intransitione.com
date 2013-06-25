@@ -22,12 +22,12 @@ end
 
 desc 'Build site with Jekyll'
 task :build => [:clean,:less,:minify] do
-  jekyll('--no-server --no-auto')
+  jekyll('build')
 end
 
 desc 'Start server with --auto'
 task :server => :build do
-  jekyll('--server --auto')
+  jekyll('serve')
 end
 
 desc 'Build and deploy'
@@ -76,7 +76,7 @@ def cleanup
 end
 
 def jekyll(opts = '')
-  sh 'jekyll --pygments ' + opts
+  sh 'jekyll ' + opts
 end
 
 def lessdev(opts = '')
