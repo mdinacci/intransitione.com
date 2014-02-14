@@ -1,0 +1,169 @@
+--- 
+layout: post
+title: MDRadialProgress Examples
+tags: 
+  ["UIKit", "iOS", "Objective-c"]
+blurb: |
+      <strong>MDRadialProgress</strong> is an Open Source iOS UIView that allows to represent progress in discrete steps. It is useful in those circumstances where you have a task or anything else that has a fixed number of steps and you want to represent the progress.</p><p>Last time I wrote about <em>MDRadialProgress</em> I promised some technical documentation, well here are some examples to make you started with this component...</p>
+---
+
+<p class="headsup">I dropped by 50% the non-attribution licenses for my <a href="http://github.com/mdinacci/MDRadialProgress">MDRadialProgress</a> component until the end of next week, <a style="font-size:120%" href="http://sites.fastspring.com/intransitione/product/mdradialprogresslicenses">go get one !</a></p>
+
+<strong>MDRadialProgress</strong> is an Open Source iOS UIView that allows to represent progress in discrete steps. It is useful in those circumstances where you have a task or anything else that has a fixed number of steps and you want to represent the progress.</p>
+<p>Last time I wrote about <em>MDRadialProgress</em> I promised some technical documentation, well here are some examples to make you started with this component:</p>
+
+<h3>Setup</h3>
+<p>
+	First, let's prepare the view and create a frame that will contain the progress view:<br>
+	
+{% highlight objc %}
+self.view.backgroundColor = [UIColor whiteColor];	
+CGRect frame = CGRectMake(self.view.center.x - 100, self.view.center.y - 100, 200, 200);
+MDRadialProgressView *radialView = [self progressViewWithFrame:frame];
+[self.view addSubview:radialView];
+{% endhighlight %}
+   
+    <p>That's it, we just created a 200x200 frame and set its coordinates in order for our view to appear centered. We also added it to our main view. That wasn't too hard.</p>
+
+<br>
+<h3>Basic View</h3> 
+	<p><img class="leftimagenoborder" src="/img/mdradialprogressexamples/example1.png"></img>Let's start with the most basic view you can possibly make. To the code you've written above, add:
+	
+{% highlight objc %}
+radialView.progressTotal = 7;
+radialView.progressCounter = 5;
+{% endhighlight %}
+
+	<code class="simple">progressTotal</code> represents the total number of steps in the view.</b>
+	<code class="simple">progressCounter</code> keep track of the number of the steps completed.</b>
+	
+	By default, completed progress is represented in green, uncompleted progress in light gray. You can also see that there's a divider between each slice, which has the same colour as the center color (in this case white) and that there's a number in the middle, which represents the completion percentage.
+</p>
+
+<br>
+<h3>Changing colors</h3>
+<p><img class="leftimagenoborder" src="/img/mdradialprogressexamples/example2.png"></img>Let's say you want to change the colours, to make the component fits better into your UI.
+	
+{% highlight objc %}
+radialView.theme.incompletedColor = [UIColor colorWithRed:0.15 green:0.3 blue:0.45 alpha:0.4];
+radialView.theme.completedColor = [UIColor colorWithRed:0.15 green:0.3 blue:0.45 alpha:1.0];
+{% endhighlight %}
+
+	As you can see, we're actually using the same colour, just with a different alpha value. You don't have to use the same color though. You may be asking yourself, what's the <code class="simple">theme</code> property all about ? We'll see that later, for the moment just know that you may want to have multiple radial views on the same screen sharing the same colours and settings. A theme encapsulate those settings.</p>
+
+<br>
+<h3>Showing/hiding percentage and slice dividers</h3>
+<p><img class="leftimagenoborder" src="/img/mdradialprogressexamples/example3.png"></img>You may not want to show the percentage label in the middle of the view, fair enough, let's just hide it:
+	
+{% highlight objc %}
+radialView.label.hidden = YES;
+{% endhighlight %}
+
+	<p>(This should be part of the theme too, it will probably change in the next release). Also, let's hide the slice dividers so that the progress look like a single uninterrupted arc.</p>
+
+	
+{% highlight objc %}
+radialView.theme.sliceDividerHidden = YES;
+{% endhighlight %}
+</p>
+<br>
+<h3>Hiding more stuff</h3>
+<p><img class="leftimagenoborder" src="/img/mdradialprogressexamples/example4.png"></img>Is the incompleted arc really worth showing ? That's up to you, but in case you want to hide it and show only the progress done, you can, just set its color to <code class="simple">clearColor</code>: 
+	
+{% highlight objc %}
+radialView.theme.incompletedColor = [UIColor clearColor];
+{% endhighlight %}
+
+	The progress now looks smoother, with no interruptions.
+</p>
+<br><br><br>
+<h3>Changing the center color</h3>
+<p><img class="leftimagenoborder" src="/img/mdradialprogressexamples/example5.png"></img>It might not be very pretty in this example, but you can change the center color yoo if you want:
+	
+{% highlight objc %}
+radialView.theme.centerColor = [UIColor colorWithRed:0.45 green:0.3 blue:0.15 alpha:0.1];
+{% endhighlight %}
+</p>
+<br><br><br><br>
+<h3>Changing the starting point and direction</h3>
+<p><img class="leftimagenoborder" src="/img/mdradialprogressexamples/example6.png"></img>As you certainly noticed, the progress start drawing from 12'clock and proceeds in a clockwise direction. You can change both these settings very easily:<br>
+	
+{% highlight objc %}
+radialView.clockwise = NO;
+radialView.startingSlice = 2;
+{% endhighlight %}
+
+	The <code class="simple">progressCounter</code> in this picture was set to 3.
+</p>
+<br><br><br>
+<h3>Changing divider color and thickness</h3>
+<p><img class="leftimagenoborder" src="/img/mdradialprogressexamples/example7.png"></img>Until now we haven't changed the "thickness" of the area where the progress is drawn. We also never changed the slice divider color. <br>This example shows you how to implement these customisations. Since I made a few changes since the original example, I'm showing all the code required to reproduce the picture above:<br><br>
+{% highlight objc %}
+radialView.progressTotal = 7;
+radialView.progressCounter = 3;
+radialView.theme.thickness = 60;
+radialView.theme.sliceDividerColor = [UIColor colorWithRed:0.80 green:0.80 blue:0.80 alpha:0.6];
+radialView.theme.incompletedColor = [UIColor colorWithRed:0.15 green:0.3 blue:0.45 alpha:0.4];
+radialView.theme.completedColor = [UIColor colorWithRed:0.15 green:0.3 blue:0.45 alpha:1.0];
+radialView.label.hidden = YES;
+{% endhighlight %}
+	
+	As you can see, our progress view looks quite different this time.
+</p>
+<br>
+<h3>Themes</h3>
+<p><img class="leftimagenoborder" src="/img/mdradialprogressexamples/example8.png">The last feature I want to show is themes, which can be used when there are multiple views that must share the same settings. We'll first create a <code class="simple">MDRadialProgressTheme</code> object:
+
+{% highlight objc %}
+MDRadialProgressTheme *newTheme = [[MDRadialProgressTheme alloc] init];
+newTheme.completedColor = [UIColor colorWithRed:90/255.0 green:212/255.0 blue:39/255.0 alpha:1.0];
+newTheme.incompletedColor = [UIColor colorWithRed:164/255.0 green:231/255.0 blue:134/255.0 alpha:1.0];
+newTheme.centerColor = [UIColor clearColor];
+newTheme.centerColor = [UIColor colorWithRed:224/255.0 green:248/255.0 blue:216/255.0 alpha:1.0];
+newTheme.sliceDividerHidden = YES;
+newTheme.labelColor = [UIColor blackColor];
+newTheme.labelShadowColor = [UIColor whiteColor];
+{% endhighlight %}
+	
+<br><p>Then, we'll create 4 radial views and assign the theme to each one of them in the constructor:</p></br>
+
+{% highlight objc %}
+int x = 50, y = 50;
+CGRect frame = CGRectMake(x, y, 80, 80);
+MDRadialProgressView *radialView = [[MDRadialProgressView alloc] initWithFrame:frame andTheme:newTheme];
+radialView.progressTotal = 4;
+radialView.progressCounter = 1;
+[self.view addSubview:radialView];
+
+y += 120;
+
+frame = CGRectMake(x, y, 80, 80);
+MDRadialProgressView *radialView2 = [[MDRadialProgressView alloc] initWithFrame:frame andTheme:newTheme];
+radialView2.progressTotal = 4;
+radialView2.progressCounter = 2;
+[self.view addSubview:radialView2];
+
+y += 120;
+
+frame = CGRectMake(x, y, 80, 80);
+MDRadialProgressView *radialView3 = [[MDRadialProgressView alloc] initWithFrame:frame andTheme:newTheme];
+radialView3.progressTotal = 4;
+radialView3.progressCounter = 3;
+[self.view addSubview:radialView3];
+
+y += 120;
+
+frame = CGRectMake(x, y, 80, 80);
+MDRadialProgressView *radialView4 = [[MDRadialProgressView alloc] initWithFrame:frame andTheme:newTheme];
+radialView4.progressTotal = 4;
+radialView4.progressCounter = 4;
+[self.view addSubview:radialView4];
+{% endhighlight %}
+	
+</p>
+
+<p>Done ! Don't forget to <a href="https://github.com/mdinacci/MDRadialProgress">grab the source on Github</a> and <a href="http://sites.fastspring.com/intransitione/product/mdradialprogresslicenses">buy a non-attribution license</a> if you require one.</p>
+
+<br>
+<table><tr><td><iframe src="http://ghbtns.com/github-btn.html?user=mdinacci&repo=MDRadialProgress&type=watch&count=true&size=large" height="30" width="170" frameborder="0" scrolling="0" style="width:170px; height: 30px;" allowTransparency="true"></iframe></td><td><iframe src="http://ghbtns.com/github-btn.html?user=mdinacci&repo=MDRadialProgress&type=fork&count=true&size=large" height="30" width="170" frameborder="0" scrolling="0" style="width:170px; height: 30px;" allowTransparency="true"></iframe></td><td><iframe src="http://ghbtns.com/github-btn.html?user=mdinacci&type=follow&count=true&size=large" height="30" width="240" frameborder="0" scrolling="0" style="width:240px; height: 30px;" allowTransparency="true"></iframe></td></tr></table>
+<br>

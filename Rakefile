@@ -32,7 +32,7 @@ end
 
 desc 'Build and deploy'
 task :deploy do
-  sh 'rsync -rtzh --progress --delete _site/ marco@95.154.250.249:/var/www/intransitione.com/'
+  sh 'rsync -rtzh -e "ssh -p 4242" --progress --delete _site/ marco@95.154.250.249:/var/www/intransitione.com/'
 end
 
 desc 'Create a new post'
